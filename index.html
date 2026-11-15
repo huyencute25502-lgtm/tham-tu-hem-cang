@@ -5306,10 +5306,12 @@
        ytStopNow() dừng hẳn. Khi đang phát mà không ở trong app, thanh
        nhạc nhỏ #ytMiniBar hiện ngay trên taskbar (ảnh + tên video, nút
        tạm dừng/phát tiếp đồng bộ onStateChange, nút dừng hẳn; bấm vào
-       thanh là mở lại app). Âm lượng video đi qua ytPushVolume(): áp
-       vào đúng ytPlayer đang phát, đọc lại getVolume()/isMuted() để
-       kiểm chứng, chưa ăn thì tự thử lại; mức chọn lúc trình phát chưa
-       sẵn sàng được áp ở onReady và mỗi lần chuyển sang PLAYING. */
+       thanh là mở lại app). Âm lượng video đi qua ytPushVolume(): gửi
+       lệnh hai đường (hàm của YT.Player + postMessage thẳng vào khung
+       phát), kiểm chứng bằng cách đọc lại getVolume()/isMuted() sau
+       một nhịp chờ và gửi lại theo từng "thế hệ" cho tới khi khớp;
+       mức chọn lúc trình phát chưa sẵn sàng được áp ở onReady, mỗi lần
+       chuyển sang PLAYING và mọi lần đổi trạng thái khi còn đang nợ. */
     var YT_API_BASE = "https://tim-video-hem-cang.vercel.app";
     var ytPlayer = null, ytPlayerReady = false, ytApiLoading = false, ytApiReady = false;
     var ytPendingVideo = null, ytCurrentId = null, ytSearching = false, ytOpenedOnce = false;
@@ -5346,36 +5348,97 @@
       if (setOut) setOut.textContent = v + "%";
       ytPushVolume();
     }
-    /* Áp mức Âm lượng video vào ĐÚNG trình phát đang phát, rồi đọc lại
-       getVolume()/isMuted() từ chính trình phát đó để kiểm chứng: nếu
-       mức chưa ăn (lệnh gọi lúc video còn đang nạp) thì tự thử lại vài
-       lần cách nhau 300ms. Trình phát chưa sẵn sàng thì bỏ qua — onReady
-       và sự kiện PLAYING sẽ gọi lại. Khung phát đã ra khỏi trang (tham
-       chiếu cũ) thì dựng lại trình phát cho video đang chọn. */
-    var ytVolRetry = 0;
-    function ytPushVolume() {
-      if (!ytPlayer || !ytPlayerReady) return;
+    /* Áp mức Âm lượng video vào ĐÚNG trình phát đang phát. Bản cũ hỏng ở
+       ba chỗ khiến kéo thanh trong Cài đặt mà tiếng không đổi theo:
+       (1) nó đọc lại getVolume()/isMuted() NGAY trong cùng nhịp vừa gửi
+       lệnh — lệnh đi qua postMessage nên lúc đó trình phát vẫn báo mức
+       cũ, bị tính là "chưa ăn"; (2) mọi lần kéo dùng CHUNG một bộ đếm
+       thử lại: kéo liên tục là các lần gọi chen nhau, lần cuối (mức
+       chốt) lại rơi đúng lúc bộ đếm đã cạn nên không còn lần thử nào
+       được hẹn cho nó; (3) trình phát chưa sẵn sàng hoặc đang tạm dừng
+       thì lệnh bị bỏ qua lặng lẽ, không ai đẩy lại sau đó.
+       Cách mới:
+       - Gửi lệnh HAI đường cùng lúc: gọi hàm của YT.Player và gửi thẳng
+         lệnh postMessage vào cửa sổ khung phát (đúng định dạng lệnh của
+         trình nhúng) — đường nào tới nơi cũng ăn.
+       - Mỗi lần đẩy mang một "thế hệ" riêng: vòng kiểm chứng đọc lại
+         mức thật SAU một nhịp chờ, chưa khớp thì gửi lại, vòng của thế
+         hệ cũ tự hủy khi có thế hệ mới — kéo nhanh cỡ nào thì mức chốt
+         cuối cùng vẫn được đuổi theo tới khi khớp.
+       - Kéo liên tục được gộp nhịp: đẩy ngay lần đầu, các lần chen
+         trong 130ms dồn thành một lần đẩy chốt đọc mức mới nhất.
+       - Chưa xác nhận khớp thì giữ cờ "còn nợ" (ytVolDirty): mọi sự
+         kiện đổi trạng thái của trình phát (phát / tạm dừng / đệm / sẵn
+         sàng) và mỗi lần mở lại app đều đẩy lại cho tới khi khớp.
+       Khung phát đã ra khỏi trang (tham chiếu cũ) thì dựng lại trình
+       phát cho video đang chọn. */
+    var ytVolGen = 0;
+    var ytVolDirty = false;
+    var ytVolLastPush = 0, ytVolTrailTimer = null;
+
+    function ytSendVolumeCmds(v) {
+      try {
+        if (v === 0) { ytPlayer.setVolume(0); ytPlayer.mute(); }
+        else { ytPlayer.unMute(); ytPlayer.setVolume(v); }
+      } catch (e) {}
+      try {
+        var fr = ytPlayer.getIframe && ytPlayer.getIframe();
+        if (fr && fr.contentWindow) {
+          var cmds = v === 0
+            ? [["setVolume", [0]], ["mute", []]]
+            : [["unMute", []], ["setVolume", [v]]];
+          for (var i = 0; i < cmds.length; i++) {
+            fr.contentWindow.postMessage(
+              JSON.stringify({ event: "command", func: cmds[i][0], args: cmds[i][1] }),
+              "https://www.youtube-nocookie.com"
+            );
+          }
+        }
+      } catch (e) {}
+    }
+    function ytPlayerMatches(v) {
+      var got = null, muted = null;
+      try { got = ytPlayer.getVolume(); muted = ytPlayer.isMuted(); } catch (e) { return false; }
+      if (v === 0) return muted === true || got === 0;
+      return muted === false && got != null && Math.abs(Math.round(got) - v) <= 1;
+    }
+    function ytPushVolumeNow() {
+      if (!ytPlayer || !ytPlayerReady) { ytVolDirty = true; return; }
       try {
         var fr = ytPlayer.getIframe && ytPlayer.getIframe();
         if (fr && !document.contains(fr)) {
-          ytPlayer = null; ytPlayerReady = false;
+          ytPlayer = null; ytPlayerReady = false; ytVolDirty = true;
           if (ytCurrentId) ytCreatePlayer({ videoId: ytCurrentId });
           return;
         }
       } catch (e) {}
       var v = ytGameVolume();
-      try {
-        if (v === 0) { ytPlayer.setVolume(0); ytPlayer.mute(); }
-        else { ytPlayer.unMute(); ytPlayer.setVolume(v); }
-      } catch (e) { return; }
-      var got = null, muted = null;
-      try { got = ytPlayer.getVolume(); muted = ytPlayer.isMuted(); } catch (e) {}
-      var ok = (v === 0) ? (muted === true || got === 0)
-                         : (muted === false && got != null && Math.round(got) === v);
-      if (!ok && ytVolRetry < 3) {
-        ytVolRetry++;
-        setTimeout(ytPushVolume, 300);
-      } else { ytVolRetry = 0; }
+      ytVolDirty = true;
+      var gen = ++ytVolGen;
+      ytSendVolumeCmds(v);
+      var tries = 0;
+      function verify() {
+        if (gen !== ytVolGen || !ytPlayer || !ytPlayerReady) return;
+        if (ytPlayerMatches(v)) { ytVolDirty = false; return; }
+        tries++;
+        if (tries > 10) return; /* vẫn giữ cờ nợ: sự kiện trình phát kế tiếp sẽ đẩy lại */
+        ytSendVolumeCmds(v);
+        setTimeout(verify, tries < 3 ? 350 : 700);
+      }
+      setTimeout(verify, 350);
+    }
+    function ytPushVolume() {
+      var wait = 130 - (Date.now() - ytVolLastPush);
+      if (wait > 0) {
+        if (!ytVolTrailTimer) {
+          ytVolTrailTimer = setTimeout(function () {
+            ytVolTrailTimer = null; ytPushVolume();
+          }, wait + 20);
+        }
+        return;
+      }
+      ytVolLastPush = Date.now();
+      ytPushVolumeNow();
     }
     window.__syncVideoVolume = ytApplyVolume;
     /* Thanh trượt trong app ghi mức mới: lưu bền videoVol vào kho cài
@@ -5604,9 +5667,10 @@
           onStateChange: function (e) {
             ytState = e.data;
             /* Vừa chuyển sang đang phát (kể cả sau loadVideoById) là áp
-               lại mức Âm lượng video đang chọn vào đúng trình phát này,
-               và đồng bộ nút tạm dừng/phát tiếp trên thanh nhạc nhỏ. */
-            if (e.data === 1) ytPushVolume();
+               lại mức Âm lượng video đang chọn vào đúng trình phát này;
+               còn đang nợ mức chưa khớp thì mọi lần đổi trạng thái đều
+               đẩy lại. Đồng bộ nút tạm dừng/phát tiếp trên thanh nhạc nhỏ. */
+            if (e.data === 1 || ytVolDirty) ytPushVolume();
             ytSyncMiniBar();
           },
           onError: function () {
@@ -7100,6 +7164,11 @@
             S[key] = Number(el.value); out.textContent = el.value + "%"; saveSettings();
             if (key === "musicVol") { bgmGestured = true; syncMusic(); }
             if (key === "videoVol" && typeof window.__syncVideoVolume === "function") window.__syncVideoVolume();
+          });
+          /* Nhả tay khỏi thanh Âm lượng video: đẩy lại mức chốt một lần
+             nữa xuống trình phát, phòng nhịp kéo cuối bị gộp sót. */
+          if (key === "videoVol") el.addEventListener("change", function () {
+            if (typeof window.__syncVideoVolume === "function") window.__syncVideoVolume();
           });
         }
         bindSlider("slMaster", "masterVol"); bindSlider("slMusic", "musicVol"); bindSlider("slVideo", "videoVol"); bindSlider("slSfx", "sfxVol");
