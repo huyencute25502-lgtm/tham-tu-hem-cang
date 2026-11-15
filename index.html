@@ -5,7 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="color-scheme" content="light dark" />
     <link rel="icon" href="data:," />
-    <title>Game Thám Tử — Hồ Sơ Hẻm Cảng</title>
+    <title>Thám tử Hẻm Cảng — Game thám tử phá án</title>
+    <meta name="description" content="Phá 18 vụ án ở Hẻm Cảng, Thủy Nguyên: đọc thư, hỏi chuyện, ghim manh mối, buộc tội đúng hung thủ. Chơi ngay, không cần đăng nhập." />
+    <meta property="og:title" content="Thám tử Hẻm Cảng — Game thám tử phá án" />
+    <meta property="og:description" content="Phá 18 vụ án ở Hẻm Cảng, Thủy Nguyên: đọc thư, hỏi chuyện, ghim manh mối, buộc tội đúng hung thủ. Chơi ngay, không cần đăng nhập." />
+    <meta property="og:image" content="https://tham-tu-hem-cang.vercel.app/assets/og-image.jpg" />
+    <meta property="og:url" content="https://tham-tu-hem-cang.vercel.app/" />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Thám tử Hẻm Cảng — Game thám tử phá án" />
+    <meta name="twitter:description" content="Phá 18 vụ án ở Hẻm Cảng, Thủy Nguyên: đọc thư, hỏi chuyện, ghim manh mối, buộc tội đúng hung thủ. Chơi ngay, không cần đăng nhập." />
+    <meta name="twitter:image" content="https://tham-tu-hem-cang.vercel.app/assets/og-image.jpg" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Special+Elite&display=swap" rel="stylesheet" />
@@ -1540,6 +1550,56 @@
       .yt-thumb{ border-radius:12px; }
       .yt-empty{ border-radius:16px; }
 
+      /* Xem video — làm đẹp lại: giữ nền kem, bố cục gọn gàng, điểm nhấn
+         vàng gold hợp game, chữ rõ trên điện thoại. Chỉ đổi lớp trình bày,
+         mọi chức năng (tìm kiếm, gợi ý, lịch sử, khung phát, âm lượng,
+         kết quả, mở ngoài) giữ nguyên. */
+      .yt-pane{ padding:24px 24px 28px; }
+      .yt-searchbar{ max-width:760px; margin-bottom:12px; }
+      .yt-search-field{ background:var(--panel2); box-shadow:0 3px 12px rgba(84,66,30,.12); transition:border-color .15s ease, box-shadow .15s ease; }
+      .yt-search-field:focus-within{ border-color:var(--accent); box-shadow:0 0 0 3px rgba(232,163,61,.28), 0 3px 12px rgba(84,66,30,.12); }
+      .yt-search-go{ background:var(--accent); border-color:var(--accent); color:var(--accent-ink); transition:filter .15s ease; }
+      .yt-search-go:hover{ background:var(--accent); filter:brightness(1.08); }
+      .yt-chips{ max-width:760px; margin-bottom:6px; }
+      .yt-chips .kw-chip{ border:1px solid var(--line); background:var(--panel2); padding:6px 14px; font-size:13.5px; box-shadow:0 1px 4px rgba(84,66,30,.08); }
+      .yt-chips .kw-chip:hover{ border-color:var(--accent); color:var(--accent); }
+      .yt-history{ max-width:760px; background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:12px 12px 6px; margin-bottom:18px; box-shadow:0 3px 10px rgba(84,66,30,.07); }
+      .yt-history-head{ padding:0 4px; }
+      .yt-history-head b{ font-size:13px; letter-spacing:.05em; text-transform:uppercase; color:var(--ink-dim); }
+      .yt-history-item{ border-radius:10px; }
+      .yt-history-item svg{ color:var(--accent); }
+      .yt-layout{ margin-top:14px; gap:20px 26px; }
+      .yt-frame-wrap{ border:1px solid rgba(232,163,61,.4); }
+      .yt-now-title{ font-size:16.5px; }
+      .yt-results-head h4{ font-size:18px; }
+      .yt-result{ background:var(--panel); border:1px solid var(--line); margin-bottom:10px; box-shadow:0 2px 8px rgba(84,66,30,.06); }
+      .yt-result:hover{ background:var(--panel); border-color:var(--accent); }
+      .yt-result.playing{ border-color:var(--accent); background:rgba(232,163,61,.12); outline:none; }
+      .yt-empty{ background:var(--panel); border-color:rgba(232,163,61,.45); }
+      @media (max-width:760px){ .yt-pane{ padding:18px 14px 22px; } }
+
+      /* Thanh nhạc nhỏ trên desktop: hiện ngay TRÊN taskbar (là một hàng
+         trong khung màn hình, không phủ lên taskbar) khi video đang phát
+         mà người chơi không ở trong app Xem video. */
+      .yt-mini{ flex:0 0 auto; display:flex; align-items:center; gap:11px; margin:0 14px 10px 104px; padding:7px 10px; background:var(--panel2); border:1px solid var(--line); border-radius:14px; box-shadow:0 14px 30px rgba(0,0,0,.35); color:var(--ink); cursor:pointer; position:relative; z-index:3; }
+      .yt-mini[hidden]{ display:none; }
+      body.locked .yt-mini{ display:none !important; }
+      .yt-mini-thumb{ width:62px; height:35px; flex:0 0 auto; object-fit:cover; border-radius:8px; background:#000; display:block; }
+      .yt-mini-title{ flex:1 1 auto; min-width:0; font-weight:700; font-size:14.5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+      .yt-mini-btn{ flex:0 0 auto; width:38px; height:38px; min-height:38px; padding:0; border-radius:50%; border:1px solid var(--line); background:var(--panel); color:var(--ink); display:grid; place-items:center; cursor:pointer; transition:border-color .15s ease, color .15s ease; }
+      .yt-mini-btn:hover{ border-color:var(--accent); color:var(--accent); }
+      .yt-mini .ic-play{ display:none; }
+      .yt-mini[data-playing="0"] .ic-play{ display:block; }
+      .yt-mini[data-playing="0"] .ic-pause{ display:none; }
+      .yt-mini-eq{ display:flex; align-items:flex-end; gap:2.5px; height:14px; flex:0 0 auto; }
+      .yt-mini-eq i{ width:3px; height:5px; background:var(--accent); border-radius:2px; }
+      .yt-mini[data-playing="1"] .yt-mini-eq i{ animation:ytEq .9s ease-in-out infinite; }
+      .yt-mini[data-playing="1"] .yt-mini-eq i:nth-child(2){ animation-delay:.25s; }
+      .yt-mini[data-playing="1"] .yt-mini-eq i:nth-child(3){ animation-delay:.5s; }
+      @keyframes ytEq{ 0%,100%{ height:5px; } 50%{ height:14px; } }
+      @media (prefers-reduced-motion: reduce){ .yt-mini[data-playing="1"] .yt-mini-eq i{ animation:none; height:9px; } }
+      @media (max-width:760px){ .yt-mini{ margin:0 8px 8px; } .yt-mini-thumb{ width:50px; height:28px; } .yt-mini-title{ font-size:13.5px; } }
+
       /* Máy tính này + Thùng rác */
       .pc-crumb{ border-radius:12px; }
       .trash-empty{ border-radius:16px; }
@@ -2132,7 +2192,7 @@
           <span class="app-ic" style="color:#f5c877"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="5" width="19" height="14" rx="3"/><path d="M10 9.2v5.6L15 12Z" fill="currentColor" stroke="none"/></svg></span>
           <div class="case-head-main">
             <h2>Xem video</h2>
-            <p class="app-desc">Tìm video và xem ngay trong cửa sổ này. Tiếng video chỉnh bằng thanh Âm lượng video ngay dưới khung phát, hoặc trong Cài đặt → Âm thanh.</p>
+            <p class="app-desc">Tìm video và xem ngay trong cửa sổ này. Thu nhỏ cửa sổ hay sang app khác thì nhạc vẫn phát tiếp — chỉ bấm ✕ đóng app mới dừng hẳn. Tiếng video chỉnh bằng thanh Âm lượng video ngay dưới khung phát, hoặc trong Cài đặt → Âm thanh.</p>
           </div>
           <div class="case-meta">
             <span class="pill">Âm lượng video: <b id="ytVolPill">80%</b></span>
@@ -2239,6 +2299,19 @@
       </div>
     </div>
 
+            <!-- Thanh nhạc nhỏ: hiện khi video đang phát mà người chơi không ở trong app Xem video — bấm vào thanh mở lại app, có nút tạm dừng/phát tiếp và nút dừng hẳn -->
+            <div class="yt-mini" id="ytMiniBar" hidden title="Đang phát video — bấm để mở app Xem video">
+              <img class="yt-mini-thumb" id="ytMiniThumb" alt="" />
+              <span class="yt-mini-eq" aria-hidden="true"><i></i><i></i><i></i></span>
+              <span class="yt-mini-title" id="ytMiniTitle"></span>
+              <button type="button" class="yt-mini-btn" id="ytMiniToggle" aria-label="Tạm dừng hoặc phát tiếp">
+                <svg class="ic-pause" width="17" height="17" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="5.5" y="4.5" width="4.5" height="15" rx="1.2"/><rect x="13.5" y="4.5" width="4.5" height="15" rx="1.2"/></svg>
+                <svg class="ic-play" width="17" height="17" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.3v13.4c0 .9 1 1.5 1.8 1L20 13a1.2 1.2 0 0 0 0-2L9.8 4.3C9 3.9 8 4.4 8 5.3Z"/></svg>
+              </button>
+              <button type="button" class="yt-mini-btn" id="ytMiniStop" aria-label="Dừng hẳn video">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="5" y="5" width="14" height="14" rx="2"/></svg>
+              </button>
+            </div>
             <div class="taskbar" aria-label="Thanh tác vụ">
               <button type="button" class="tb-widgets" id="tbWidgets" aria-haspopup="true" aria-expanded="false" title="Bảng tin hẻm — thời tiết, vụ án và tin đồn trong hẻm">
                 <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#f5c877" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="9" r="3.4"/><path d="M9 2.8v1.4M2.8 9h1.4M4.4 4.4l1 1M13.6 4.4l-1 1"/><path d="M10 20.5h8.2a3.4 3.4 0 0 0 .6-6.7 5 5 0 0 0-9.6-1A4.2 4.2 0 0 0 10 20.5Z" stroke="#7cc4ff"/></svg>
@@ -4204,7 +4277,10 @@
       $("settingsView").style.display = "none";
       $("pcView").style.display = "none";
       $("trashView").style.display = "none";
-      if (G.currentApp !== "youtube") { try { ytPauseNow(); } catch (e) { /* trình phát chưa sẵn sàng */ } }
+      /* Rời app Xem video (thu nhỏ —, sang app khác) KHÔNG dừng video nữa:
+         nhạc vẫn phát tiếp ở nền, thanh nhạc nhỏ hiện trên desktop để điều
+         khiển. Chỉ bấm Đóng (✕) mới dừng hẳn — xem closeCurrentApp. */
+      try { ytSyncMiniBar(); } catch (e) { /* app video chưa khởi tạo */ }
     }
 
     function openYoutube() {
@@ -4249,6 +4325,9 @@
 
     /* Đóng (✕): tắt hẳn app đang ở tiền cảnh — icon biến khỏi taskbar. */
     function closeCurrentApp() {
+      /* Đóng app Xem video bằng ✕ là chỗ DUY NHẤT dừng hẳn video;
+         thu nhỏ hay sang app khác thì nhạc vẫn phát tiếp. */
+      if (G.currentApp === "youtube") { try { ytStopNow(); } catch (e) { /* trình phát chưa sẵn sàng */ } }
       if (G.currentApp) delete G.openApps[G.currentApp];
       showDesktop();
     }
@@ -5242,9 +5321,20 @@
          phát trong app này — đồng bộ 2 chiều: kéo bên nào bên kia đổi
          theo, tiếng video đổi ngay. Âm lượng chung từ giờ chỉ chỉnh
          hiệu ứng game, nhạc nền có thanh riêng, không đụng vào video. */
+    /* Hành vi phát nền: thu nhỏ (—) hoặc sang app khác thì video PHÁT
+       TIẾP — hideAllViews không dừng video nữa; chỉ Đóng (✕) mới gọi
+       ytStopNow() dừng hẳn. Khi đang phát mà không ở trong app, thanh
+       nhạc nhỏ #ytMiniBar hiện ngay trên taskbar (ảnh + tên video, nút
+       tạm dừng/phát tiếp đồng bộ onStateChange, nút dừng hẳn; bấm vào
+       thanh là mở lại app). Âm lượng video đi qua ytPushVolume(): áp
+       vào đúng ytPlayer đang phát, đọc lại getVolume()/isMuted() để
+       kiểm chứng, chưa ăn thì tự thử lại; mức chọn lúc trình phát chưa
+       sẵn sàng được áp ở onReady và mỗi lần chuyển sang PLAYING. */
     var YT_API_BASE = "https://tim-video-hem-cang.vercel.app";
     var ytPlayer = null, ytPlayerReady = false, ytApiLoading = false, ytApiReady = false;
     var ytPendingVideo = null, ytCurrentId = null, ytSearching = false, ytOpenedOnce = false;
+    var ytState = -1; /* YT.PlayerState gần nhất: 1 đang phát, 2 tạm dừng, 0 đã hết */
+    var ytCurrentTitle = "", ytCurrentThumb = "", ytStopped = true;
     var ytHistory = []; /* từ khóa vừa tìm — chỉ giữ trong phiên chơi này */
 
     function ytGameVolume() {
@@ -5275,12 +5365,38 @@
       if (setRng && document.activeElement !== setRng) setRng.value = v;
       var setOut = document.getElementById("slVideoVal");
       if (setOut) setOut.textContent = v + "%";
-      if (ytPlayer && ytPlayerReady) {
-        try {
-          ytPlayer.setVolume(v);
-          if (v === 0) ytPlayer.mute(); else ytPlayer.unMute();
-        } catch (e) {}
-      }
+      ytPushVolume();
+    }
+    /* Áp mức Âm lượng video vào ĐÚNG trình phát đang phát, rồi đọc lại
+       getVolume()/isMuted() từ chính trình phát đó để kiểm chứng: nếu
+       mức chưa ăn (lệnh gọi lúc video còn đang nạp) thì tự thử lại vài
+       lần cách nhau 300ms. Trình phát chưa sẵn sàng thì bỏ qua — onReady
+       và sự kiện PLAYING sẽ gọi lại. Khung phát đã ra khỏi trang (tham
+       chiếu cũ) thì dựng lại trình phát cho video đang chọn. */
+    var ytVolRetry = 0;
+    function ytPushVolume() {
+      if (!ytPlayer || !ytPlayerReady) return;
+      try {
+        var fr = ytPlayer.getIframe && ytPlayer.getIframe();
+        if (fr && !document.contains(fr)) {
+          ytPlayer = null; ytPlayerReady = false;
+          if (ytCurrentId) ytCreatePlayer({ videoId: ytCurrentId });
+          return;
+        }
+      } catch (e) {}
+      var v = ytGameVolume();
+      try {
+        if (v === 0) { ytPlayer.setVolume(0); ytPlayer.mute(); }
+        else { ytPlayer.unMute(); ytPlayer.setVolume(v); }
+      } catch (e) { return; }
+      var got = null, muted = null;
+      try { got = ytPlayer.getVolume(); muted = ytPlayer.isMuted(); } catch (e) {}
+      var ok = (v === 0) ? (muted === true || got === 0)
+                         : (muted === false && got != null && Math.round(got) === v);
+      if (!ok && ytVolRetry < 3) {
+        ytVolRetry++;
+        setTimeout(ytPushVolume, 300);
+      } else { ytVolRetry = 0; }
     }
     window.__syncVideoVolume = ytApplyVolume;
     /* Thanh trượt trong app ghi mức mới: lưu bền videoVol vào kho cài
@@ -5510,6 +5626,8 @@
     }
 
     function ytCreatePlayer(v) {
+      if (ytPlayer) return; /* chỉ một trình phát duy nhất cho cả app */
+      ytPlayerReady = false;
       var vars = { autoplay: 1, rel: 0, playsinline: 1 };
       try {
         if (/^https?:$/.test(location.protocol) && location.origin && location.origin !== "null") vars.origin = location.origin;
@@ -5532,6 +5650,14 @@
               try { ytPlayer.loadVideoById(pv.videoId); } catch (e) {}
             }
           },
+          onStateChange: function (e) {
+            ytState = e.data;
+            /* Vừa chuyển sang đang phát (kể cả sau loadVideoById) là áp
+               lại mức Âm lượng video đang chọn vào đúng trình phát này,
+               và đồng bộ nút tạm dừng/phát tiếp trên thanh nhạc nhỏ. */
+            if (e.data === 1) ytPushVolume();
+            ytSyncMiniBar();
+          },
           onError: function () {
             ytSetStatus("Video này không phát được trong cửa sổ app (chủ kênh có thể đã tắt nhúng) — bấm “Mở trên YouTube” ở khung phát để xem ngoài trình duyệt.", true, false);
           }
@@ -5550,6 +5676,9 @@
       if (title) title.textContent = v.title || "";
       var meta = document.getElementById("ytNowMeta");
       if (meta) meta.textContent = [v.channel, v.views].filter(Boolean).join(" · ");
+      ytStopped = false;
+      ytCurrentTitle = v.title || "";
+      ytCurrentThumb = v.thumbnail || ("https://i.ytimg.com/vi/" + encodeURIComponent(v.videoId) + "/mqdefault.jpg");
       var oo = document.getElementById("ytOpenOut");
       if (oo) {
         oo.href = "https://www.youtube.com/watch?v=" + encodeURIComponent(v.videoId);
@@ -5574,6 +5703,7 @@
         ytPendingVideo = v;
         ytLoadApi();
       }
+      ytSyncMiniBar();
     }
 
     function ytStartEmbed() {
@@ -5588,11 +5718,32 @@
         ytDoSearch("lofi");
       }
     }
-    function ytPauseNow() {
-      /* Rời app: dừng hẳn video (stopVideo cắt cả hình lẫn tiếng). */
+    /* Dừng hẳn video — CHỈ gọi khi bấm Đóng (✕) app Xem video hoặc bấm
+       nút dừng hẳn trên thanh nhạc nhỏ. Thu nhỏ (—) hay sang app khác
+       thì KHÔNG gọi hàm này: video phát tiếp ở nền. */
+    function ytStopNow() {
+      ytStopped = true;
       if (ytPlayer && ytPlayerReady) {
         try { ytPlayer.stopVideo(); } catch (e) {}
       }
+      ytSyncMiniBar();
+    }
+    /* Thanh nhạc nhỏ trên desktop: hiện khi có video đang tải/phát mà
+       người chơi không ở trong app Xem video (đang ở desktop hoặc app
+       khác, máy không khóa). Nút tạm dừng/phát tiếp bám đúng trạng thái
+       thật của trình phát qua ytState (cập nhật ở onStateChange). */
+    function ytSyncMiniBar() {
+      var bar = document.getElementById("ytMiniBar");
+      if (!bar) return;
+      var show = !!ytCurrentId && !ytStopped && typeof G !== "undefined" && G.currentApp !== "youtube"
+        && !document.body.classList.contains("locked");
+      if (!show) { bar.hidden = true; return; }
+      var t = document.getElementById("ytMiniTitle");
+      if (t) t.textContent = ytCurrentTitle || "";
+      var im = document.getElementById("ytMiniThumb");
+      if (im && ytCurrentThumb && im.getAttribute("src") !== ytCurrentThumb) im.src = ytCurrentThumb;
+      bar.setAttribute("data-playing", ytState === 1 ? "1" : "0");
+      bar.hidden = false;
     }
     (function initYoutubeApp() {
       var form = document.getElementById("ytSearchForm");
@@ -5631,6 +5782,23 @@
           ytSetVideoVolume(Number(volRng.value));
         });
         ytApplyVolume();
+      }
+      /* Thanh nhạc nhỏ: bấm vào thanh = mở lại app Xem video; nút giữa
+         tạm dừng / phát tiếp đúng trình phát thật; nút cuối dừng hẳn. */
+      var mini = document.getElementById("ytMiniBar");
+      if (mini) {
+        mini.addEventListener("click", function () { openYoutube(); });
+        var tg = document.getElementById("ytMiniToggle");
+        if (tg) tg.addEventListener("click", function (e) {
+          e.stopPropagation();
+          if (!ytPlayer || !ytPlayerReady) return;
+          try {
+            if (ytState === 1) ytPlayer.pauseVideo();
+            else { if (ytState === 0) ytPlayer.seekTo(0); ytPlayer.playVideo(); }
+          } catch (err) {}
+        });
+        var sp = document.getElementById("ytMiniStop");
+        if (sp) sp.addEventListener("click", function (e) { e.stopPropagation(); ytStopNow(); });
       }
     })();
 
