@@ -866,7 +866,6 @@
          danh sách kết quả gọn bên phải; trên điện thoại xếp dọc (phát trên,
          danh sách dưới). */
       .yt-pane{ padding-top:18px; }
-      .yt-chips{ display:flex; gap:7px; flex-wrap:wrap; justify-content:center; max-width:720px; margin:2px auto 4px; }
       .yt-layout{ display:grid; grid-template-columns:minmax(0,1fr); gap:4px 24px; align-items:start; margin-top:6px; }
       .yt-thumb .yt-live{ position:absolute; left:6px; top:6px; background:#c62f1e; color:#fff; font-size:10.5px; font-weight:800; letter-spacing:.05em; padding:2px 7px; border-radius:5px; }
       .yt-status.err{ color:var(--red); }
@@ -892,16 +891,6 @@
       .yt-search-go{ flex:0 0 auto; width:68px; border:1.5px solid var(--line); background:var(--panel2); color:var(--ink); border-radius:0 999px 999px 0; display:grid; place-items:center; cursor:pointer; }
       .yt-search-go:hover{ background:rgba(127,127,127,.16); }
       .yt-search-hint{ text-align:center; font-size:13px; color:var(--ink-faint); margin:0 0 16px; }
-      .yt-history{ max-width:720px; margin:0 auto 16px; }
-      .yt-history[hidden]{ display:none; }
-      .yt-history-head{ display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:7px; }
-      .yt-history-head b{ font-size:13.5px; }
-      .yt-history-clear{ background:none; border:none; color:var(--accent); font-size:13px; font-weight:600; padding:4px 6px; min-height:0; }
-      .yt-history-list{ display:flex; flex-direction:column; }
-      .yt-history-item{ display:flex; align-items:center; gap:11px; width:100%; text-align:left; background:none; border:none; border-radius:8px; color:var(--ink); padding:8px 10px; font-size:14.5px; font-family:inherit; }
-      .yt-history-item:hover{ background:rgba(127,127,127,.13); }
-      .yt-history-item svg{ flex:0 0 auto; color:var(--ink-faint); }
-      .yt-history-item span{ overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
       .yt-frame-wrap{ position:relative; width:100%; aspect-ratio:16/9; background:#000; border-radius:12px; overflow:hidden; border:1px solid var(--line); }
       .yt-frame-wrap iframe, .yt-frame-wrap > div{ position:absolute; inset:0; width:100%; height:100%; border:0; display:block; }
       .yt-empty{ border:1.5px dashed var(--line); border-radius:12px; padding:34px 18px; text-align:center; color:var(--ink-dim); font-size:14.5px; background:var(--panel2); }
@@ -1556,7 +1545,7 @@
 
       /* Xem video — làm đẹp lại: giữ nền kem, bố cục gọn gàng, điểm nhấn
          vàng gold hợp game, chữ rõ trên điện thoại. Chỉ đổi lớp trình bày,
-         mọi chức năng (tìm kiếm, gợi ý, lịch sử, khung phát, âm lượng,
+         mọi chức năng (tìm kiếm, khung phát, âm lượng,
          kết quả, mở ngoài) giữ nguyên. */
       .yt-pane{ padding:24px 24px 28px; }
       .yt-searchbar{ max-width:760px; margin-bottom:12px; }
@@ -1564,14 +1553,6 @@
       .yt-search-field:focus-within{ border-color:var(--accent); box-shadow:0 0 0 3px rgba(232,163,61,.28), 0 3px 12px rgba(84,66,30,.12); }
       .yt-search-go{ background:var(--accent); border-color:var(--accent); color:var(--accent-ink); transition:filter .15s ease; }
       .yt-search-go:hover{ background:var(--accent); filter:brightness(1.08); }
-      .yt-chips{ max-width:760px; margin-bottom:6px; }
-      .yt-chips .kw-chip{ border:1px solid var(--line); background:var(--panel2); padding:6px 14px; font-size:13.5px; box-shadow:0 1px 4px rgba(84,66,30,.08); }
-      .yt-chips .kw-chip:hover{ border-color:var(--accent); color:var(--accent); }
-      .yt-history{ max-width:760px; background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:12px 12px 6px; margin-bottom:18px; box-shadow:0 3px 10px rgba(84,66,30,.07); }
-      .yt-history-head{ padding:0 4px; }
-      .yt-history-head b{ font-size:13px; letter-spacing:.05em; text-transform:uppercase; color:var(--ink-dim); }
-      .yt-history-item{ border-radius:10px; }
-      .yt-history-item svg{ color:var(--accent); }
       .yt-layout{ margin-top:14px; gap:20px 26px; }
       .yt-frame-wrap{ border:1px solid rgba(232,163,61,.4); }
       .yt-now-title{ font-size:16.5px; }
@@ -2210,11 +2191,6 @@
             </div>
             <button type="submit" class="yt-search-go" id="ytGoBtn" aria-label="Tìm video"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.3 15.3 21 21"/></svg></button>
           </form>
-          <div class="yt-chips" id="ytChips" aria-label="Gợi ý tìm kiếm"></div>
-          <div class="yt-history" id="ytHistory" hidden>
-            <div class="yt-history-head"><b>Vừa tìm</b><button type="button" class="yt-history-clear" id="ytHistoryClear">Xóa hết</button></div>
-            <div class="yt-history-list" id="ytHistoryList"></div>
-          </div>
           <div class="yt-layout" id="ytLayout">
             <div class="yt-player-col" id="ytPlayerCol" hidden>
               <div class="yt-frame-wrap"><div id="ytPlayer"></div></div>
@@ -2235,7 +2211,7 @@
             <div class="yt-results-col" id="ytResultsCol">
               <div class="yt-empty" id="ytEmpty">
                 <div class="yt-play"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#201503" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 5.5v13L19 12Z" fill="#201503" stroke="none"/></svg></div>
-                Gõ từ khóa rồi bấm Tìm, hoặc bấm một gợi ý ở trên — bấm vào video trong danh sách là phát ngay tại đây.
+                Gõ từ khóa rồi bấm Tìm — bấm vào video trong danh sách là phát ngay tại đây.
               </div>
               <div class="yt-results-head" id="ytResultsHead" hidden><h4>Kết quả</h4><span id="ytResultsCount"></span></div>
               <p class="yt-status" id="ytStatus" role="status"></p>
@@ -5339,7 +5315,6 @@
     var ytPendingVideo = null, ytCurrentId = null, ytSearching = false, ytOpenedOnce = false;
     var ytState = -1; /* YT.PlayerState gần nhất: 1 đang phát, 2 tạm dừng, 0 đã hết */
     var ytCurrentTitle = "", ytCurrentThumb = "", ytStopped = true;
-    var ytHistory = []; /* từ khóa vừa tìm — chỉ giữ trong phiên chơi này */
 
     function ytGameVolume() {
       var v = 80;
@@ -5429,33 +5404,6 @@
         a.textContent = " Mở trang tìm video ngoài trình duyệt →";
         st.appendChild(a);
       }
-    }
-
-    function ytRenderHistory() {
-      var wrap = document.getElementById("ytHistory");
-      var list = document.getElementById("ytHistoryList");
-      if (!wrap || !list) return;
-      list.innerHTML = "";
-      ytHistory.forEach(function (q) {
-        var b = document.createElement("button");
-        b.type = "button"; b.className = "yt-history-item";
-        b.innerHTML = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>';
-        var s = document.createElement("span"); s.textContent = q;
-        b.appendChild(s);
-        b.addEventListener("click", function () {
-          var inp = document.getElementById("ytQuery");
-          if (inp) inp.value = q;
-          ytDoSearch(q);
-        });
-        list.appendChild(b);
-      });
-      wrap.hidden = ytHistory.length === 0;
-    }
-    function ytPushHistory(q) {
-      ytHistory = ytHistory.filter(function (x) { return x.toLowerCase() !== q.toLowerCase(); });
-      ytHistory.unshift(q);
-      if (ytHistory.length > 6) ytHistory.length = 6;
-      ytRenderHistory();
     }
 
     function ytRenderResults(list) {
@@ -5557,7 +5505,6 @@
       var head = document.getElementById("ytResultsHead"); if (head) head.hidden = true;
       var box = document.getElementById("ytResults"); if (box) box.innerHTML = "";
       ytSetStatus("Đang tìm “" + q + "”…", false, false);
-      ytPushHistory(q);
 
       /* Trước đây chỉ gọi máy tìm đúng 1 lần, chờ 15 giây: máy khởi
          động chậm một nhịp hoặc mạng chập chờn là rớt ngay thành
@@ -5762,20 +5709,6 @@
           inp.value = ""; clearBtn.hidden = true; inp.focus();
         });
       }
-      var chips = document.getElementById("ytChips");
-      if (chips) {
-        ["lofi", "nhạc trẻ", "nấu ăn ngon", "du lịch Việt Nam", "hài ngắn"].forEach(function (s) {
-          var b = document.createElement("button");
-          b.type = "button"; b.className = "kw-chip"; b.textContent = s;
-          b.addEventListener("click", function () {
-            if (inp) { inp.value = s; if (clearBtn) clearBtn.hidden = false; }
-            ytDoSearch(s);
-          });
-          chips.appendChild(b);
-        });
-      }
-      var hc = document.getElementById("ytHistoryClear");
-      if (hc) hc.addEventListener("click", function () { ytHistory = []; ytRenderHistory(); });
       /* Thanh Âm lượng video ngay trong app: kéo là lưu bền + áp ngay
          vào YT.Player qua ytSetVideoVolume, đồng bộ với Cài đặt. */
       var volRng = document.getElementById("ytVolRange");
