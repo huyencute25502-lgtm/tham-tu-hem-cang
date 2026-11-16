@@ -1177,6 +1177,12 @@
         border-radius:0 0 8px 8px; box-shadow:0 24px 54px rgba(0,0,0,.42);
         overflow-y:auto !important; overflow-x:hidden !important;
         overscroll-behavior:contain;
+        /* Tắt scroll anchoring của trình duyệt trong các cửa sổ app: khi nội
+           dung được thêm vào (vd dòng "đã tìm thấy" trong mini game), trình
+           duyệt tự tăng scrollTop để giữ phần tử neo ở cuối khung, làm cả
+           cảnh phía trên nhảy lên đúng bằng chiều cao phần mới thêm — người
+           chơi bấm một chỗ mà vòng khoanh hiện lệch hẳn sang chỗ khác. */
+        overflow-anchor:none;
       }
       @media (prefers-color-scheme: light){
         #homeView, #caseView, #reportView, #howtoView, #badgesView, #youtubeView, #dailyView, #miniView,
@@ -6943,7 +6949,10 @@
             var px = (fi === 1 && sp.bx != null) ? sp.bx : sp.x;
             var py = (fi === 1 && sp.by != null) ? sp.by : sp.y;
             var hot = document.createElementNS(NS, "circle");
-            hot.setAttribute("cx", px); hot.setAttribute("cy", py); hot.setAttribute("r", 17);
+            /* Bán kính 15: hai điểm gần nhau nhất (giỏ cá và con mèo ở hình B
+               cảnh 2) cách nhau ~33 đơn vị — bán kính lớn hơn sẽ làm hai vùng
+               bấm chồng lên nhau, bấm điểm này lại trúng điểm kia. */
+            hot.setAttribute("cx", px); hot.setAttribute("cy", py); hot.setAttribute("r", 15);
             hot.setAttribute("class", "hot");
             var t = document.createElementNS(NS, "title"); t.textContent = "Điểm khác nhau?";
             hot.appendChild(t);
