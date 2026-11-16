@@ -2625,33 +2625,11 @@
             <div class="br-hero">
               <div class="br-hero-mark"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v10.5"/><path d="M12 3l5.5 8H12"/><path d="M12 6.2 7.6 13H12"/><path d="M4.5 16.5c1.8 1.5 3.6-1.2 5.4 0 1.4 1 2.4 1 3.8 0 1.8-1.2 3.6 1.5 5.4 0"/><path d="M4.5 20.5c1.8 1.5 3.6-1.2 5.4 0 1.4 1 2.4 1 3.8 0 1.8-1.2 3.6 1.5 5.4 0"/></svg></div>
               <h3>Cảng Lướt</h3>
-              <p>Trình duyệt của văn phòng thám tử — gõ gì cũng tra được ngay trong cửa sổ game: Cảng Lướt tự vẽ trang kết quả (đáp án nhanh, Wikipedia, hình ảnh, tin tức), mở nguyên trang kết quả Bing / Cốc Cốc trong khung, và đọc lấy phần chữ của những trang không cho nhúng. Chỉ vài trang khóa cứng như Google, Facebook, Netflix mới phải ra tab mới — xem bảng tra ở dưới.</p>
               <form class="br-search" id="brSearchForm" role="search">
                 <div class="br-search-field"><input id="brSearchInput" type="search" placeholder="Tìm gì cũng được — người, nơi chốn, sự kiện, tin tức…" autocomplete="off" aria-label="Tìm kiếm trong Cảng Lướt" /></div>
                 <button type="submit" class="br-search-go">Tìm</button>
               </form>
-              <p class="br-search-alt">Kết quả hiện ngay tại đây, không bật ra ngoài. Muốn tìm bằng Google? <button type="button" id="brGoogleSearch">Mở Google ở tab mới</button> — vì Google chặn nhúng, xem bảng tra ở dưới.</p>
             </div>
-
-            <section class="br-sec">
-              <h4>Mở ngay trong game</h4>
-              <p class="br-sec-note">Các trang này không cấm nhúng khung (iframe) nên hiện nguyên trang thật ngay trong cửa sổ Cảng Lướt.</p>
-              <div class="br-tiles">
-                <button type="button" class="br-tile" data-br-open="https://vi.wikipedia.org/wiki/Trang_Chính" data-br-title="Wikipedia tiếng Việt"><span class="br-tag">TRONG GAME</span><b>Wikipedia tiếng Việt</b><span>Bách khoa toàn thư — tra cứu manh mối, địa danh, nhân vật.</span></button>
-                <button type="button" class="br-tile" data-br-open="https://vi.wikipedia.org/wiki/Cổng_thông_tin:Thời_sự" data-br-title="Thời sự · Wikipedia"><span class="br-tag">TRONG GAME</span><b>Thời sự trên Wikipedia</b><span>Tin nhanh do cộng đồng Wikipedia cập nhật — đọc ngay tại đây.</span></button>
-                <button type="button" class="br-tile" data-br-open="https://en.wikipedia.org/wiki/Main_Page" data-br-title="Wikipedia (English)"><span class="br-tag">TRONG GAME</span><b>Wikipedia (English)</b><span>Bản tiếng Anh khi bản tiếng Việt chưa có bài.</span></button>
-                <button type="button" class="br-tile" data-br-open="https://example.com" data-br-title="Example.com"><span class="br-tag">TRONG GAME</span><b>Example.com</b><span>Trang mẫu quốc tế — để thử xem khung nhúng chạy thế nào.</span></button>
-              </div>
-            </section>
-
-            <section class="br-sec">
-              <h4>Tìm toàn web — nguyên trang kết quả trong game</h4>
-              <p class="br-sec-note">Trang kết quả của <b>Bing</b> và <b>Cốc Cốc</b> là hai trang kết quả tìm kiếm hiếm hoi KHÔNG gửi lệnh cấm nhúng — kiểm chứng trực tiếp ngày 16/11/2026 bằng công cụ testiframe.com: Bing hiện kết quả thật ngay trong khung; Cốc Cốc thì lệnh ở đầu trang cho phép nhúng, nhưng hình ảnh kết quả trong khung chưa xác nhận trực tiếp được. Cách nhanh nhất: gõ từ khóa ở ô tìm phía trên, vào trang kết quả của Cảng Lướt rồi bấm mở toàn web bằng Bing hoặc Cốc Cốc. Hai ô dưới mở sẵn trang tìm của từng nhà. Lưu ý: việc cho nhúng là lựa chọn của từng trang, có thể đổi bất cứ lúc nào — khung trắng thì bấm “Mở tab mới”.</p>
-              <div class="br-tiles">
-                <button type="button" class="br-tile" data-br-open="https://www.bing.com/search" data-br-title="Bing — tìm toàn web"><span class="br-tag">TRONG GAME · ĐÃ KIỂM CHỨNG 16/11/2026</span><b>Bing — tìm toàn web</b><span>Trang kết quả Bing hiện nguyên trong khung Cảng Lướt — đường gần nhất tới “tìm gì cũng có” mà không cần khóa API.</span></button>
-                <button type="button" class="br-tile" data-br-open="https://coccoc.com/search" data-br-title="Cốc Cốc — tìm toàn web"><span class="br-tag">TRONG GAME · LỆNH CHO PHÉP</span><b>Cốc Cốc — tìm toàn web</b><span>Máy tìm kiếm Việt Nam, kết quả chỉnh cho tiếng Việt. Đầu trang không cấm nhúng; nếu khung trắng, mở tab mới giúp Cảng Lướt nhé.</span></button>
-              </div>
-            </section>
 
             <section class="br-sec">
               <h4>Hộp nhúng — video &amp; bản đồ</h4>
@@ -7914,10 +7892,6 @@
         var q = $("brSearchInput").value.trim();
         if (!q) return;
         brGo("search:" + encodeURIComponent(q), "Tìm: " + q);
-      });
-      $("brGoogleSearch").addEventListener("click", function () {
-        var q = $("brSearchInput").value.trim();
-        window.open("https://www.google.com/search?q=" + encodeURIComponent(q), "_blank", "noopener");
       });
       $("brEmbedGo").addEventListener("click", function () {
         var msg = $("brEmbedMsg");
