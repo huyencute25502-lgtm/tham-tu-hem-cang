@@ -2330,6 +2330,33 @@
       .msg-status{ padding:8px 14px; font-size:12.5px; color:var(--ink-dim); border-top:1px solid var(--line); background:var(--bg2); }
       .msg-status:empty{ display:none; }
       .msg-status.err{ color:var(--red); }
+      /* Cửa sổ app Tin nhắn — khung cửa sổ app như MỌI app khác: trước đây
+         #msgView không có rule riêng nên chỉ là khối thường (không định vị,
+         không nền, không lề), bị lớp icon desktop (position:absolute,
+         z-index:1, phủ khắp màn hình) vẽ ĐÈ lên trên, che chữ cột trái.
+         Nay: position:relative + z-index:2 như các app khác, nền đặc,
+         lề trái 104px khớp thanh tiêu đề .os-bar, cuộn nội bộ trong khung. */
+      #msgView{ display:none; margin:0 14px 14px 104px; position:relative; z-index:2;
+        background:var(--bg); border:1px solid rgba(255,255,255,.1); border-top:none;
+        border-radius:0 0 8px 8px; box-shadow:0 24px 54px rgba(0,0,0,.42);
+        flex:1 1 auto; min-height:0; overflow-y:auto; overflow-x:hidden; overscroll-behavior:contain; overflow-anchor:none; }
+      @media (prefers-color-scheme: light){ #msgView{ border-color:rgba(0,0,0,.1); } }
+      html[data-theme="light"] #msgView{ border-color:rgba(0,0,0,.1); }
+      html[data-theme="dark"] #msgView{ border-color:rgba(255,255,255,.1); }
+      body.locked #msgView{ display:none !important; }
+      body.on-desktop #msgView{ display:none !important; }
+      @media (max-width:760px){ #msgView{ margin:0 8px 10px; } }
+      /* Thẻ thám tử trong mục Tìm (gợi ý online + kết quả tìm): ảnh đại
+         diện thật (ảnh tải lên hoặc mẫu chân dung vẽ sẵn), tên, cấp bậc,
+         % nhiệm vụ hoàn thành, chấm xanh khi đang online. */
+      .msg-ava{ overflow:hidden; }
+      .msg-ava svg{ width:100%; height:100%; display:block; }
+      .msg-ava img{ width:100%; height:100%; object-fit:cover; display:block; }
+      .msg-det-main{ flex:1 1 auto; min-width:0; }
+      .msg-det-main b{ display:block; font-size:14px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+      .msg-det-meta{ display:flex; align-items:center; gap:5px; font-size:12px; color:var(--ink-dim); margin-top:1px; }
+      .msg-online-dot{ flex:0 0 auto; width:8px; height:8px; border-radius:50%; background:#3d9e57; }
+      .msg-online-head{ margin:12px 0 2px; font-size:11.5px; font-weight:800; letter-spacing:.09em; text-transform:uppercase; color:var(--ink-faint); }
       @media (max-width:760px){
         .msg-wrap{ min-height:0; }
         .msg-list{ flex:1 1 auto; max-width:none; border-right:none; }
@@ -12924,8 +12951,8 @@
        - Nhắn riêng: dms/{uidA_uidB}/messages. Nhóm: groups/{id}/messages.
        - Ảnh/tài liệu: upload thẳng lên Cloudinary bằng preset KHÔNG ký
          (unsigned) rồi gửi link trong tin nhắn — không qua Firebase Storage. */
-    var CLOUDINARY_CLOUD_NAME = "";    /* điền cloud name thật khi có tài khoản Cloudinary */
-    var CLOUDINARY_UPLOAD_PRESET = ""; /* preset upload không ký (tham-tu-chat) — điền cùng lúc với cloud name */
+    var CLOUDINARY_CLOUD_NAME = "cslzx8db";    /* tài khoản Cloudinary miễn phí của văn phòng (tạo 16/11) */
+    var CLOUDINARY_UPLOAD_PRESET = "tham-tu-chat"; /* preset upload không ký (Unsigned, folder tham-tu-chat) */
     (function () {
       var FB_CONFIG = {
         apiKey: "AIzaSyAyKMX1geiuAWH86hu4HOOM8nVzla1lsPs",
@@ -12979,46 +13006,179 @@
       }
 
       /* ---------- Khởi động: đăng nhập ẩn danh + hồ sơ + các listener ---------- */
+      var authBooted = false;   /* đã initializeApp + gắn onAuthStateChanged */
+      var signingIn = false;    /* đang trong một lần thử đăng nhập */
+      var signInAttempts = 0;
+
+      /* Nạp lại SDK Firebase từ CDN khi lần tải đầu trong trang thất bại
+         (mạng chập chờn / CDN nghẽn): nạp đủ 3 file theo đúng thứ tự. */
+      function loadSdk(cb) {
+        if (typeof firebase !== "undefined") { cb(true); return; }
+        var urls = [
+          "https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js",
+          "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js",
+          "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"
+        ];
+        var i = 0;
+        (function next() {
+          if (i >= urls.length) { cb(typeof firebase !== "undefined"); return; }
+          var s = document.createElement("script");
+          s.src = urls[i++]; s.async = false;
+          s.onload = next;
+          s.onerror = function () { cb(false); };
+          document.head.appendChild(s);
+        })();
+      }
+
       function start() {
-        if (started) { syncMyProfile(); return; }
-        started = true;
-        if (typeof firebase === "undefined") {
-          startFailed = true;
-          setPill("Chưa kết nối được");
-          setStatus("Không tải được thư viện chat — kiểm tra mạng rồi mở lại app nhé.", true);
+        if (me) { syncMyProfile(); return; }
+        if (signingIn) return;
+        if (authBooted) {
+          /* Đã khởi động nhưng chưa đăng nhập được: mở lại app là thử lại
+             từ đầu thay vì kẹt ở trạng thái lỗi như trước. */
+          signInAttempts = 0; startFailed = false;
+          setPill("Đang kết nối…"); setStatus("");
           renderConvoList();
+          trySignIn();
           return;
         }
-        try {
-          firebase.initializeApp(FB_CONFIG);
-          db = firebase.firestore();
-        } catch (e) {
-          startFailed = true;
-          setPill("Chưa kết nối được");
-          setStatus("Không khởi động được chat. Thử mở lại app sau nhé.", true);
-          return;
-        }
-        firebase.auth().onAuthStateChanged(function (user) {
-          if (!user) {
-            firebase.auth().signInAnonymously().catch(function () {
-              setPill("Chưa kết nối được");
-              setStatus("Không đăng nhập được vào máy chủ chat. Kiểm tra mạng rồi mở lại app nhé.", true);
-            });
+        startFailed = false;
+        setPill("Đang kết nối…");
+        setStatus("");
+        loadSdk(function (ok) {
+          if (!ok || typeof firebase === "undefined") {
+            startFailed = true;
+            setPill("Chưa kết nối được");
+            setStatus("Không tải được thư viện chat — kiểm tra mạng rồi mở lại app nhé. Mở lại app sẽ tự thử lại.", true);
+            renderConvoList();
             return;
           }
-          me = user;
-          onSignedIn();
+          try {
+            if (!firebase.apps || !firebase.apps.length) firebase.initializeApp(FB_CONFIG);
+            db = firebase.firestore();
+          } catch (e) {
+            startFailed = true;
+            setPill("Chưa kết nối được");
+            setStatus("Không khởi động được chat (mã lỗi: " + ((e && e.code) || "không rõ") + "). Mở lại app sẽ tự thử lại.", true);
+            if (window.console) console.warn("[Tin nhắn] initializeApp lỗi:", e);
+            return;
+          }
+          authBooted = true;
+          firebase.auth().onAuthStateChanged(function (user) {
+            if (user) { me = user; signingIn = false; signInAttempts = 0; startFailed = false; onSignedIn(); return; }
+            trySignIn();
+          }, function (err) {
+            if (window.console) console.warn("[Tin nhắn] onAuthStateChanged lỗi:", err);
+            trySignIn();
+          });
         });
+      }
+
+      /* Đăng nhập ẩn danh TỰ THỬ LẠI: ghi rõ mã lỗi Firebase trả về vào
+         console + dòng trạng thái; lần thử thứ 2 chuyển sang chế độ không
+         lưu phiên (tránh lỗi kho lưu trữ bị chặn trong khung nhúng làm
+         đăng nhập hỏng hẳn); các lần sau chờ tăng dần 1s → 2s → 4s → 8s,
+         tối đa 5 lần, mở lại app là chạy lại từ đầu. */
+      function trySignIn() {
+        if (me || signingIn || typeof firebase === "undefined") return;
+        signingIn = true;
+        signInAttempts++;
+        var auth = firebase.auth();
+        var attempt = function () { return auth.signInAnonymously(); };
+        var p;
+        if (signInAttempts === 2 && firebase.auth.Auth && firebase.auth.Auth.Persistence) {
+          p = auth.setPersistence(firebase.auth.Auth.Persistence.NONE).then(attempt, attempt);
+        } else {
+          p = attempt();
+        }
+        p.then(function () {
+          /* onAuthStateChanged nhận user rồi gọi onSignedIn */
+        }, function (err) {
+          signingIn = false;
+          var code = (err && err.code) || "không rõ";
+          if (window.console) console.warn("[Tin nhắn] Đăng nhập ẩn danh thất bại, mã lỗi:", code, err);
+          if (signInAttempts < 5) {
+            setPill("Đang kết nối lại…");
+            setStatus("Chưa đăng nhập được (mã lỗi: " + code + ") — đang tự thử lại…");
+            setTimeout(function () { if (!me) trySignIn(); }, Math.min(8000, 1000 * Math.pow(2, signInAttempts - 1)));
+          } else {
+            startFailed = true;
+            setPill("Chưa kết nối được");
+            setStatus("Không đăng nhập được vào máy chủ chat (mã lỗi: " + code + "). Kiểm tra mạng rồi mở lại app — app sẽ tự thử đăng nhập lại.", true);
+            renderConvoList();
+          }
+        });
+      }
+
+      /* Số liệu hồ sơ của chính mình: cấp bậc theo danh tiếng + % vụ đã phá */
+      function myStats() {
+        var d = { rank: "", rep: 0, solved: 0, total: 0, pct: 0, style: "classic", color: "#8a5a2b", photo: null };
+        try {
+          if (typeof G !== "undefined" && G) {
+            d.rep = G.rep || 0;
+            d.solved = Object.keys(G.solved || {}).length;
+            if (typeof CASES !== "undefined" && CASES) d.total = CASES.length;
+            if (typeof rankOf === "function") d.rank = rankOf(d.rep).cur.name;
+            var p = G.profile || {};
+            if (p.style) d.style = p.style;
+            if (p.color) d.color = p.color;
+            if (p.usePhoto && p.photo) d.photo = p.photo;
+            if (!d.rank && p.rank) d.rank = p.rank;
+          }
+        } catch (e) { /* trạng thái game chưa sẵn sàng: dùng mặc định */ }
+        d.pct = d.total ? Math.round(d.solved / d.total * 100) : 0;
+        return d;
+      }
+
+      /* Ảnh đại diện của một thám tử (từ hồ sơ users): ảnh họ tải lên nếu
+         có, không thì mẫu chân dung vẽ sẵn theo style + màu áo của họ. */
+      function avatarNode(data, name) {
+        if (data && data.avPhoto) {
+          var img = document.createElement("img");
+          img.src = data.avPhoto; img.alt = "";
+          return img;
+        }
+        var holder = document.createElement("span");
+        holder.style.display = "block"; holder.style.width = "100%"; holder.style.height = "100%";
+        try {
+          if (typeof avatarSVG === "function") {
+            holder.innerHTML = avatarSVG({ style: (data && data.avStyle) || "classic", color: (data && data.avColor) || "#8a5a2b" });
+            return holder;
+          }
+        } catch (e) { /* rơi xuống chữ cái đầu bên dưới */ }
+        holder.textContent = initial(name);
+        holder.style.display = "grid"; holder.style.placeItems = "center";
+        return holder;
       }
 
       function syncMyProfile() {
         if (!db || !me) return;
-        db.collection("users").doc(me.uid).set(
-          { displayName: myName(), updatedAt: ts() },
-          { merge: true }
-        ).catch(function () { /* hồ sơ cập nhật sau cũng được */ });
+        var st = myStats();
+        db.collection("users").doc(me.uid).set({
+          displayName: myName(),
+          rank: st.rank, rep: st.rep,
+          solvedCount: st.solved, totalCases: st.total, pct: st.pct,
+          avStyle: st.style, avColor: st.color, avPhoto: st.photo,
+          lastSeen: ts(), updatedAt: ts()
+        }, { merge: true }).catch(function () { /* hồ sơ cập nhật sau cũng được */ });
         var mn = $("msgMeName"); if (mn) mn.textContent = myName();
-        var ma = $("msgMeAva"); if (ma) ma.textContent = initial(myName());
+        var ma = $("msgMeAva");
+        if (ma) { ma.innerHTML = ""; ma.appendChild(avatarNode({ avPhoto: st.photo, avStyle: st.style, avColor: st.color }, myName())); }
+        var ms = $("msgMeSub");
+        if (ms && st.rank) ms.textContent = st.rank + " · Đã phá " + st.solved + "/" + st.total + " vụ (" + st.pct + "%)";
+      }
+
+      /* Nhịp tim online: khi app Tin nhắn đang mở, cập nhật lastSeen mỗi
+         45 giây để mục "Đang online" thấy nhau trong cửa sổ 5 phút. */
+      var hbTimer = null;
+      function startHeartbeat() {
+        if (hbTimer) return;
+        hbTimer = setInterval(function () {
+          if (!db || !me) return;
+          var v = $("msgView");
+          if (!v || v.style.display === "none") return;
+          db.collection("users").doc(me.uid).set({ lastSeen: ts() }, { merge: true }).catch(function () {});
+        }, 45000);
       }
 
       function onSignedIn() {
@@ -13030,6 +13190,7 @@
           return db.collection("users").doc(me.uid).set(data, { merge: true });
         }).catch(function () { /* bỏ qua: vẫn chat được */ });
         syncMyProfile();
+        startHeartbeat();
 
         db.collection("friends").doc(me.uid).collection("list").onSnapshot(function (snap) {
           friends = {};
@@ -13323,14 +13484,85 @@
         return row;
       }
 
+      /* Gửi lời mời kết bạn cho một thám tử (dùng chung cho gợi ý online
+         và kết quả tìm theo tên). */
+      function sendFriendRequest(uid, nm, btn) {
+        if (btn) { btn.disabled = true; btn.textContent = "Đang gửi…"; }
+        db.collection("friendRequests").doc(uid).collection("incoming").doc(me.uid)
+          .set({ fromUid: me.uid, fromName: myName(), createdAt: ts() })
+          .then(function () { sentTo[uid] = true; if (btn) btn.textContent = "Đã gửi lời mời"; setStatus("Đã gửi lời mời kết bạn cho " + nm + "."); })
+          .catch(function () { if (btn) { btn.disabled = false; btn.textContent = "Kết bạn"; } setStatus("Gửi lời mời chưa được — thử lại nhé.", true); });
+      }
+
+      /* Thẻ một thám tử: ảnh đại diện + tên + cấp bậc + % nhiệm vụ hoàn
+         thành (+ chấm xanh khi đang online). Bấm vào thẻ hoặc nút Kết bạn
+         đều gửi lời mời kết bạn như cũ. */
+      function detectiveRow(uid, data, online) {
+        var nm = data.displayName || "Thám tử";
+        var row = document.createElement("div"); row.className = "msg-user-row";
+        var av = document.createElement("div"); av.className = "msg-ava"; av.appendChild(avatarNode(data, nm));
+        var main = document.createElement("div"); main.className = "msg-det-main";
+        var b = document.createElement("b"); b.textContent = nm;
+        var meta = document.createElement("span"); meta.className = "msg-det-meta";
+        if (online) { var dot = document.createElement("span"); dot.className = "msg-online-dot"; meta.appendChild(dot); }
+        var pct = (typeof data.pct === "number") ? data.pct : (data.totalCases ? Math.round((data.solvedCount || 0) / data.totalCases * 100) : 0);
+        meta.appendChild(document.createTextNode((data.rank ? data.rank + " · " : "") + "Hoàn thành nhiệm vụ " + pct + "%"));
+        main.appendChild(b); main.appendChild(meta);
+        row.appendChild(av); row.appendChild(main);
+        var btn = document.createElement("button");
+        btn.type = "button"; btn.className = "msg-pick";
+        if (friends[uid]) { btn.textContent = "Đã là bạn"; btn.disabled = true; }
+        else if (sentTo[uid]) { btn.textContent = "Đã gửi lời mời"; btn.disabled = true; }
+        else {
+          btn.textContent = "Kết bạn";
+          btn.addEventListener("click", function (e) { e.stopPropagation(); sendFriendRequest(uid, nm, btn); });
+          row.style.cursor = "pointer";
+          row.addEventListener("click", function () { if (!btn.disabled) sendFriendRequest(uid, nm, btn); });
+        }
+        row.appendChild(btn);
+        return row;
+      }
+
+      /* Gợi ý thám tử ĐANG ONLINE: lastSeen trong 5 phút gần nhất, không
+         hiện chính mình, người vừa online nhất xếp trước. */
+      function loadOnline(host) {
+        if (!db || !me) { host.innerHTML = '<p class="msg-note">Chưa kết nối được máy chủ chat — kiểm tra mạng rồi mở lại app nhé.</p>'; return; }
+        host.innerHTML = '<p class="msg-note">Đang tìm thám tử đang online…</p>';
+        var cutoff = new Date(Date.now() - 5 * 60 * 1000);
+        db.collection("users").where("lastSeen", ">", cutoff).limit(50).get().then(function (snap) {
+          var list = [];
+          snap.forEach(function (d) {
+            if (d.id === me.uid) return;
+            var data = d.data() || {};
+            var ms = data.lastSeen && data.lastSeen.toMillis ? data.lastSeen.toMillis() : 0;
+            if (ms && Date.now() - ms > 5 * 60 * 1000) return;
+            list.push({ uid: d.id, data: data, ms: ms });
+          });
+          list.sort(function (a, b) { return b.ms - a.ms; });
+          host.innerHTML = "";
+          if (!list.length) {
+            host.innerHTML = '<p class="msg-note">Hiện chưa có thám tử nào khác đang online. Khi có người mở app Tin nhắn cùng lúc với bạn, họ sẽ hiện ở đây để kết bạn.</p>';
+            return;
+          }
+          list.forEach(function (it) { host.appendChild(detectiveRow(it.uid, it.data, true)); });
+        }).catch(function () {
+          host.innerHTML = '<p class="msg-note">Chưa tải được danh sách đang online — kiểm tra mạng rồi mở lại mục Tìm nhé.</p>';
+        });
+      }
+
       function renderSearchPanel() {
         var p = panelShell("Tìm thám tử để kết bạn", "Gõ tên thám tử của người bạn muốn kết bạn. Kết bạn xong mới nhắn riêng và rủ vào nhóm được.");
         var row = document.createElement("div"); row.className = "msg-search-row";
         var inp = document.createElement("input"); inp.type = "search"; inp.placeholder = "Tên thám tử…"; inp.setAttribute("aria-label", "Tìm thám tử theo tên");
         var go = document.createElement("button"); go.type = "button"; go.className = "msg-mini-btn"; go.textContent = "Tìm";
         row.appendChild(inp); row.appendChild(go); p.appendChild(row);
+        var onHead = document.createElement("div"); onHead.className = "msg-online-head"; onHead.textContent = "Đang online";
+        p.appendChild(onHead);
+        var onHost = document.createElement("div"); p.appendChild(onHost);
+        loadOnline(onHost);
         var out = document.createElement("div"); p.appendChild(out);
         function run() {
+          if (!db || !me) { out.innerHTML = '<p class="msg-note">Chưa kết nối được máy chủ chat — kiểm tra mạng rồi mở lại app nhé.</p>'; return; }
           var q = inp.value.trim().toLowerCase();
           out.innerHTML = '<p class="msg-note">Đang tìm…</p>';
           db.collection("users").limit(100).get().then(function (snap) {
@@ -13338,18 +13570,11 @@
             var found = 0;
             snap.forEach(function (d) {
               if (d.id === me.uid) return;
-              var nm = (d.data() || {}).displayName || "Thám tử";
+              var data = d.data() || {};
+              var nm = data.displayName || "Thám tử";
               if (q && nm.toLowerCase().indexOf(q) < 0) return;
               found++;
-              if (friends[d.id]) out.appendChild(userRow(d.id, nm, "Đã là bạn", true, null));
-              else if (sentTo[d.id]) out.appendChild(userRow(d.id, nm, "Đã gửi lời mời", true, null));
-              else out.appendChild(userRow(d.id, nm, "Kết bạn", false, function (btn) {
-                btn.disabled = true; btn.textContent = "Đang gửi…";
-                db.collection("friendRequests").doc(d.id).collection("incoming").doc(me.uid)
-                  .set({ fromUid: me.uid, fromName: myName(), createdAt: ts() })
-                  .then(function () { sentTo[d.id] = true; btn.textContent = "Đã gửi lời mời"; setStatus("Đã gửi lời mời kết bạn cho " + nm + "."); })
-                  .catch(function () { btn.disabled = false; btn.textContent = "Kết bạn"; setStatus("Gửi lời mời chưa được — thử lại nhé.", true); });
-              }));
+              out.appendChild(detectiveRow(d.id, data, false));
             });
             if (!found) out.innerHTML = '<p class="msg-note">Chưa thấy thám tử nào khớp tên này. Người kia cần mở game và vào app Tin nhắn ít nhất một lần thì mới hiện trong danh sách tìm.</p>';
           }).catch(function () { out.innerHTML = '<p class="msg-note">Tìm chưa được — kiểm tra mạng rồi thử lại.</p>'; });
