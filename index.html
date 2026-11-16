@@ -2800,7 +2800,7 @@
           <span class="app-ic" style="color:#57e6c9"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="7" width="19" height="11" rx="5.5"/><path d="M7.5 11v3M6 12.5h3"/><circle cx="15.8" cy="11.3" r="1.05" fill="currentColor" stroke="none"/><circle cx="18" cy="14" r="1.05" fill="currentColor" stroke="none"/></svg></span>
           <div class="case-head-main">
             <h2>Mini game hẻm</h2>
-            <p class="app-desc">Bốn trò chơi nhanh 30–60 giây để luyện mắt thám tử — Lật thẻ và Tìm điểm khác nhau thắng ván +5 điểm, Ai nói dối? mỗi câu đúng +5 điểm, Giải mã mật thư mỗi thư đúng +5 điểm. Thắng đủ cả 4 trò ít nhất một lần để nhận huy hiệu “Vua trò chơi”.</p>
+            <p class="app-desc">Năm trò chơi nhanh để luyện mắt thám tử — Lật thẻ và Tìm điểm khác nhau thắng ván +5 điểm, Ai nói dối? mỗi câu đúng +5 điểm, Giải mã mật thư mỗi thư đúng +5 điểm, Đế chế hẻm phá Nhà chính địch trong 5 phút +5 điểm. Thắng đủ cả 5 trò ít nhất một lần để nhận huy hiệu “Vua trò chơi”.</p>
           </div>
           <div class="case-meta">
             <span class="pill">Đã thắng: <b id="miniWonPill">0/4 trò</b></span>
@@ -6464,7 +6464,7 @@
       { id: "b8", name: "Điểm thi ở 171 Phan Đăng Lưu", desc: "Phá cả 3 phần của series Điểm thi ở 171 Phan Đăng Lưu" },
       { id: "b9", name: "Chuỗi 3 ngày", desc: "Phá Vụ án hôm nay 3 ngày liên tiếp" },
       { id: "b10", name: "Chuỗi 7 ngày", desc: "Phá Vụ án hôm nay 7 ngày liên tiếp" },
-      { id: "b11", name: "Vua trò chơi", desc: "Thắng đủ cả 4 trò trong app Mini game hẻm, mỗi trò ít nhất 1 lần" }
+      { id: "b11", name: "Vua trò chơi", desc: "Thắng đủ cả 5 trò trong app Mini game hẻm, mỗi trò ít nhất 1 lần" }
     ];
 
     /* ==================== TRẠNG THÁI GAME ==================== */
@@ -7551,10 +7551,10 @@
        đúng ngay trong ván (đúng luật từng trò đã ghi trong app), còn Lật thẻ
        và Tìm điểm khác nhau cộng 5 điểm khi hoàn thành ván. Kỷ lục tốt nhất
        của từng trò + danh sách trò đã thắng lưu bền ở localStorage
-       (hem-cang-minigames-v1). Thắng đủ cả 4 trò ít nhất 1 lần -> huy hiệu
+       (hem-cang-minigames-v1). Thắng đủ cả 5 trò ít nhất 1 lần -> huy hiệu
        b11 "Vua trò chơi". Không đụng tới điểm/đáp án của 18 vụ và vụ ngày. */
     var MINI_KEY = "hem-cang-minigames-v1";
-    var MG_GAMES = ["memory", "liar", "spot", "cipher"];
+    var MG_GAMES = ["memory", "liar", "spot", "cipher", "empire"];
     function loadMini() {
       try { var o = JSON.parse(localStorage.getItem(MINI_KEY) || "{}"); return (o && typeof o === "object") ? o : {}; } catch (e) { return {}; }
     }
@@ -8785,12 +8785,13 @@
       if (gameId === "liar") return "Kỷ lục: đúng " + b.correct + "/10 câu";
       if (gameId === "spot") return "Kỷ lục: tìm đủ 10 điểm trong " + fmtDuration(b.secs);
       if (gameId === "cipher") return "Kỷ lục: giải " + (b.solved || 0) + "/5 thư" + (b.secs ? " · " + fmtDuration(b.secs) : "");
+      if (gameId === "empire") return "Kỷ lục: phá Nhà chính địch trong " + fmtDuration(b.secs);
       return "";
     }
     function mgSyncHead(st) {
       st = st || loadMini();
       var won = MG_GAMES.filter(function (k) { return st.wins && st.wins[k]; }).length;
-      var wp = $("miniWonPill"); if (wp) wp.textContent = won + "/4 trò";
+      var wp = $("miniWonPill"); if (wp) wp.textContent = won + "/5 trò";
       var rp = $("miniRep"); if (rp) rp.textContent = G.rep;
     }
     function mgEl(tag, cls, text) {
@@ -8829,7 +8830,7 @@
       mgSyncHead(st);
       pane.innerHTML = "";
       var h = mgEl("h3", "pane-title", "Chọn một trò chơi");
-      var sub = mgEl("p", "pane-sub", "Mỗi trò chỉ tốn khoảng 30–60 giây. Cách cộng điểm theo từng trò: Lật thẻ và Tìm điểm khác nhau — thắng ván được +5 điểm; Ai nói dối? — mỗi câu đúng +5 điểm (đúng cả 10 câu là +50 điểm); Giải mã mật thư — mỗi thư giải đúng +5 điểm. Thắng đủ cả 4 trò ít nhất một lần để nhận huy hiệu “Vua trò chơi”.");
+      var sub = mgEl("p", "pane-sub", "Mỗi trò chỉ tốn khoảng 30–60 giây, riêng Đế chế hẻm chơi trong 5 phút. Cách cộng điểm theo từng trò: Lật thẻ và Tìm điểm khác nhau — thắng ván được +5 điểm; Ai nói dối? — mỗi câu đúng +5 điểm (đúng cả 10 câu là +50 điểm); Giải mã mật thư — mỗi thư giải đúng +5 điểm; Đế chế hẻm — phá Nhà chính địch trong 5 phút được +5 điểm. Thắng đủ cả 5 trò ít nhất một lần để nhận huy hiệu “Vua trò chơi”.");
       pane.append(h, sub);
       var grid = mgEl("div", "mg-menu");
       var defs = [
@@ -8840,7 +8841,9 @@
         { id: "spot", name: "Tìm điểm khác nhau", desc: "Hai hình hiện trường gần giống hệt nhau, mỗi cảnh có 5 điểm khác. Bấm vào điểm khác trên một trong hai hình để đánh dấu — tìm đủ cả 2 cảnh là thắng.",
           icon: '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.3 15.3 21 21"/><path d="M8 10.5h5M10.5 8v5" opacity=".55"/></svg>', start: mgStartSpot },
         { id: "cipher", name: "Giải mã mật thư", desc: "5 bức thư ngắn bị mã hóa bằng mật mã Caesar (dịch chữ cái theo khóa cho sẵn), mỗi thư 60 giây. Gõ lại nội dung đã giải mã — giải đúng mỗi thư được cộng 5 điểm.",
-          icon: '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4.5" y="10" width="15" height="10" rx="2"/><path d="M8 10V7.5a4 4 0 0 1 7.8-1.3"/><circle cx="12" cy="15" r="1.6"/><path d="M12 16.6v1.6"/></svg>', start: mgStartCipher }
+          icon: '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4.5" y="10" width="15" height="10" rx="2"/><path d="M8 10V7.5a4 4 0 0 1 7.8-1.3"/><circle cx="12" cy="15" r="1.6"/><path d="M12 16.6v1.6"/></svg>', start: mgStartCipher },
+        { id: "empire", name: "Đế chế hẻm", desc: "RTS thu nhỏ kiểu AoE: giao dân chặt gỗ, hái quả, đào vàng; xây Nhà dân, Doanh trại, Tháp canh; luyện Lính rồi phá Nhà chính địch trong 5 phút là thắng (+5 điểm).",
+          icon: '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 21V8l3-1V4h2v3h4V4h2v3l3 1v13"/><path d="M3 21h18"/><path d="M10 21v-4h4v4"/></svg>', start: mgStartEmpire }
       ];
       defs.forEach(function (d) {
         var card = mgEl("button", "mg-card");
@@ -8856,6 +8859,366 @@
         grid.appendChild(card);
       });
       pane.appendChild(grid);
+    }
+
+    /* ---------- Trò 5: Đế chế hẻm (RTS thu nhỏ kiểu AoE) ----------
+       Dân thu thập 3 tài nguyên, xây nhà, luyện lính, phá Nhà chính địch
+       trong 5 phút. Thắng +5 điểm danh tiếng, kỷ lục là thời gian thắng
+       nhanh nhất (giây), lưu bền trong kho mini game như 4 trò cũ. */
+    function mgStartEmpire() {
+      mgClearTimers();
+      var pane = $("miniPane"); if (!pane) return;
+      mgSyncHead();
+      pane.innerHTML = "";
+      pane.appendChild(mgEl("h3", "pane-title", "Đế chế hẻm"));
+      pane.appendChild(mgEl("p", "mg-note", "Bấm chọn 1 dân rồi bấm vào 🌲 / 🌾 / ⛏️ để giao thu thập. Bấm nút xây rồi bấm ô trống để đặt nhà. Bấm chọn lính rồi bấm vào địch để tấn công. Phá Nhà chính địch trong 5 phút là thắng (+5 điểm)."));
+      var hud = mgHud([
+        { key: "wood", label: "🪵 Gỗ:", value: "50" },
+        { key: "food", label: "🌾 Lương thực:", value: "50" },
+        { key: "gold", label: "💰 Vàng:", value: "0" },
+        { key: "pop", label: "Dân:", value: "3/4" },
+        { key: "time", label: "⏱:", value: "5:00", cls: "mg-time" },
+        { key: "foe", label: "Nhà chính địch:", value: "150" }
+      ]);
+      pane.appendChild(hud.hud);
+      var gridEl = mgEl("div", "mg-emp-grid");
+      gridEl.style.display = "grid";
+      gridEl.style.gridTemplateColumns = "repeat(14, minmax(0, 1fr))";
+      gridEl.style.gap = "2px";
+      gridEl.style.margin = "10px 0";
+      pane.appendChild(gridEl);
+      var hintEl = mgEl("p", "mg-note", "Bấm 1 dân rồi bấm vào 🌲 / 🌾 / ⛏️ để giao thu thập.");
+      pane.appendChild(hintEl);
+      var actRow = mgEl("div", "mg-actions");
+      function empBtn(label) { var b = mgEl("button", "mg-btn", label); b.type = "button"; actRow.appendChild(b); return b; }
+      var bHouse = empBtn("🏠 Nhà dân · 30🪵");
+      var bBarr = empBtn("🏯 Doanh trại · 60🪵+20💰");
+      var bTower = empBtn("🗼 Tháp canh · 40🪵+30💰");
+      var bVill = empBtn("👨‍🌾 Luyện Dân · 20🌾");
+      var bSold = empBtn("🛡️ Luyện Lính · 30🌾+20💰");
+      pane.appendChild(actRow);
+      var resBox = mgEl("div");
+      pane.appendChild(resBox);
+      pane.appendChild(mgNavButtons(function () { mgClearResume("empire"); mgStartEmpire(); }));
+
+      var EMP_COLS = 14, EMP_ROWS = 9, EMP_TIME = 300;
+      function empNewState() {
+        var s = { res: { wood: 50, food: 50, gold: 0 }, cap: 4, units: [], buildings: [], nodes: [], sel: null, buildMode: null, elapsed: 0, over: null, loseReason: "", uid: 1, foeClock: 0, tickN: 0 };
+        s.buildings.push({ kind: "tc", side: "me", x: 1, y: 4, hp: 200, maxHp: 200, queue: [], qT: 0, hitT: 0 });
+        s.buildings.push({ kind: "tc", side: "foe", x: 12, y: 4, hp: 150, maxHp: 150, queue: [], qT: 0, hitT: 0 });
+        [[2,3],[2,4],[2,5]].forEach(function (p) { s.units.push({ id: s.uid++, kind: "vill", side: "me", x: p[0], y: p[1], hp: 30, maxHp: 30, job: null, tx: null, ty: null, tgt: null, gatherT: 0, hitT: 0 }); });
+        [[11,3],[11,5]].forEach(function (p) { s.units.push({ id: s.uid++, kind: "sold", side: "foe", x: p[0], y: p[1], hp: 50, maxHp: 50, job: null, tx: null, ty: null, tgt: null, gatherT: 0, hitT: 0 }); });
+        [[5,1],[6,1],[7,1],[8,1],[5,7],[6,7],[7,7],[8,7]].forEach(function (p) { s.nodes.push({ kind: "tree", x: p[0], y: p[1], amt: 60 }); });
+        [[5,4],[6,4],[7,4],[8,4]].forEach(function (p) { s.nodes.push({ kind: "bush", x: p[0], y: p[1], amt: 60 }); });
+        [[6,2],[7,2],[6,6],[7,6]].forEach(function (p) { s.nodes.push({ kind: "gold", x: p[0], y: p[1], amt: 50 }); });
+        return s;
+      }
+      var E = empNewState();
+      var empResume = mgGetResume("empire");
+      if (empResume && Array.isArray(empResume.units) && Array.isArray(empResume.buildings) && Array.isArray(empResume.nodes) && !empResume.over) { E = empResume; }
+
+      function empDist(ax, ay, bx, by) { return Math.max(Math.abs(ax - bx), Math.abs(ay - by)); }
+      function empUnitAt(x, y) { for (var i = 0; i < E.units.length; i++) { if (E.units[i].x === x && E.units[i].y === y) return E.units[i]; } return null; }
+      function empBuildAt(x, y) { for (var i = 0; i < E.buildings.length; i++) { if (E.buildings[i].x === x && E.buildings[i].y === y) return E.buildings[i]; } return null; }
+      function empNodeAt(x, y) { for (var i = 0; i < E.nodes.length; i++) { if (E.nodes[i].x === x && E.nodes[i].y === y) return E.nodes[i]; } return null; }
+      function empMeTC() { return empBuildAt(1, 4); }
+      function empFoeTC() { return empBuildAt(12, 4); }
+      function empPop() { var n = 0; E.units.forEach(function (u) { if (u.side === "me") n++; }); return n; }
+      function empHasBarracks() { return E.buildings.some(function (b) { return b.kind === "barracks" && b.side === "me"; }); }
+      function empFreeNear(x, y) {
+        var dirs = [[0,1],[1,0],[0,-1],[-1,0],[1,1],[1,-1],[-1,1],[-1,-1],[0,2],[2,0],[0,-2],[-2,0]];
+        for (var i = 0; i < dirs.length; i++) {
+          var nx = x + dirs[i][0], ny = y + dirs[i][1];
+          if (nx < 0 || nx >= EMP_COLS || ny < 0 || ny >= EMP_ROWS) continue;
+          if (!empUnitAt(nx, ny) && !empBuildAt(nx, ny) && !empNodeAt(nx, ny)) return { x: nx, y: ny };
+        }
+        return { x: x, y: y };
+      }
+      function empStepToward(u, tx, ty) {
+        if (u.x === tx && u.y === ty) return true;
+        if (u.x < tx) u.x++;
+        else if (u.x > tx) u.x--;
+        else if (u.y < ty) u.y++;
+        else if (u.y > ty) u.y--;
+        return (u.x === tx && u.y === ty);
+      }
+      function empFmtT(s) { s = Math.max(0, Math.ceil(s)); return Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0"); }
+      function empNearestEnemy(u) {
+        var best = null, bd = 99;
+        var cands = [];
+        E.units.forEach(function (o) { if (o.side !== u.side && o.hp > 0) cands.push(o); });
+        E.buildings.forEach(function (o) { if (o.side !== u.side && o.hp > 0) cands.push(o); });
+        cands.forEach(function (o) {
+          var d = empDist(u.x, u.y, o.x, o.y);
+          if (d <= 1 && d < bd) { bd = d; best = o; }
+        });
+        return best;
+      }
+      function empIsBuilding(o) { return o.kind === "tc" || o.kind === "house" || o.kind === "barracks" || o.kind === "tower"; }
+
+      function empCellHTML(x, y) {
+        var u = empUnitAt(x, y), b = empBuildAt(x, y), n = empNodeAt(x, y);
+        var inner = "", bg = "", sel = (E.sel != null && u && u.id === E.sel);
+        if (u) {
+          inner = (u.kind === "vill") ? "👨‍🌾" : "⚔️";
+          bg = (u.side === "me") ? "background:rgba(87,150,255,.35);" : "background:rgba(255,80,80,.35);";
+        } else if (b) {
+          if (b.kind === "tc") inner = "🏰";
+          else if (b.kind === "house") inner = "🏠";
+          else if (b.kind === "barracks") inner = "🏯";
+          else inner = "🗼";
+          bg = (b.side === "me") ? "background:rgba(87,150,255,.25);" : "background:rgba(255,80,80,.25);";
+          var pct = Math.max(0, Math.round(b.hp / b.maxHp * 100));
+          inner += '<i style="position:absolute;left:2px;right:2px;bottom:1px;height:3px;background:rgba(255,255,255,.25);border-radius:2px;"><i style="display:block;height:100%;width:' + pct + '%;background:' + (pct > 50 ? "#57e6c9" : "#e8a33d") + ';border-radius:2px;"></i></i>';
+        } else if (n) {
+          if (n.kind === "tree") inner = "🌲";
+          else if (n.kind === "bush") inner = "🌾";
+          else inner = "⛏️";
+        }
+        var buildable = (E.buildMode && !u && !b && !n);
+        return '<div class="mg-emp-cell" data-x="' + x + '" data-y="' + y + '" style="aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;font-size:17px;background:rgba(255,255,255,.07);border-radius:6px;cursor:pointer;position:relative;user-select:none;' + bg + (sel ? "outline:2px solid #e8a33d;" : "") + (buildable ? "background:rgba(87,230,201,.22);" : "") + '">' + inner + "</div>";
+      }
+      function renderEmp() {
+        var html = "";
+        for (var y = 0; y < EMP_ROWS; y++) { for (var x = 0; x < EMP_COLS; x++) { html += empCellHTML(x, y); } }
+        gridEl.innerHTML = html;
+        hud.spans.wood.textContent = String(E.res.wood);
+        hud.spans.food.textContent = String(E.res.food);
+        hud.spans.gold.textContent = String(E.res.gold);
+        hud.spans.pop.textContent = empPop() + "/" + E.cap;
+        hud.spans.time.textContent = empFmtT(EMP_TIME - E.elapsed);
+        var ft = empFoeTC();
+        hud.spans.foe.textContent = ft ? String(Math.max(0, ft.hp)) : "0";
+      }
+      function empWin() {
+        if (E.over) return;
+        E.over = "win";
+        mgClearTimers();
+        mgClearResume("empire");
+        var secs = Math.round(E.elapsed);
+        mgAward5("Phá được Nhà chính địch!");
+        mgRecordWin("empire", { secs: secs }, function (old, nw) { return nw.secs < old.secs; });
+        mgSyncHead();
+        renderEmp();
+        resBox.innerHTML = "";
+        resBox.appendChild(mgEl("p", "mg-win", "🏆 Thắng rồi! Bạn phá Nhà chính địch trong " + fmtDuration(secs) + " — cộng 5 điểm danh tiếng."));
+      }
+      function empLose(reason) {
+        if (E.over) return;
+        E.over = "lose"; E.loseReason = reason;
+        mgClearTimers();
+        mgClearResume("empire");
+        mgSyncHead();
+        renderEmp();
+        resBox.innerHTML = "";
+        resBox.appendChild(mgEl("p", "mg-lose", "Thua rồi — " + reason + " Bấm “Chơi lại” để thử ván mới."));
+      }
+
+      gridEl.addEventListener("click", function (ev) {
+        if (E.over) return;
+        var cell = ev.target.closest ? ev.target.closest("[data-x]") : null;
+        if (!cell) return;
+        var x = parseInt(cell.getAttribute("data-x"), 10), y = parseInt(cell.getAttribute("data-y"), 10);
+        if (isNaN(x) || isNaN(y)) return;
+        if (E.buildMode) {
+          var kind = E.buildMode;
+          var cost = { house: { wood: 30, food: 0, gold: 0 }, barracks: { wood: 60, food: 0, gold: 20 }, tower: { wood: 40, food: 0, gold: 30 } }[kind];
+          if (empUnitAt(x, y) || empBuildAt(x, y) || empNodeAt(x, y)) { hintEl.textContent = "Ô này đã có đồ rồi, chọn ô trống khác."; return; }
+          if (E.res.wood < cost.wood || E.res.food < cost.food || E.res.gold < cost.gold) { hintEl.textContent = "Chưa đủ tài nguyên để xây."; E.buildMode = null; renderEmp(); return; }
+          E.res.wood -= cost.wood; E.res.food -= cost.food; E.res.gold -= cost.gold;
+          var hpMap = { house: 80, barracks: 120, tower: 100 };
+          E.buildings.push({ kind: kind, side: "me", x: x, y: y, hp: hpMap[kind], maxHp: hpMap[kind], queue: [], qT: 0, hitT: 0 });
+          if (kind === "house") E.cap += 4;
+          E.buildMode = null;
+          hintEl.textContent = "Đã xây xong " + (kind === "house" ? "Nhà dân (+4 chỗ ở)." : kind === "barracks" ? "Doanh trại — giờ luyện được Lính." : "Tháp canh — tự bắn địch trong tầm 2.");
+          renderEmp();
+          return;
+        }
+        var u = empUnitAt(x, y), b = empBuildAt(x, y), n = empNodeAt(x, y);
+        var selU = null;
+        if (E.sel != null) { for (var i = 0; i < E.units.length; i++) { if (E.units[i].id === E.sel) { selU = E.units[i]; break; } } }
+        if (u && u.side === "me") {
+          E.sel = u.id;
+          hintEl.textContent = (u.kind === "vill") ? "Đã chọn Dân — bấm vào 🌲 / 🌾 / ⛏️ để giao thu thập, hoặc bấm ô trống để di chuyển." : "Đã chọn Lính — bấm vào địch để tấn công, hoặc bấm ô trống để di chuyển.";
+          renderEmp();
+          return;
+        }
+        if (selU) {
+          if (selU.kind === "vill" && n) {
+            selU.job = { x: n.x, y: n.y };
+            var adj = null;
+            var dirs = [[0,1],[1,0],[0,-1],[-1,0],[1,1],[1,-1],[-1,1],[-1,-1]];
+            for (var k = 0; k < dirs.length; k++) {
+              var ax = n.x + dirs[k][0], ay = n.y + dirs[k][1];
+              if (ax < 0 || ax >= EMP_COLS || ay < 0 || ay >= EMP_ROWS) continue;
+              if (!empUnitAt(ax, ay) && !empBuildAt(ax, ay) && !empNodeAt(ax, ay)) { adj = { x: ax, y: ay }; break; }
+            }
+            if (adj) { selU.tx = adj.x; selU.ty = adj.y; } else { selU.tx = null; selU.ty = null; }
+            selU.tgt = null;
+            hintEl.textContent = "Dân đang đi " + (n.kind === "tree" ? "chặt gỗ." : n.kind === "bush" ? "hái quả." : "đào vàng.");
+            renderEmp();
+            return;
+          }
+          if (selU.kind === "sold" && ((u && u.side === "foe") || (b && b.side === "foe"))) {
+            selU.tgt = { kind: b ? "building" : "unit", x: x, y: y };
+            selU.tx = null; selU.ty = null;
+            hintEl.textContent = "Lính đang tiến lên tấn công!";
+            renderEmp();
+            return;
+          }
+          if (!u && !b && !n) {
+            selU.tx = x; selU.ty = y; selU.job = null; selU.tgt = null;
+            hintEl.textContent = "Đang di chuyển…";
+            renderEmp();
+            return;
+          }
+          E.sel = null;
+          renderEmp();
+          return;
+        }
+        if (n) hintEl.textContent = "Bấm chọn 1 dân trước, rồi bấm vào đây để giao thu thập.";
+        else if (b && b.side === "foe") hintEl.textContent = "Bấm chọn 1 lính trước, rồi bấm vào Nhà chính địch để tấn công.";
+        else hintEl.textContent = "Bấm 1 dân rồi bấm vào 🌲 / 🌾 / ⛏️ để giao thu thập.";
+        renderEmp();
+      });
+
+      function empSetBuild(kind, cost, name) {
+        if (E.over) return;
+        if (E.res.wood < cost.wood || E.res.food < cost.food || E.res.gold < cost.gold) { hintEl.textContent = "Chưa đủ tài nguyên để xây " + name + "."; return; }
+        E.buildMode = kind;
+        hintEl.textContent = "Bấm vào ô trống để đặt " + name + ".";
+        renderEmp();
+      }
+      bHouse.onclick = function () { empSetBuild("house", { wood: 30, food: 0, gold: 0 }, "Nhà dân"); };
+      bBarr.onclick = function () { empSetBuild("barracks", { wood: 60, food: 0, gold: 20 }, "Doanh trại"); };
+      bTower.onclick = function () { empSetBuild("tower", { wood: 40, food: 0, gold: 30 }, "Tháp canh"); };
+      bVill.onclick = function () {
+        if (E.over) return;
+        var tc = empMeTC();
+        if (!tc) { hintEl.textContent = "Nhà chính đã mất!"; return; }
+        if (empPop() >= E.cap) { hintEl.textContent = "Hết chỗ ở — xây thêm Nhà dân (+4 chỗ)."; return; }
+        if (E.res.food < 20) { hintEl.textContent = "Chưa đủ lương thực (cần 20)."; return; }
+        E.res.food -= 20;
+        tc.queue.push({ kind: "vill", t: 5 });
+        hintEl.textContent = "Đang luyện Dân (5 giây)…";
+        renderEmp();
+      };
+      bSold.onclick = function () {
+        if (E.over) return;
+        if (!empHasBarracks()) { hintEl.textContent = "Cần xây Doanh trại trước mới luyện được Lính."; return; }
+        if (E.res.food < 30 || E.res.gold < 20) { hintEl.textContent = "Chưa đủ tài nguyên (cần 30 lương thực + 20 vàng)."; return; }
+        var br = null;
+        for (var i = 0; i < E.buildings.length; i++) { if (E.buildings[i].kind === "barracks" && E.buildings[i].side === "me") { br = E.buildings[i]; break; } }
+        if (!br) { hintEl.textContent = "Cần xây Doanh trại trước mới luyện được Lính."; return; }
+        E.res.food -= 30; E.res.gold -= 20;
+        br.queue.push({ kind: "sold", t: 6 });
+        hintEl.textContent = "Đang luyện Lính (6 giây)…";
+        renderEmp();
+      };
+
+      function empTick() {
+        if (E.over) return;
+        E.elapsed += 0.5;
+        E.tickN++;
+        if (E.elapsed >= EMP_TIME) { empLose("Hết 5 phút mà chưa phá được Nhà chính địch."); return; }
+        if (E.elapsed >= 35) {
+          E.foeClock += 0.5;
+          var foeAlive = E.units.filter(function (u) { return u.kind === "sold" && u.side === "foe"; }).length;
+          if (E.foeClock >= 25 && foeAlive < 6) {
+            E.foeClock = 0;
+            var sp = empFreeNear(11, 4);
+            E.units.push({ id: E.uid++, kind: "sold", side: "foe", x: sp.x, y: sp.y, hp: 50, maxHp: 50, job: null, tx: null, ty: null, tgt: null, gatherT: 0, hitT: 0 });
+          }
+        }
+        E.buildings.forEach(function (b) {
+          if (!b.queue || b.queue.length === 0) return;
+          if (b.qT <= 0) { b.qT = b.queue[0].t; return; }
+          b.qT -= 0.5;
+          if (b.qT > 0) return;
+          var item = b.queue.shift();
+          b.qT = 0;
+          var sp2 = empFreeNear(b.x, b.y);
+          if (item.kind === "vill") E.units.push({ id: E.uid++, kind: "vill", side: "me", x: sp2.x, y: sp2.y, hp: 30, maxHp: 30, job: null, tx: null, ty: null, tgt: null, gatherT: 0, hitT: 0 });
+          else E.units.push({ id: E.uid++, kind: "sold", side: "me", x: sp2.x, y: sp2.y, hp: 90, maxHp: 90, job: null, tx: null, ty: null, tgt: null, gatherT: 0, hitT: 0 });
+        });
+        E.units.slice().forEach(function (u) {
+          if (u.hp <= 0) return;
+          if (u.kind === "vill" && u.side === "me") {
+            if (u.job) {
+              var nd = empNodeAt(u.job.x, u.job.y);
+              if (!nd) { u.job = null; u.tx = null; u.ty = null; return; }
+              if (empDist(u.x, u.y, nd.x, nd.y) <= 1) {
+                u.gatherT += 0.5;
+                if (u.gatherT >= 2) {
+                  u.gatherT = 0;
+                  if (nd.kind === "tree") E.res.wood++;
+                  else if (nd.kind === "bush") E.res.food++;
+                  else E.res.gold++;
+                  nd.amt--;
+                  if (nd.amt <= 0) { E.nodes = E.nodes.filter(function (nn) { return nn !== nd; }); u.job = null; }
+                }
+              } else if (u.tx != null && u.ty != null) {
+                if (empStepToward(u, u.tx, u.ty)) { u.tx = null; u.ty = null; }
+              } else {
+                empStepToward(u, nd.x, nd.y);
+              }
+            } else if (u.tx != null && u.ty != null) {
+              if (empStepToward(u, u.tx, u.ty)) { u.tx = null; u.ty = null; }
+            }
+            return;
+          }
+          if (u.kind === "sold") {
+            /* lính địch chờ 35 giây đầu mới bắt đầu đánh, để ván đầu thắng được */
+            if (u.side === "foe" && E.elapsed < 35) return;
+            if (!u.tgt) {
+              var near = empNearestEnemy(u);
+              if (near) u.tgt = { kind: empIsBuilding(near) ? "building" : "unit", x: near.x, y: near.y };
+            }
+            if (u.tgt) {
+              var tgtObj = (u.tgt.kind === "building") ? empBuildAt(u.tgt.x, u.tgt.y) : empUnitAt(u.tgt.x, u.tgt.y);
+              if (!tgtObj || (u.side === "me" && tgtObj.side !== "foe") || (u.side === "foe" && tgtObj.side !== "me")) { u.tgt = null; return; }
+              if (empDist(u.x, u.y, tgtObj.x, tgtObj.y) <= 1) {
+                u.hitT += 0.5;
+                if (u.hitT >= 1) { u.hitT = 0; tgtObj.hp -= (u.side === "me" ? 12 : 2); }
+              } else { empStepToward(u, tgtObj.x, tgtObj.y); }
+            } else if (u.tx != null && u.ty != null) {
+              if (empStepToward(u, u.tx, u.ty)) { u.tx = null; u.ty = null; }
+            } else if (u.side === "foe") {
+              var tc = empMeTC();
+              if (tc) {
+                if (empDist(u.x, u.y, tc.x, tc.y) <= 1) {
+                  u.hitT += 0.5;
+                  if (u.hitT >= 1) { u.hitT = 0; tc.hp -= 2; }
+                } else { empStepToward(u, tc.x, tc.y); }
+              }
+            }
+            return;
+          }
+        });
+        E.buildings.forEach(function (b) {
+          if (b.kind !== "tower" || b.side !== "me" || b.hp <= 0) return;
+          var best = null, bd = 99;
+          E.units.forEach(function (u) {
+            if (u.side !== "foe" || u.hp <= 0) return;
+            var d = empDist(b.x, b.y, u.x, u.y);
+            if (d <= 2 && d < bd) { bd = d; best = u; }
+          });
+          if (best) {
+            b.hitT += 0.5;
+            if (b.hitT >= 1) { b.hitT = 0; best.hp -= 8; }
+          }
+        });
+        E.units = E.units.filter(function (u) { return u.hp > 0; });
+        E.buildings = E.buildings.filter(function (b) { return b.hp > 0; });
+        if (E.sel != null && !E.units.some(function (u) { return u.id === E.sel; })) E.sel = null;
+        if (!empFoeTC()) { empWin(); return; }
+        if (!empMeTC()) { empLose("Nhà chính của bạn đã bị phá."); return; }
+        if (E.tickN % 4 === 0) mgSetResume("empire", E);
+        renderEmp();
+      }
+
+      renderEmp();
+      mgEvery(function () { empTick(); }, 500);
     }
 
     /* ---------- Trò 1: Lật thẻ trí nhớ ---------- */
