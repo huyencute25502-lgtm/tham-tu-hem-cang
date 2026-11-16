@@ -5852,6 +5852,44 @@
         G.profile.usePhoto = !!(p.usePhoto && G.profile.photo);
       } catch (e) { /* dữ liệu lưu hỏng: dùng nhân vật mặc định */ }
     }
+    /* Lưu / khôi phục TIẾN TRÌNH CHƠI trên chính máy này (localStorage):
+       điểm danh tiếng, lần buộc tội sai, vụ đã phá, huy hiệu, tiến độ vụ
+       đang làm dở và thùng rác. Trước đây chỉ nhân vật, kỷ lục mini game,
+       vụ ngày và sổ tay có kho lưu riêng — danh tiếng / vụ đã phá / huy
+       hiệu chỉ nằm trong bộ nhớ nên tải lại trang là về 0. Mọi chỗ thay
+       đổi tiến trình (cộng/trừ điểm, phá án, nhận huy hiệu, thùng rác,
+       cất tiến độ vụ dở, đặt lại tiến trình) đều gọi saveProgress(). */
+    var PROGRESS_KEY = "hem-cang-progress-v1";
+    function saveProgress() {
+      try {
+        var ts = 0; try { ts = trashSeq || 0; } catch (e) { /* bộ đếm thùng rác chưa khởi tạo */ }
+        localStorage.setItem(PROGRESS_KEY, JSON.stringify({
+          rep: G.rep, wrongTotal: G.wrongTotal,
+          solved: G.solved, badges: G.badges, progress: G.progress,
+          trash: G.trash, deletedCases: G.deletedCases, goneCases: G.goneCases,
+          deletedClues: G.deletedClues, goneClues: G.goneClues, pendingClues: G.pendingClues,
+          trashSeq: ts
+        }));
+      } catch (e) { /* hết chỗ lưu: tiến trình vẫn giữ trong phiên đang mở */ }
+    }
+    function loadProgress() {
+      try {
+        var raw = localStorage.getItem(PROGRESS_KEY);
+        if (!raw) return;
+        var s = JSON.parse(raw);
+        if (!s || typeof s !== "object") return;
+        if (typeof s.rep === "number" && isFinite(s.rep)) G.rep = Math.max(0, Math.floor(s.rep));
+        if (typeof s.wrongTotal === "number" && isFinite(s.wrongTotal)) G.wrongTotal = Math.max(0, Math.floor(s.wrongTotal));
+        ["solved", "badges", "progress", "deletedCases", "goneCases", "deletedClues", "goneClues", "pendingClues"].forEach(function (k) {
+          if (s[k] && typeof s[k] === "object" && !Array.isArray(s[k])) G[k] = s[k];
+        });
+        if (Array.isArray(s.trash)) G.trash = s.trash.filter(function (it) { return it && typeof it === "object" && typeof it.tid === "number"; });
+        try {
+          if (typeof s.trashSeq === "number" && isFinite(s.trashSeq)) trashSeq = Math.max(trashSeq, Math.floor(s.trashSeq));
+          G.trash.forEach(function (it) { if (it.tid > trashSeq) trashSeq = it.tid; });
+        } catch (e) { /* bộ đếm thùng rác chưa khởi tạo: tid cũ vẫn khôi phục được */ }
+      } catch (e) { /* dữ liệu lưu hỏng: bắt đầu với tiến trình trống */ }
+    }
     function applyProfile() {
       document.querySelectorAll(".js-det-avatar").forEach(el => { el.innerHTML = avatarHTML(G.profile); });
       document.querySelectorAll(".js-det-name").forEach(el => { el.textContent = G.profile.name; });
@@ -5879,6 +5917,7 @@
         selSuspect: r.selSuspect, selEvidence: [...r.selEvidence],
         attempts: r.attempts, hintsUsed: r.hintsUsed, startedAt: r.startedAt || Date.now()
       };
+      saveProgress();
     }
     function restoreRunProgress(c) {
       const p = G.progress[c.id];
@@ -6476,6 +6515,7 @@
     function mgAward5(sub) {
       const repBeforeMg = G.rep;
       G.rep += 5;
+      saveProgress();
       checkRankUp(repBeforeMg, G.rep);
       toast("+5 điểm danh tiếng", sub);
       sndSolve();
@@ -7430,6 +7470,7 @@
       if (G.run && G.run.caseId === caseId) G.run = null;
       delete G.progress[caseId];
       G.trash.unshift({ tid: ++trashSeq, kind: "case", caseId: caseId, clueId: null, title: c.title, caseTitle: c.title, at: Date.now() });
+      saveProgress();
       updateTrashBadge();
       toast("Đã chuyển vụ án vào Thùng rác", c.title + " — mở app Thùng rác để khôi phục khi cần.");
       renderHome();
@@ -7444,6 +7485,7 @@
       if (!G.deletedClues[caseId]) G.deletedClues[caseId] = {};
       G.deletedClues[caseId][clueId] = true;
       G.trash.unshift({ tid: ++trashSeq, kind: "clue", caseId: caseId, clueId: clueId, title: c.clues[clueId].title, caseTitle: c.title, at: Date.now() });
+      saveProgress();
       updateTrashBadge();
       toast("Đã chuyển manh mối vào Thùng rác", c.clues[clueId].title + " — khôi phục lại ở app Thùng rác.");
       if (G.run && G.run.caseId === caseId) renderCase();
@@ -7469,6 +7511,7 @@
           toast("Đã khôi phục manh mối", it.title + " — sẽ hiện trên Bảng ghim khi bạn nhận lại vụ “" + it.caseTitle + "”.");
         }
       }
+      saveProgress();
       updateTrashBadge();
       renderTrash();
     }
@@ -7489,6 +7532,7 @@
         G.goneClues[it.caseId][it.clueId] = true;
         toast("Đã xóa vĩnh viễn manh mối", it.title + " — manh mối này không khôi phục được nữa.");
       }
+      saveProgress();
       updateTrashBadge();
       renderTrash();
     }
@@ -7509,6 +7553,7 @@
       });
       renderHome();
       updateTrashBadge();
+      saveProgress();
       renderTrash();
       toast("Đã dọn sạch Thùng rác", items.length + " mục đã bị xóa vĩnh viễn.");
     }
@@ -7588,7 +7633,7 @@
         rows: [["Điểm danh tiếng", String(G.rep)], ["Cấp bậc hiện tại", rankOf(G.rep).cur.name], ["Vụ đã phá", Object.keys(G.solved).length + "/" + CASES.length], ["Danh sách vụ đã phá", solvedTitles.length ? solvedTitles.join(" · ") : "Chưa phá vụ nào"], ["Lần buộc tội sai", String(G.wrongTotal)], ["Vụ đang làm", (G.run && !G.run.solvedHere) ? ((caseById(G.run.caseId) || {}).title || "—") : "Không có"]],
         note: "Xóa file này sẽ đặt lại điểm danh tiếng, vụ đã phá và phiên làm vụ hiện tại — huy hiệu và nhân vật được giữ nguyên.",
         exportFn: function () { downloadGenerated("tien-trinh-pha-an.json", JSON.stringify(progData, null, 2)); toast("Đã xuất file tiến trình", "tien-trinh-pha-an.json đã tải xuống máy của bạn."); },
-        deleteFn: function () { G.rep = 0; G.wrongTotal = 0; G.solved = {}; G.run = null; G.progress = {}; renderHome(); toast("Đã xóa file tiến trình", "Điểm và vụ đã phá đã về 0 — bắt đầu lại từ thám tử tập sự."); }
+        deleteFn: function () { G.rep = 0; G.wrongTotal = 0; G.solved = {}; G.run = null; G.progress = {}; saveProgress(); renderHome(); toast("Đã xóa file tiến trình", "Điểm và vụ đã phá đã về 0 — bắt đầu lại từ thám tử tập sự."); }
       });
       /* 3 — Huy hiệu */
       const badgeData = BADGES.map(b => ({ ten: b.name, moTa: b.desc, daDat: !!G.badges[b.id] }));
@@ -8234,6 +8279,7 @@
         hb.onclick = () => {
           if (r.hintsUsed >= c.hints.length) return;
           G.rep = Math.max(0, G.rep - 5);
+          saveProgress();
           ht.textContent = "💡 " + c.hints[r.hintsUsed];
           ht.classList.add("show");
           r.hintsUsed++;
@@ -8264,6 +8310,7 @@
           r.solvedHere = true;
           delete G.progress[c.id];
           recordDailySolve(c, ptsD, firstTryD, r);
+          saveProgress();
           sndSolve();
           awardBadge("b1");
           if (firstTryD) awardBadge("b2");
@@ -8289,6 +8336,7 @@
         r.solvedHere = true;
         G.solved[c.id] = { firstTry };
         delete G.progress[c.id]; /* vụ đã phá: dọn tiến độ đang làm dở đã cất */
+        saveProgress();
         sndSolve();
         awardBadge("b1");
         if (firstTry) awardBadge("b2");
@@ -8309,10 +8357,12 @@
       verdict.classList.add("show");
       if (!rightPerson) {
         G.rep = Math.max(0, G.rep - 25);
+        saveProgress();
         verdict.className = "verdict show bad";
         verdict.textContent = "Sai người rồi! " + suspectById(c, r.selSuspect).name + " không phải người đã làm việc này. Buộc tội oan một người vô tội: −25 điểm danh tiếng. Hãy xem lại bảng ghim — bằng chứng thật đang chỉ về hướng khác.";
       } else {
         G.rep = Math.max(0, G.rep - 10);
+        saveProgress();
         verdict.className = "verdict show mid";
         verdict.textContent = "Đúng người — nhưng bộ 3 bằng chứng này chưa đủ chặt để kết án. Có manh mối chỉ là mồi nhử hoặc chưa đủ sức nặng. −10 điểm. Hãy chọn 3 bằng chứng gắn trực tiếp với hành vi của " + suspectById(c, c.culprit).name + ".";
       }
@@ -8323,6 +8373,7 @@
     function awardBadge(id) {
       if (G.badges[id]) return;
       G.badges[id] = true;
+      saveProgress();
       const bd = BADGES.find(b => b.id === id);
       setTimeout(() => toast("🏅 Nhận huy hiệu: " + bd.name, bd.desc), 600);
     }
@@ -8452,6 +8503,7 @@
       clearTimeout(resetTimer);
       G.rep = 0; G.wrongTotal = 0; G.solved = {}; G.badges = {};
       G.trash = []; G.deletedCases = {}; G.goneCases = {}; G.deletedClues = {}; G.goneClues = {}; G.pendingClues = {}; G.progress = {};
+      saveProgress();
       updateTrashBadge();
       resetArmed = false;
       $("resetBtn").textContent = "Chơi lại từ đầu";
@@ -9180,6 +9232,7 @@
     })();
 
     loadProfile();
+    loadProgress();
     var savedPinHint = document.getElementById("lockPinHint");
     if (savedPinHint) savedPinHint.textContent = G.profile.pin;
     applyProfile();
@@ -9281,9 +9334,21 @@
           });
           try { localStorage.setItem(POS_KEY, JSON.stringify(o)); } catch (e) { /* hết chỗ lưu: bỏ qua */ }
         }
+        function deskSize() {
+          /* Lúc tải trang máy đang ở màn khóa: .desktop-icons bị ẩn
+             (display:none) nên clientWidth/Height bằng 0 — các bản trước vì
+             thế không đo được chiều cao thật, không ngắt cột được và icon
+             cuối bị đẩy xuống dưới taskbar. Khi chưa đo được thì lấy kích
+             thước cửa sổ trừ taskbar 52px làm chuẩn để xếp cột đúng ngay. */
+          return {
+            W: desk.clientWidth || window.innerWidth || 0,
+            H: desk.clientHeight || Math.max(0, (window.innerHeight || 0) - 52)
+          };
+        }
         function clampIcon(ic) {
-          var W = desk.clientWidth, H = desk.clientHeight;
-          if (!W || !H) return; /* desktop đang ẩn (màn nhỏ): giữ nguyên tọa độ đã lưu */
+          var size = deskSize();
+          var W = size.W, H = size.H;
+          if (!W || !H) return; /* không rõ kích thước: giữ nguyên tọa độ đã lưu */
           var w = ic.offsetWidth || 82, h = ic.offsetHeight || 104;
           var x = Math.min(Math.max(0, parseFloat(ic.style.left) || 0), Math.max(0, W - w));
           var y = Math.min(Math.max(0, parseFloat(ic.style.top) || 0), Math.max(0, H - h));
@@ -9293,14 +9358,31 @@
           /* Xếp icon theo cột từ trên xuống; hết chiều cao của vùng desktop
              (màn hình thấp hoặc nhiều icon) thì tự ngắt sang cột tiếp theo
              ở bên phải — như desktop thật — để icon cuối không bị taskbar che. */
-          var H = desk.clientHeight || 0;
+          var H = deskSize().H;
           var x = 14, y = 16;
           icons.forEach(function (ic) {
             var h = ic.offsetHeight || 104;
-            if (H && y > 16 && y + h > H + 6) { x += 100; y = 16; }
+            if (H && y > 16 && y + h > H) { x += 104; y = 16; }
             ic.style.left = x + "px"; ic.style.top = y + "px";
             y += h + 18;
           });
+        }
+        function anyIconOverflow() {
+          var size = deskSize();
+          if (!size.W || !size.H) return false;
+          return icons.some(function (ic) {
+            var w = ic.offsetWidth || 82, h = ic.offsetHeight || 104;
+            var x = parseFloat(ic.style.left) || 0, y = parseFloat(ic.style.top) || 0;
+            return x < 0 || y < 0 || x + w > size.W + 1 || y + h > size.H + 1;
+          });
+        }
+        function ensureAllVisible() {
+          /* Chỉ "kẹp" icon tràn mép sẽ làm icon cuối chồng lên icon phía
+             trên ở sát taskbar; hễ có icon tràn khỏi vùng desktop thì xếp
+             lại toàn bộ theo cột có ngắt cột để mọi icon đều hiện đủ. */
+          if (!anyIconOverflow()) return;
+          defaultPos();
+          icons.forEach(clampIcon);
         }
         function applyPos() {
           var saved = loadPos();
@@ -9308,8 +9390,14 @@
           icons.forEach(function (ic) {
             var p = saved[ic.dataset.app];
             if (p && isFinite(p.x) && isFinite(p.y)) { ic.style.left = p.x + "px"; ic.style.top = p.y + "px"; }
-            clampIcon(ic);
           });
+          /* Vị trí đã lưu từ màn hình cao hơn (hoặc bản cũ xếp một cột dài
+             tới top 848px) tràn khỏi vùng desktop ở màn hình thấp hơn —
+             vd 1920×1000 — thì bỏ bố cục đã lưu đó và xếp lại theo cột.
+             Phải kiểm tra tràn TRƯỚC khi kẹp mép, vì kẹp trước sẽ kéo icon
+             tràn lên chồng icon khác và che mất dấu hiệu tràn. */
+          ensureAllVisible();
+          icons.forEach(clampIcon);
         }
         /* Móc cho Cài đặt + chuột phải lên desktop: xếp icon về cột mặc định */
         window.__resetIconLayout = function () {
@@ -9370,8 +9458,16 @@
           window.__resetIconLayout();
           toast("Đã sắp xếp lại icon.", "Các icon trên desktop đã về vị trí mặc định ở cột trái.");
         });
-        window.addEventListener("resize", function () { icons.forEach(clampIcon); });
+        window.addEventListener("resize", function () { ensureAllVisible(); icons.forEach(clampIcon); });
         applyPos();
+        /* Mở khóa xong vùng desktop mới hiện và đo được kích thước thật:
+           kiểm tra lại ngay lúc đó, icon nào còn tràn thì xếp lại theo cột
+           để "Vụ án hôm nay" và "Mini game hẻm" không bị taskbar che. */
+        if (window.MutationObserver && document.body) {
+          new MutationObserver(function () {
+            if (!document.body.classList.contains("locked")) ensureAllVisible();
+          }).observe(document.body, { attributes: true, attributeFilter: ["class"] });
+        }
       })();
 
 
@@ -10438,6 +10534,7 @@
           clearTimeout(timer);
           G.rep = 0; G.wrongTotal = 0; G.solved = {}; G.badges = {}; G.run = null; G.progress = {};
           G.trash = []; G.deletedCases = {}; G.goneCases = {}; G.deletedClues = {}; G.goneClues = {}; G.pendingClues = {};
+          saveProgress();
           if (typeof updateTrashBadge === "function") updateTrashBadge();
           renderHome();
           toast("Đã đặt lại tiến trình.", "Bắt đầu lại từ thám tử tập sự nhé!");
