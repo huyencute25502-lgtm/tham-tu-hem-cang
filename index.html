@@ -2370,20 +2370,15 @@
       .msg-privacy{ margin:0; padding:9px 14px; font-size:12px; line-height:1.55; color:var(--ink-dim); border-bottom:1px solid var(--line); background:rgba(87,176,106,.09); }
       .msg-blocked{ margin:0 0 10px; padding:11px 14px; border:1px solid var(--red); background:rgba(224,49,49,.13); color:var(--ink); border-radius:12px; font-size:13.5px; font-weight:700; line-height:1.55; }
       .msg-blocked[hidden]{ display:none; }
-      .msg-bcast{ display:flex; flex-direction:column; gap:2px; width:100%; text-align:left; margin:0 0 10px; padding:11px 14px; border:1px solid rgba(232,163,61,.55); background:rgba(232,163,61,.13); border-radius:12px; color:var(--ink); font-family:inherit; cursor:pointer; }
-      .msg-bcast[hidden]{ display:none; }
-      .msg-bcast:hover{ border-color:var(--accent); }
-      .msg-bcast-tag{ font-size:11px; font-weight:800; letter-spacing:.07em; text-transform:uppercase; color:var(--accent); }
-      .msg-bcast-text{ font-size:13.5px; line-height:1.5; overflow-wrap:break-word; white-space:pre-wrap; }
+      .msg-bcast-btn{ display:inline-flex; align-items:center; gap:6px; padding:6px 11px; border:1px solid rgba(232,163,61,.55); background:rgba(232,163,61,.13); border-radius:999px; color:var(--ink); font-family:inherit; font-size:12px; font-weight:700; cursor:pointer; }
+      .msg-bcast-btn:hover{ border-color:var(--accent); }
+      .msg-bcast-btn svg{ flex:0 0 auto; color:var(--accent); }
       .msg-bcast-time{ font-size:11.5px; color:var(--ink-faint); }
       .msg-bcast-item{ padding:9px 2px; border-bottom:1px solid var(--line); }
       .msg-bcast-item b{ font-size:13.5px; display:block; }
       .msg-bcast-item p{ margin:3px 0; font-size:13px; line-height:1.5; color:var(--ink-dim); overflow-wrap:break-word; white-space:pre-wrap; }
       .msg-bcast-item .msg-bcast-time{ display:block; }
-      .msg-bcast-dot{ position:absolute; top:3px; right:30px; width:11px; height:11px; border-radius:50%; background:var(--red); box-shadow:0 0 0 2px rgba(0,0,0,.35); z-index:3; }
-      .msg-bcast-dot[hidden]{ display:none; }
       .tb-app{ position:relative; }
-      .tb-app .msg-bcast-dot{ top:3px; right:3px; width:9px; height:9px; }
       .msg-report-btn{ background:none; border:none; color:var(--ink-faint); font-size:11px; font-weight:700; padding:2px 5px; min-height:0; cursor:pointer; font-family:inherit; }
       .msg-row.mine .msg-report-btn{ align-self:flex-end; }
       .msg-row.theirs .msg-report-btn{ align-self:flex-start; }
@@ -2555,7 +2550,7 @@
               <button type="button" class="d-icon" data-app="daily" style="background:none;border:none;font-family:inherit;cursor:pointer;left:14px;top:744px"><span class="d-glyph" style="color:#e8a33d"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/><path d="m9.2 16.2 2 2 3.6-3.8"/></svg></span><span>Vụ án hôm nay</span></button>
               <button type="button" class="d-icon" data-app="minigames" style="background:none;border:none;font-family:inherit;cursor:pointer;left:14px;top:848px"><span class="d-glyph" style="color:#57e6c9"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="7" width="19" height="11" rx="5.5"/><path d="M7.5 11v3M6 12.5h3"/><circle cx="15.8" cy="11.3" r="1.05" fill="currentColor" stroke="none"/><circle cx="18" cy="14" r="1.05" fill="currentColor" stroke="none"/></svg></span><span>Mini game hẻm</span></button>
               <button type="button" class="d-icon" data-app="browser" style="background:none;border:none;font-family:inherit;cursor:pointer;left:14px;top:952px"><span class="d-glyph" style="color:#35c4b5"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v10.5"/><path d="M12 3l5.5 8H12"/><path d="M12 6.2 7.6 13H12"/><path d="M4.5 16.5c1.8 1.5 3.6-1.2 5.4 0 1.4 1 2.4 1 3.8 0 1.8-1.2 3.6 1.5 5.4 0"/><path d="M4.5 20.5c1.8 1.5 3.6-1.2 5.4 0 1.4 1 2.4 1 3.8 0 1.8-1.2 3.6 1.5 5.4 0"/></svg></span><span>Trình duyệt</span></button>
-              <button type="button" class="d-icon" data-app="messages" style="background:none;border:none;font-family:inherit;cursor:pointer;left:110px;top:16px"><span class="d-glyph" style="color:#57b06a"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5c-1.4 0-2.8-.3-4-.9L3 20l1-5.4a8.5 8.5 0 1 1 17-3.1Z"/><path d="M8.5 10.5h7M8.5 13.5h4.5"/></svg></span><span>Tin nhắn</span><span class="d-badge" id="msgBadge" hidden>0</span><span class="msg-bcast-dot" id="msgBroadcastDot" hidden></span></button>
+              <button type="button" class="d-icon" data-app="messages" style="background:none;border:none;font-family:inherit;cursor:pointer;left:110px;top:16px"><span class="d-glyph" style="color:#57b06a"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5c-1.4 0-2.8-.3-4-.9L3 20l1-5.4a8.5 8.5 0 1 1 17-3.1Z"/><path d="M8.5 10.5h7M8.5 13.5h4.5"/></svg></span><span>Tin nhắn</span><span class="d-badge" id="msgBadge" hidden>0</span></button>
             </div>
             <div class="os-bar" aria-hidden="true">
               <span class="os-dots"><i></i><i></i><i></i></span>
@@ -2984,16 +2979,12 @@
             <p class="app-desc">Nhắn riêng với admin và các thám tử khác — không cần kết bạn trước, tin đầu tiên từ người chưa phải bạn sẽ vào mục Tin nhắn chờ. Lập nhóm chat chung để cùng phá án. Gửi được ảnh, tài liệu, icon vui và báo lỗi cho admin.</p>
           </div>
           <div class="case-meta">
+            <button type="button" class="msg-bcast-btn" id="msgBroadcastBtn" title="Xem tất cả thông báo chung từ admin"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4V5Z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.6 5.4a9 9 0 0 1 0 13.2"/></svg><span>Thông báo</span></button>
             <span class="pill" id="msgStatusPill">Đang kết nối…</span>
           </div>
         </div>
         <section class="pane">
           <div class="msg-blocked" id="msgBlockBanner" role="alert" hidden></div>
-          <button type="button" class="msg-bcast" id="msgBroadcastBanner" hidden>
-            <span class="msg-bcast-tag">Thông báo từ admin</span>
-            <span class="msg-bcast-text" id="msgBroadcastText"></span>
-            <span class="msg-bcast-time" id="msgBroadcastTime"></span>
-          </button>
           <div class="msg-wrap" id="msgWrap">
             <aside class="msg-list" aria-label="Danh sách hội thoại">
               <div class="msg-me">
@@ -6688,6 +6679,7 @@
     const notifs = [];
     let notifSeq = 0;
     let notifPopupTimer = null;
+    let notifPopupId = null;  /* id của tin đang hiện trong popup chuông */
 
     /* Danh sách thông báo lưu bền trên máy này (hem-cang-notifs-v1):
        trước đây chuông chỉ giữ thông báo trong bộ nhớ — chơi một lúc
@@ -6709,7 +6701,7 @@
         localStorage.setItem(NOTIF_KEY, JSON.stringify({
           seq: notifSeq,
           items: notifs.slice(0, 100).map(function (n) {
-            return { id: n.id, main: n.main, sub: n.sub, time: n.time instanceof Date ? n.time.getTime() : Number(n.time) || Date.now(), read: !!n.read, deleted: !!n.deleted, deletedAt: n.deletedAt || 0 };
+            return { id: n.id, main: n.main, sub: n.sub, act: n.act || "", time: n.time instanceof Date ? n.time.getTime() : Number(n.time) || Date.now(), read: !!n.read, deleted: !!n.deleted, deletedAt: n.deletedAt || 0 };
           })
         }));
       } catch (e) { /* hết chỗ lưu: thông báo vẫn còn trong phiên đang mở */ }
@@ -6727,6 +6719,7 @@
             id: typeof it.id === "number" ? it.id : ++notifSeq,
             main: it.main,
             sub: typeof it.sub === "string" ? it.sub : "",
+            act: typeof it.act === "string" ? it.act : "",
             time: new Date(typeof it.time === "number" ? it.time : Date.now()),
             read: !!it.read,
             deleted: !!it.deleted,
@@ -6800,7 +6793,7 @@
     window.__notifAPI = {
       snapshot: function () {
         return notifs.map(function (n) {
-          return { id: n.id, main: n.main, sub: n.sub, time: n.time instanceof Date ? n.time.getTime() : Number(n.time) || Date.now(), read: !!n.read, deleted: !!n.deleted, deletedAt: n.deletedAt || 0 };
+          return { id: n.id, main: n.main, sub: n.sub, act: n.act || "", time: n.time instanceof Date ? n.time.getTime() : Number(n.time) || Date.now(), read: !!n.read, deleted: !!n.deleted, deletedAt: n.deletedAt || 0 };
         });
       },
       markRead: function (id) {
@@ -6895,10 +6888,12 @@
       p.classList.remove("show"); p.setAttribute("aria-hidden", "true");
       $("notifPopupMain").tabIndex = -1; $("notifPopupClose").tabIndex = -1;
       clearTimeout(notifPopupTimer);
+      notifPopupId = null;
     }
 
     function showNotifPopup(n) {
       const p = $("notifPopup"); if (!p) return;
+      notifPopupId = n.id;
       $("notifPopupTitle").textContent = n.main;
       $("notifPopupBody").textContent = n.sub || "";
       $("notifPopupTime").textContent = notifTimeStr(n.time);
@@ -6906,6 +6901,17 @@
       $("notifPopupMain").tabIndex = 0; $("notifPopupClose").tabIndex = 0;
       clearTimeout(notifPopupTimer);
       notifPopupTimer = setTimeout(hideNotifPopup, 6000);
+    }
+
+    /* Bấm vào tin chuông "Thông báo từ admin" (act = "broadcast"):
+       đánh dấu đã đọc, đóng popup/bảng chuông, mở app Tin nhắn rồi nhờ
+       hook của app chat mở panel liệt kê tất cả thông báo chung. */
+    function openBroadcastFromNotif(n) {
+      if (n && !n.read && !n.deleted) { n.read = true; afterNotifChange(); }
+      hideNotifPopup();
+      closeNotifPanel();
+      if (typeof openMessages === "function") openMessages();
+      if (typeof window.__msgOpenBroadcasts === "function") window.__msgOpenBroadcasts();
     }
 
     function openNotifPanel() {
@@ -6925,8 +6931,12 @@
       return !!panel && panel.classList.contains("show");
     }
 
-    function toast(main, sub) {
-      const n = { id: ++notifSeq, main: String(main), sub: sub ? String(sub) : "", time: new Date(), read: false };
+    /* Tham số thứ 3 (act) là hành động khi người chơi bấm vào tin:
+       "broadcast" = thông báo chung của admin — bấm vào sẽ mở app Tin
+       nhắn + panel liệt kê tất cả thông báo chung. act được lưu bền
+       cùng tin trong hem-cang-notifs-v1 và trong snapshot __notifAPI. */
+    function toast(main, sub, act) {
+      const n = { id: ++notifSeq, main: String(main), sub: sub ? String(sub) : "", act: act ? String(act) : "", time: new Date(), read: false };
       notifs.unshift(n);
       if (notifs.length > 100) notifs.length = 100;
       saveNotifs();
@@ -6948,7 +6958,11 @@
         e.stopPropagation();
         if (notifPanelOpen()) closeNotifPanel(); else openNotifPanel();
       });
-      $("notifPopupMain").addEventListener("click", function () { openNotifPanel(); });
+      $("notifPopupMain").addEventListener("click", function () {
+        const pn = notifs.find(x => x.id === notifPopupId);
+        if (pn && pn.act === "broadcast" && !pn.deleted) { openBroadcastFromNotif(pn); return; }
+        openNotifPanel();
+      });
       $("notifPopupClose").addEventListener("click", function (e) { e.stopPropagation(); hideNotifPopup(); });
       $("notifPanelClose").addEventListener("click", function () { closeNotifPanel(); });
       $("notifReadAll").addEventListener("click", function () {
@@ -6969,6 +6983,7 @@
         if (del) { e.stopPropagation(); trashNotifById(Number(del.dataset.del)); return; }
         const item = e.target.closest(".notif-item"); if (!item) return;
         const n = notifs.find(x => String(x.id) === item.dataset.id);
+        if (n && n.act === "broadcast" && !n.deleted) { openBroadcastFromNotif(n); return; }
         if (n && !n.read && !n.deleted) { n.read = true; afterNotifChange(); }
       });
       $("notifList").addEventListener("keydown", function (e) {
@@ -6976,6 +6991,7 @@
         const item = e.target.closest(".notif-item"); if (!item || e.target.closest(".notif-item-del")) return;
         e.preventDefault();
         const n = notifs.find(x => String(x.id) === item.dataset.id);
+        if (n && n.act === "broadcast" && !n.deleted) { openBroadcastFromNotif(n); return; }
         if (n && !n.read && !n.deleted) { n.read = true; afterNotifChange(); }
       });
       document.addEventListener("click", function (e) {
@@ -13203,8 +13219,10 @@
            (blockedUntil null = vĩnh viễn) thì khóa ô soạn tin ở cả 3 nơi
            gửi (admin / DM / nhóm). Lỗi quyền đọc = coi như không bị chặn.
          - Thông báo chung: collection broadcasts, mới nhất lên đầu; id
-           đã xem lưu ở localStorage BROADCAST_SEEN_KEY, chấm đỏ trên
-           icon Tin nhắn khi có thông báo chưa xem. Lỗi quyền = ẩn im lặng.
+           đã xem lưu ở localStorage BROADCAST_SEEN_KEY. Thông báo mới
+           (khi app Tin nhắn chưa mở) được đẩy vào chuông thông báo của
+           game; trong app chỉ còn nút loa nhỏ "Thông báo" ở tiêu đề để
+           xem lại tất cả. Lỗi quyền = ẩn im lặng.
          - Báo cáo: collection reports, tạo từ nút Báo cáo ở từng tin
            nhắn DM/nhóm hoặc nút Báo cáo đoạn chat ở tiêu đề đoạn chat. */
       var BROADCAST_SEEN_KEY = "hem-cang-broadcast-seen-v1";
@@ -13294,38 +13312,38 @@
 
       /* ---------- 2. Thông báo chung từ admin (broadcasts) ---------- */
       function seenBroadcastId() { try { return localStorage.getItem(BROADCAST_SEEN_KEY) || ""; } catch (e) { return ""; } }
-      function hasUnseenBroadcast() { return broadcasts.length > 0 && broadcasts[0].id !== seenBroadcastId(); }
       function markBroadcastsSeen() {
         if (!broadcasts.length) return;
-        try { localStorage.setItem(BROADCAST_SEEN_KEY, broadcasts[0].id); } catch (e) { /* lưu không được thì chấm đỏ còn — vô hại */ }
-        updateBroadcastDot();
-      }
-      function updateBroadcastDot() {
-        var unseen = hasUnseenBroadcast();
-        var dot = $("msgBroadcastDot"); if (dot) dot.hidden = !unseen;
-        var tb = document.querySelector('.tb-app[data-app="messages"]');
-        if (tb) {
-          var td = tb.querySelector(".msg-bcast-dot");
-          if (!td) { td = document.createElement("span"); td.className = "msg-bcast-dot"; tb.appendChild(td); }
-          td.hidden = !unseen;
-        }
+        try { localStorage.setItem(BROADCAST_SEEN_KEY, broadcasts[0].id); } catch (e) { /* lưu không được thì lần sau đẩy lại vào chuông — vô hại */ }
       }
       function renderBroadcastUI() {
-        var bn = $("msgBroadcastBanner");
-        if (bn) {
-          if (!broadcasts.length) { bn.hidden = true; }
-          else {
-            var latest = broadcasts[0];
-            bn.hidden = false;
-            $("msgBroadcastText").textContent = (latest.title ? latest.title + " — " : "") + latest.text;
-            $("msgBroadcastTime").textContent = latest.date ? fmtDateTime(latest.date) : "";
-          }
-        }
-        /* App đang mở sẵn mà thông báo mới về tới thì coi như đã xem. */
-        var v = $("msgView");
-        if (v && v.style.display !== "none" && broadcasts.length) markBroadcastsSeen();
-        updateBroadcastDot();
         if (panelMode === "broadcasts") renderBroadcastPanel();
+        if (!broadcasts.length) return;
+        /* App đang mở sẵn mà thông báo mới về tới thì coi như đã xem:
+           chỉ đánh dấu đã xem, KHÔNG đẩy chuông. */
+        var v = $("msgView");
+        if (v && v.style.display !== "none") { markBroadcastsSeen(); return; }
+        /* App Tin nhắn chưa mở: đẩy các thông báo chưa xem vào chuông
+           thông báo của game (toast với hành động "broadcast" — bấm vào
+           tin chuông sẽ mở app Tin nhắn + panel liệt kê tất cả thông
+           báo chung). Danh sách xếp mới nhất trước: lấy phần đầu tới
+           khi gặp id đã xem thì dừng; đẩy từ cũ lên mới để popup cuối
+           cùng là tin mới nhất. Đẩy xong cập nhật id đã xem lên tin mới
+           nhất để snapshot sau không đẩy trùng. */
+        var seenId = seenBroadcastId();
+        var fresh = [];
+        for (var i = 0; i < broadcasts.length; i++) {
+          if (broadcasts[i].id === seenId) break;
+          fresh.push(broadcasts[i]);
+        }
+        if (!fresh.length) return;
+        for (var j = fresh.length - 1; j >= 0; j--) {
+          var bc = fresh[j];
+          try {
+            if (typeof toast === "function") toast("Thông báo từ admin", (bc.title ? bc.title + " — " : "") + bc.text, "broadcast");
+          } catch (e) { /* chuông không sẵn sàng: bỏ qua, đã xem vẫn được cập nhật bên dưới */ }
+        }
+        markBroadcastsSeen();
       }
       function watchBroadcasts() {
         if (!db || !me) return;
@@ -13342,9 +13360,9 @@
           });
           renderBroadcastUI();
         }, function () {
-          /* Lỗi quyền (rules chưa publish): ẩn banner im lặng. */
+          /* Lỗi quyền (rules chưa publish): ẩn im lặng, không đẩy chuông. */
           broadcasts = [];
-          renderBroadcastUI();
+          if (panelMode === "broadcasts") renderBroadcastPanel();
         });
       }
       function renderBroadcastPanel() {
@@ -14351,9 +14369,9 @@
         $("msgFileBtn").addEventListener("click", function () { $("msgFileInput").click(); });
         $("msgImgInput").addEventListener("change", function () { handleFile(this.files && this.files[0], true); this.value = ""; });
         $("msgFileInput").addEventListener("change", function () { handleFile(this.files && this.files[0], false); this.value = ""; });
-        /* Banner thông báo chung: bấm vào mở panel liệt kê tất cả thông
-           báo + đánh dấu đã xem (chấm đỏ biến mất). */
-        $("msgBroadcastBanner").addEventListener("click", function () {
+        /* Nút loa nhỏ "Thông báo" ở tiêu đề app: bấm vào mở panel liệt
+           kê tất cả thông báo chung + đánh dấu đã xem. */
+        $("msgBroadcastBtn").addEventListener("click", function () {
           markBroadcastsSeen();
           $("msgWrap").classList.remove("show-chat");
           if (panelMode !== "broadcasts") openPanel("broadcasts"); else renderBroadcastPanel();
@@ -14368,6 +14386,15 @@
       }
 
       window.__msgOnOpen = function () { wire(); start(); markBroadcastsSeen(); };
+      /* Hook cho hệ thống chuông thông báo: người chơi bấm vào tin
+         chuông "Thông báo từ admin" thì mở panel liệt kê tất cả thông
+         báo chung (app Tin nhắn đã được openMessages() mở trước đó). */
+      window.__msgOpenBroadcasts = function () {
+        wire(); start();
+        markBroadcastsSeen();
+        $("msgWrap").classList.remove("show-chat");
+        if (panelMode !== "broadcasts") openPanel("broadcasts"); else renderBroadcastPanel();
+      };
     })();
     </script>
   </body>
