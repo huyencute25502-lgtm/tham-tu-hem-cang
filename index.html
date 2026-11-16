@@ -11068,6 +11068,12 @@
       try { ytPlayer.setVolume(12); } catch (e) {}
       ytPostCmd("setVolume", [12]);
       setTimeout(function () { ytSendMuteOnly(); }, 300);
+      /* Đọc lại sau 600ms: nếu nhịp đầu bị trình phát nuốt thì mute() thêm lần nữa. */
+      setTimeout(function () {
+        var m = null;
+        try { m = ytPlayer.isMuted(); } catch (e) {}
+        if (m !== true) ytSendMuteOnly();
+      }, 600);
       return true;
     }
     function ytSendVolumeCmds(v) {
@@ -11153,18 +11159,22 @@
        khi isMuted() thật sự là true (xem ytPlayerMatches) — đồng hồ này
        vì thế cứ 1 giây lại gửi mute() cho tới khi trình phát tắt tiếng
        thật, không còn bị tiếng vọng getVolume() === 0 đánh lừa nữa. */
+    /* Đếm số giây trình phát bị kẹt ở mức 0 mà chưa tắt tiếng (isMuted
+       vẫn false): đồng hồ dưới gửi lại mute() mỗi giây, sau 3 giây kẹt
+       thì thoát kẹt bằng nhịp nâng-rồi-tắt bất kể mức âm lượng trình
+       phát đang là bao nhiêu. */
+    var ytMuteStuckTicks = 0;
     setInterval(function () {
       if (!ytPlayer || !ytPlayerReady || ytStopped || !ytCurrentId) return;
       var v = ytGameVolume();
-      if (ytPlayerMatches(v)) return;
-      /* Mức 0 mà trình phát đang ở mức 0 nhưng chưa tắt tiếng: thoát
-         kẹt bằng nhịp nâng-rồi-tắt (giãn ít nhất 4 giây/lần); còn lại
-         gửi lệnh thường. */
+      if (ytPlayerMatches(v)) { ytMuteStuckTicks = 0; return; }
       if (v === 0) {
-        var gv = null;
-        try { gv = ytPlayer.getVolume(); } catch (e) {}
-        if (gv === 0 && ytEscalateMute()) return;
+        ytMuteStuckTicks++;
+        if (ytMuteStuckTicks >= 3 && ytEscalateMute()) { ytMuteStuckTicks = 0; return; }
+        ytSendMuteOnly();
+        return;
       }
+      ytMuteStuckTicks = 0;
       ytSendVolumeCmds(v);
     }, 1000);
     /* Thanh trượt trong app ghi mức mới: lưu bền videoVol vào kho cài
@@ -11916,6 +11926,7 @@
           if (e.ctrlKey || e.metaKey) base = deskIconList().filter(function (ic) { return ic.classList.contains("selected"); });
           drag = { sx: p.x, sy: p.y, moved: false, base: base, rect: null };
           if (!base) clearIconSelection();
+          window.__deskMenuIcon = null;
         });
         window.addEventListener("pointermove", function (e) {
           if (!drag) return;
@@ -11950,6 +11961,7 @@
           if (!document.body.classList.contains("on-desktop")) return;
           if (e.target !== screenEl && e.target !== deskIconsEl) return;
           clearIconSelection();
+          window.__deskMenuIcon = null;
         });
         document.addEventListener("keydown", function (e) { if (e.key === "Escape") clearIconSelection(); });
       })();
@@ -12295,11 +12307,13 @@
               var spans = targetIc.querySelectorAll("span");
               var label = (spans && spans[1]) ? spans[1].textContent.trim() : (targetIc.dataset.app || "");
               if (openLbl) openLbl.textContent = "Mở “" + label + "”";
-              openBtn.hidden = false;
-              if (openSep) openSep.hidden = false;
+              /* Dùng style.display thay cho thuộc tính hidden: CSS
+                 .desk-menu-item đặt display:flex nên hidden không ẩn được. */
+              openBtn.style.display = "";
+              if (openSep) openSep.style.display = "";
             } else {
-              openBtn.hidden = true;
-              if (openSep) openSep.hidden = true;
+              openBtn.style.display = "none";
+              if (openSep) openSep.style.display = "none";
             }
           }
           menu.classList.remove("flip", "sub-up");
