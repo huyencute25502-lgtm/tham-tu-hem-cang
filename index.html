@@ -10493,6 +10493,8 @@
       /* ----- Kéo thả icon desktop: kéo tự do trong vùng desktop, lưu vị trí -----
          Pointer events nên chạy cả chuột lẫn chạm. Chỉ khi di chuyển quá 6px mới
          tính là kéo; cú click ngay sau khi thả sẽ bị chặn để không mở app nhầm.
+         Kéo CẢ NHÓM: nắm một icon đang nằm trong vùng đã bôi chọn thì mọi icon
+         đã chọn đi theo cùng lúc (chi tiết ở handler pointerdown bên dưới).
          Vị trí lưu ở localStorage (hem-cang-icon-pos-v1); xếp lại mặc định bằng
          chuột phải lên nền desktop hoặc nút "Sắp xếp lại icon" trong Cài đặt.
          Chỉ áp cho icon desktop — menu Start và taskbar không đổi. */
@@ -10589,8 +10591,22 @@
           ic.addEventListener("dragstart", function (e) { e.preventDefault(); });
           ic.addEventListener("pointerdown", function (e) {
             if (e.pointerType === "mouse" && e.button !== 0) return;
-            var dr = desk.getBoundingClientRect(), r = ic.getBoundingClientRect();
-            drag = { id: e.pointerId, sx: e.clientX, sy: e.clientY, ox: r.left - dr.left, oy: r.top - dr.top, moved: false };
+            var dr = desk.getBoundingClientRect();
+            /* KÉO CẢ NHÓM: icon đang nắm mà nằm trong vùng đã chọn (kéo
+               khung bôi chọn hoặc Ctrl + bấm chọn nhiều) thì MỌI icon đã
+               chọn đi theo cùng một quãng kéo, giữ nguyên khoảng cách
+               giữa chúng — như Windows. Nắm icon ngoài vùng chọn (hoặc
+               chưa chọn icon nào) thì chỉ kéo mình icon đó. Ghi sẵn tọa
+               độ gốc của từng icon trong nhóm ngay lúc nhấn xuống. */
+            var group = ic.classList.contains("selected")
+              ? icons.filter(function (o) { return o.classList.contains("selected"); })
+              : [ic];
+            if (!group.length) group = [ic];
+            var items = group.map(function (o) {
+              var r = o.getBoundingClientRect();
+              return { el: o, ox: r.left - dr.left, oy: r.top - dr.top, w: o.offsetWidth || 82, h: o.offsetHeight || 104 };
+            });
+            drag = { id: e.pointerId, sx: e.clientX, sy: e.clientY, items: items, moved: false };
           });
           ic.addEventListener("pointermove", function (e) {
             if (!drag || e.pointerId !== drag.id) return;
@@ -10598,22 +10614,37 @@
             if (!drag.moved) {
               if (Math.abs(dx) < 6 && Math.abs(dy) < 6) return; /* chưa qua ngưỡng: vẫn là bấm */
               drag.moved = true;
-              ic.classList.add("dragging");
+              drag.items.forEach(function (it) { it.el.classList.add("dragging"); });
               try { ic.setPointerCapture(e.pointerId); } catch (err) {}
             }
             var W = desk.clientWidth, H = desk.clientHeight;
-            var w = ic.offsetWidth || 82, h = ic.offsetHeight || 104;
-            var x = Math.min(Math.max(0, drag.ox + dx), Math.max(0, W - w));
-            var y = Math.min(Math.max(0, drag.oy + dy), Math.max(0, H - h));
-            ic.style.left = x + "px"; ic.style.top = y + "px";
+            /* Cả nhóm dịch cùng dx/dy; từng icon tự kẹp trong vùng
+               desktop nên icon sát mép dừng lại ở mép, icon còn lại vẫn đi. */
+            drag.items.forEach(function (it) {
+              var x = Math.min(Math.max(0, it.ox + dx), Math.max(0, W - it.w));
+              var y = Math.min(Math.max(0, it.oy + dy), Math.max(0, H - it.h));
+              it.el.style.left = x + "px"; it.el.style.top = y + "px";
+            });
             e.preventDefault();
           });
           function endDrag(e) {
             if (!drag || e.pointerId !== drag.id) return;
             var wasDrag = drag.moved;
+            var items = drag.items;
             drag = null;
-            ic.classList.remove("dragging");
-            if (wasDrag) { ic.dataset.justDragged = "1"; savePos(); }
+            items.forEach(function (it) {
+              it.el.classList.remove("dragging");
+              if (wasDrag) it.el.dataset.justDragged = "1";
+            });
+            if (wasDrag) {
+              savePos();
+              /* Cờ justDragged chỉ để chặn cú click + snap lưới ngay sau
+                 khi thả; dọn sau 600ms để icon trong nhóm không bị "dính"
+                 cờ kéo sang lần bấm/kéo sau. */
+              setTimeout(function () {
+                items.forEach(function (it) { delete it.el.dataset.justDragged; });
+              }, 600);
+            }
           }
           ic.addEventListener("pointerup", endDrag);
           ic.addEventListener("pointercancel", endDrag);
@@ -10717,12 +10748,19 @@
           sorted.forEach(function (ic, i) { setCell(ic, Math.floor(i / rowsPerCol), i % rowsPerCol); });
         }
         window.__iconGridOpts = function () { return { grid: !!opts.grid, auto: !!opts.auto }; };
-        /* Sau khi cơ chế kéo gốc thả icon (đã lưu vị trí tự do), snap lại theo tùy chọn */
+        /* Sau khi cơ chế kéo gốc thả icon (đã lưu vị trí tự do), snap lại theo tùy chọn.
+           Kéo cả nhóm thì snap TỪNG icon trong nhóm vừa thả (mọi icon mang cờ
+           justDragged), không chỉ icon bị nắm — snapIcon tự tìm ô trống gần
+           nhất nên các icon trong nhóm không giành cùng một ô. */
         desk.addEventListener("pointerup", function (e) {
           var ic = e.target && e.target.closest ? e.target.closest(".d-icon") : null;
           if (!ic || ic.dataset.justDragged !== "1") return;
           if (opts.auto) { arrangeAll(); saveAllPos(); }
-          else if (opts.grid) { snapIcon(ic); saveAllPos(); }
+          else if (opts.grid) {
+            var moved = icons.filter(function (o) { return o.dataset.justDragged === "1"; });
+            (moved.length ? moved : [ic]).forEach(snapIcon);
+            saveAllPos();
+          }
         });
         /* Bọc lại hàm xếp mặc định: xếp xong mà lưới đang bật thì snap cho thẳng hàng */
         if (typeof window.__resetIconLayout === "function") {
