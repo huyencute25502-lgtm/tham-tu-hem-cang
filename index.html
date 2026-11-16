@@ -1526,6 +1526,73 @@
       }
       @media (max-width:560px){ .br-hero h3{ font-size:21px; } .br-content, .br-content iframe{ min-height:360px; } .br-out-btn span{ display:none; } }
 
+      /* Trang kết quả tìm kiếm tự vẽ trong game + chế độ Đọc chữ + thẻ trang (bản thiết kế lại theo nghiên cứu 16/11/2026) */
+      .br-results{ flex:1 1 auto; min-height:0; overflow-y:auto; padding:20px 18px 34px; }
+      .br-results[hidden]{ display:none; }
+      .br-res-wrap{ max-width:880px; margin:0 auto; }
+      .br-res-wrap > h4{ margin:0 0 2px; font-size:19px; color:var(--ink); overflow-wrap:anywhere; }
+      .br-res-status{ margin:0 0 14px; font-size:13px; color:var(--ink-faint); line-height:1.55; }
+      .br-res-answer{ background:rgba(53,196,181,.09); border:1px solid rgba(53,196,181,.35); border-radius:12px; padding:14px 16px; margin-bottom:16px; overflow:hidden; }
+      .br-res-answer .br-res-kicker{ font-size:11px; font-weight:800; letter-spacing:.05em; color:#2aa79a; margin-bottom:5px; }
+      html[data-theme="dark"] .br-res-answer .br-res-kicker{ color:#5fd8ca; }
+      @media (prefers-color-scheme: dark){ .br-res-answer .br-res-kicker{ color:#5fd8ca; } }
+      .br-res-answer p{ margin:0 0 8px; font-size:14.5px; line-height:1.6; color:var(--ink-dim); }
+      .br-res-answer img{ float:right; width:92px; height:92px; object-fit:cover; border-radius:10px; margin:2px 0 8px 12px; }
+      .br-res-answer button{ background:none; border:none; padding:0; color:#2aa79a; font-weight:700; font-family:inherit; font-size:13.5px; cursor:pointer; text-decoration:underline; min-height:0; }
+      html[data-theme="dark"] .br-res-answer button{ color:#5fd8ca; }
+      @media (prefers-color-scheme: dark){ .br-res-answer button{ color:#5fd8ca; } }
+      .br-res-webbar{ display:flex; gap:9px; flex-wrap:wrap; margin-bottom:20px; }
+      .br-res-webbar button{ flex:1 1 190px; background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:12px 14px; text-align:left; color:var(--ink); font-family:inherit; cursor:pointer; min-height:0; }
+      .br-res-webbar button:hover{ border-color:#35c4b5; }
+      .br-res-webbar b{ display:block; font-size:14.5px; margin-bottom:2px; }
+      .br-res-webbar span{ font-size:12px; color:var(--ink-dim); line-height:1.4; display:block; }
+      .br-res-sec{ margin-bottom:20px; }
+      .br-res-sec > h5{ margin:0 0 9px; font-size:12.5px; letter-spacing:.05em; color:var(--ink-faint); font-weight:800; }
+      .br-res-item{ display:flex; gap:12px; width:100%; text-align:left; background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:12px 14px; margin-bottom:9px; color:var(--ink); font-family:inherit; cursor:pointer; min-height:0; align-items:flex-start; }
+      .br-res-item:hover{ border-color:#35c4b5; }
+      .br-res-item > img{ flex:0 0 auto; width:64px; height:64px; object-fit:cover; border-radius:9px; background:var(--panel2); }
+      .br-res-item .br-res-main{ flex:1 1 auto; min-width:0; }
+      .br-res-item b{ display:block; font-size:15px; line-height:1.35; margin-bottom:3px; overflow-wrap:anywhere; }
+      .br-res-item p{ margin:0; font-size:13px; line-height:1.5; color:var(--ink-dim); overflow-wrap:anywhere; }
+      .br-res-item .br-res-host{ font-size:11.5px; color:#2aa79a; font-weight:700; }
+      html[data-theme="dark"] .br-res-item .br-res-host{ color:#5fd8ca; }
+      @media (prefers-color-scheme: dark){ .br-res-item .br-res-host{ color:#5fd8ca; } }
+      .br-res-imgs{ display:grid; grid-template-columns:repeat(auto-fill,minmax(118px,1fr)); gap:9px; }
+      .br-res-imgs button{ border:1px solid var(--line); background:var(--panel); border-radius:10px; padding:0; overflow:hidden; cursor:pointer; min-height:0; font-family:inherit; }
+      .br-res-imgs button:hover{ border-color:#35c4b5; }
+      .br-res-imgs img{ width:100%; height:96px; object-fit:cover; display:block; background:var(--panel2); }
+      .br-res-imgs span{ display:block; font-size:11px; color:var(--ink-dim); padding:6px 8px; text-align:left; line-height:1.35; max-height:2.75em; overflow:hidden; }
+      .br-res-empty{ font-size:13.5px; color:var(--ink-dim); background:var(--panel); border:1px dashed var(--line); border-radius:12px; padding:14px 16px; line-height:1.6; }
+      .br-reader{ flex:1 1 auto; min-height:0; overflow-y:auto; padding:22px 18px 36px; }
+      .br-reader[hidden]{ display:none; }
+      .br-reader-wrap{ max-width:760px; margin:0 auto; }
+      .br-reader-head{ border-bottom:1px solid var(--line); padding-bottom:12px; margin-bottom:16px; }
+      .br-reader-head h4{ margin:0 0 4px; font-size:20px; color:var(--ink); line-height:1.35; overflow-wrap:anywhere; }
+      .br-reader-head p{ margin:0; font-size:12.5px; color:var(--ink-faint); overflow-wrap:anywhere; line-height:1.55; }
+      .br-reader-body{ font-size:15px; line-height:1.75; color:var(--ink-dim); overflow-wrap:anywhere; }
+      .br-reader-body p{ margin:0 0 13px; }
+      .br-reader-body h3{ font-size:18px; color:var(--ink); margin:20px 0 8px; line-height:1.4; }
+      .br-reader-body h4{ font-size:16px; color:var(--ink); margin:18px 0 7px; line-height:1.4; }
+      .br-reader-body ul{ margin:0 0 13px; padding-left:20px; }
+      .br-reader-body li{ margin-bottom:5px; }
+      .br-reader-body a{ color:#2aa79a; font-weight:600; }
+      html[data-theme="dark"] .br-reader-body a{ color:#5fd8ca; }
+      @media (prefers-color-scheme: dark){ .br-reader-body a{ color:#5fd8ca; } }
+      .br-reader-body img{ max-width:100%; height:auto; border-radius:10px; margin:6px 0 14px; display:block; }
+      .br-reader-body code{ background:var(--panel2); border:1px solid var(--line); border-radius:5px; padding:0 5px; font-size:13px; }
+      .br-reader-note{ margin-top:20px; font-size:12.5px; color:var(--ink-faint); border-top:1px solid var(--line); padding-top:12px; line-height:1.6; }
+      .br-reader-note a{ color:#2aa79a; font-weight:600; }
+      html[data-theme="dark"] .br-reader-note a{ color:#5fd8ca; }
+      .br-cardview{ padding:38px 20px; text-align:center; color:var(--ink-dim); overflow-y:auto; }
+      .br-cardview[hidden]{ display:none; }
+      .br-cardview img.br-card-thumb{ width:120px; height:120px; object-fit:cover; border-radius:14px; margin:0 auto 14px; display:block; background:var(--panel2); }
+      .br-cardview h4{ margin:0 auto 8px; font-size:19px; color:var(--ink); max-width:560px; overflow-wrap:anywhere; line-height:1.4; }
+      .br-cardview p{ margin:0 auto 10px; max-width:560px; font-size:14.5px; line-height:1.6; overflow-wrap:anywhere; }
+      .br-cardview code{ background:var(--panel2); border:1px solid var(--line); border-radius:6px; padding:1px 7px; font-size:12.5px; }
+      .br-cardview .br-card-host{ font-size:12.5px; color:#2aa79a; font-weight:700; }
+      html[data-theme="dark"] .br-cardview .br-card-host{ color:#5fd8ca; }
+      @media (prefers-color-scheme: dark){ .br-cardview .br-card-host{ color:#5fd8ca; } }
+
       /* File Explorer kiểu Win 11 cho Máy tính này */
       .pc-crumb{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:9px 14px; font-size:13.5px; color:var(--ink-dim); margin-bottom:14px; }
       .pc-crumb b{ color:var(--ink); }
@@ -2549,12 +2616,12 @@
             <div class="br-hero">
               <div class="br-hero-mark"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v10.5"/><path d="M12 3l5.5 8H12"/><path d="M12 6.2 7.6 13H12"/><path d="M4.5 16.5c1.8 1.5 3.6-1.2 5.4 0 1.4 1 2.4 1 3.8 0 1.8-1.2 3.6 1.5 5.4 0"/><path d="M4.5 20.5c1.8 1.5 3.6-1.2 5.4 0 1.4 1 2.4 1 3.8 0 1.8-1.2 3.6 1.5 5.4 0"/></svg></div>
               <h3>Cảng Lướt</h3>
-              <p>Trình duyệt của văn phòng thám tử — ra khơi tra cứu ngay trong cửa sổ game. Trang nào cho nhúng thì hiện tại đây, trang nào chặn thì Cảng Lướt nói rõ lý do và mở tab mới cho bạn.</p>
+              <p>Trình duyệt của văn phòng thám tử — gõ gì cũng tra được ngay trong cửa sổ game: Cảng Lướt tự vẽ trang kết quả (đáp án nhanh, Wikipedia, hình ảnh, tin tức), mở nguyên trang kết quả Bing / Cốc Cốc trong khung, và đọc lấy phần chữ của những trang không cho nhúng. Chỉ vài trang khóa cứng như Google, Facebook, Netflix mới phải ra tab mới — xem bảng tra ở dưới.</p>
               <form class="br-search" id="brSearchForm" role="search">
-                <div class="br-search-field"><input id="brSearchInput" type="search" placeholder="Tra cứu trên Wikipedia tiếng Việt…" autocomplete="off" aria-label="Tra cứu trên Wikipedia" /></div>
-                <button type="submit" class="br-search-go">Tra cứu</button>
+                <div class="br-search-field"><input id="brSearchInput" type="search" placeholder="Tìm gì cũng được — người, nơi chốn, sự kiện, tin tức…" autocomplete="off" aria-label="Tìm kiếm trong Cảng Lướt" /></div>
+                <button type="submit" class="br-search-go">Tìm</button>
               </form>
-              <p class="br-search-alt">Ô tìm kiếm ở đây tra trong Wikipedia (trang cho mở trong game). Muốn tìm bằng Google? <button type="button" id="brGoogleSearch">Mở Google ở tab mới</button> — vì Google chặn nhúng, xem mục dưới.</p>
+              <p class="br-search-alt">Kết quả hiện ngay tại đây, không bật ra ngoài. Muốn tìm bằng Google? <button type="button" id="brGoogleSearch">Mở Google ở tab mới</button> — vì Google chặn nhúng, xem bảng tra ở dưới.</p>
             </div>
 
             <section class="br-sec">
@@ -2565,6 +2632,15 @@
                 <button type="button" class="br-tile" data-br-open="https://vi.wikipedia.org/wiki/Cổng_thông_tin:Thời_sự" data-br-title="Thời sự · Wikipedia"><span class="br-tag">TRONG GAME</span><b>Thời sự trên Wikipedia</b><span>Tin nhanh do cộng đồng Wikipedia cập nhật — đọc ngay tại đây.</span></button>
                 <button type="button" class="br-tile" data-br-open="https://en.wikipedia.org/wiki/Main_Page" data-br-title="Wikipedia (English)"><span class="br-tag">TRONG GAME</span><b>Wikipedia (English)</b><span>Bản tiếng Anh khi bản tiếng Việt chưa có bài.</span></button>
                 <button type="button" class="br-tile" data-br-open="https://example.com" data-br-title="Example.com"><span class="br-tag">TRONG GAME</span><b>Example.com</b><span>Trang mẫu quốc tế — để thử xem khung nhúng chạy thế nào.</span></button>
+              </div>
+            </section>
+
+            <section class="br-sec">
+              <h4>Tìm toàn web — nguyên trang kết quả trong game</h4>
+              <p class="br-sec-note">Trang kết quả của <b>Bing</b> và <b>Cốc Cốc</b> là hai trang kết quả tìm kiếm hiếm hoi KHÔNG gửi lệnh cấm nhúng — kiểm chứng trực tiếp ngày 16/11/2026 bằng công cụ testiframe.com: Bing hiện kết quả thật ngay trong khung; Cốc Cốc thì lệnh ở đầu trang cho phép nhúng, nhưng hình ảnh kết quả trong khung chưa xác nhận trực tiếp được. Cách nhanh nhất: gõ từ khóa ở ô tìm phía trên, vào trang kết quả của Cảng Lướt rồi bấm mở toàn web bằng Bing hoặc Cốc Cốc. Hai ô dưới mở sẵn trang tìm của từng nhà. Lưu ý: việc cho nhúng là lựa chọn của từng trang, có thể đổi bất cứ lúc nào — khung trắng thì bấm “Mở tab mới”.</p>
+              <div class="br-tiles">
+                <button type="button" class="br-tile" data-br-open="https://www.bing.com/search" data-br-title="Bing — tìm toàn web"><span class="br-tag">TRONG GAME · ĐÃ KIỂM CHỨNG 16/11/2026</span><b>Bing — tìm toàn web</b><span>Trang kết quả Bing hiện nguyên trong khung Cảng Lướt — đường gần nhất tới “tìm gì cũng có” mà không cần khóa API.</span></button>
+                <button type="button" class="br-tile" data-br-open="https://coccoc.com/search" data-br-title="Cốc Cốc — tìm toàn web"><span class="br-tag">TRONG GAME · LỆNH CHO PHÉP</span><b>Cốc Cốc — tìm toàn web</b><span>Máy tìm kiếm Việt Nam, kết quả chỉnh cho tiếng Việt. Đầu trang không cấm nhúng; nếu khung trắng, mở tab mới giúp Cảng Lướt nhé.</span></button>
               </div>
             </section>
 
@@ -2593,6 +2669,23 @@
                 <button type="button" class="br-tile" data-br-out="https://github.com" data-br-title="GitHub"><span class="br-tag out">TAB MỚI · DENY</span><b>GitHub</b><span>Chặn bằng X-Frame-Options: DENY. Chỉ nhúng được đoạn code Gist, bằng thẻ script chứ không phải khung.</span></button>
                 <button type="button" class="br-tile" data-br-out="https://www.reddit.com" data-br-title="Reddit"><span class="br-tag out">TAB MỚI · SAMEORIGIN + CSP</span><b>Reddit</b><span>Chặn bằng cả X-Frame-Options: SAMEORIGIN lẫn CSP frame-ancestors ’self’. Chỉ nhúng được 1 bài qua Chia sẻ → Nhúng.</span></button>
                 <button type="button" class="br-tile" data-br-out="https://www.netflix.com" data-br-title="Netflix"><span class="br-tag out">TAB MỚI · DENY</span><b>Netflix</b><span>Chặn bằng X-Frame-Options: DENY và không có bất kỳ cách nhúng chính thức nào — xem phim vẫn phải ra tab mới.</span></button>
+                <button type="button" class="br-tile" data-br-out="https://duckduckgo.com" data-br-title="DuckDuckGo"><span class="br-tag out">TAB MỚI · CSP FRAME-ANCESTORS</span><b>DuckDuckGo (trang kết quả)</b><span>Trang kết quả chặn nhúng bằng CSP frame-ancestors ’self’ (kiểm chứng 16/11/2026) — nhưng đáp án nhanh của DuckDuckGo vẫn hiện ngay trong trang kết quả của Cảng Lướt.</span></button>
+                <button type="button" class="br-tile" data-br-out="https://search.brave.com" data-br-title="Brave Search"><span class="br-tag out">TAB MỚI · CSP FRAME-ANCESTORS</span><b>Brave Search (trang kết quả)</b><span>Trang kết quả chặn nhúng bằng CSP frame-ancestors ’self’ (kiểm chứng 16/11/2026). API của Brave cần khóa đặt trên máy chủ riêng nên game tĩnh không dùng.</span></button>
+                <button type="button" class="br-tile" data-br-out="https://www.ecosia.org" data-br-title="Ecosia"><span class="br-tag out">TAB MỚI · SAMEORIGIN</span><b>Ecosia (trang kết quả)</b><span>Chặn bằng X-Frame-Options: SAMEORIGIN (kiểm chứng 16/11/2026) và không có API tìm kiếm công khai.</span></button>
+              </div>
+            </section>
+
+            <section class="br-sec">
+              <h4>Tìm gì cũng mở được trong game — Cảng Lướt làm thế nào?</h4>
+              <p class="br-sec-note">Theo nghiên cứu ngày 16/11/2026: không có mẹo miễn phí nào mở được MỌI trang trong game — trần cao nhất của một trang web tĩnh là 3 lớp dưới đây, và Cảng Lướt dùng cả 3.</p>
+              <div class="br-facts">
+                <ul>
+                  <li><b>Lớp 1 — trang kết quả Cảng Lướt tự vẽ ngay trong game.</b> Khi bạn gõ từ khóa, Cảng Lướt hỏi cùng lúc: <b>Wikipedia tiếng Việt</b> (thêm bản tiếng Anh khi bản Việt ít kết quả) qua API MediaWiki — miễn phí, không cần khóa, cho phép trang web khác gọi trực tiếp; <b>đáp án nhanh của DuckDuckGo</b> — lưu ý đây chỉ là đoạn trả lời ngắn trích từ Wikipedia chứ không phải danh sách kết quả web đầy đủ (một phép thử độc lập ngày 11/11/2026 cho thấy nó chỉ trả lời được khoảng 6% số từ khóa); <b>hình ảnh Openverse</b> (ảnh giấy phép mở, ghi rõ tác giả); và <b>tin tức</b> lọc từ RSS mới nhất của VnExpress / Tuổi Trẻ qua một dịch vụ trung gian đọc RSS — phần tin này lúc được lúc không, hỏng thì Cảng Lướt lặng lẽ bỏ qua.</li>
+                  <li><b>Lớp 2 — mở nguyên trang kết quả Bing / Cốc Cốc trong khung.</b> Đây là hai trang kết quả tìm kiếm toàn web duy nhất được kiểm chứng là cho nhúng ngày 16/11/2026. Ngược lại, trang kết quả của DuckDuckGo, Brave và Ecosia đều chặn nhúng. Các ngả API khác đều có chốt: API tìm kiếm Bing đã bị Microsoft khai tử ngày 11/8/2025; API của Brave (khoảng 1.000 lượt tìm miễn phí mỗi tháng) bắt buộc giấu khóa trên máy chủ riêng — game tĩnh không có máy chủ nên không dùng; ô tìm Programmable Search của Google từ 20/1/2026 chỉ còn cho tìm trong tối đa 50 trang web chỉ định sẵn, không còn là tìm toàn web.</li>
+                  <li><b>Lớp 3 — “Đọc chữ trong game” cho trang không cho nhúng.</b> Bấm vào một kết quả thuộc trang lạ hoặc trang chặn, Cảng Lướt hiện thẻ thông tin kèm nút <b>Đọc chữ trong game</b>: nhờ dịch vụ Jina Reader (r.jina.ai) tải trang về và lọc lấy phần chữ (tiêu đề, đoạn văn, liên kết) để đọc ngay tại đây. Miễn phí không cần khóa, giới hạn khoảng 20 lượt mỗi phút cho mỗi địa chỉ mạng. <b>Chỗ chưa chắc chắn:</b> các nguồn nói khác nhau về việc dùng ẩn danh — có nguồn ghi vẫn chạy, có nguồn ghi đã bị chặn và đòi khóa — nên tính năng này có thể lúc được lúc không; trang bắt đăng nhập, bắt trả phí hoặc chống bot thì Jina cũng không đọc được. Bản chữ mất bố cục, hình ảnh và phần tương tác, và luôn có đường về trang gốc.</li>
+                  <li><b>Vẫn chỉ mở được ở tab mới:</b> Google Tìm kiếm, Facebook, Instagram, X, GitHub, Reddit, Netflix, trang kết quả của DuckDuckGo / Brave / Ecosia, và mọi trang bắt đăng nhập hoặc trả phí. Muốn mở cả những trang đó trong game chỉ còn cách chạy trình duyệt thật trên máy chủ rồi truyền hình ảnh về (kiểu Hyperbeam) — tốn máy chủ và tiền theo phút, ngoài tầm của game tĩnh miễn phí này.</li>
+                </ul>
+                <p style="margin:0">Nguồn dữ kiện: <a href="https://www.mediawiki.org/wiki/API%3ACross-site_requests" target="_blank" rel="noopener">mediawiki.org — API gọi chéo trang</a> · <a href="https://testiframe.com/" target="_blank" rel="noopener">testiframe.com</a> (kiểm chứng nhúng trực tiếp Bing, Cốc Cốc, DuckDuckGo, Brave, Ecosia ngày 16/11/2026) · <a href="https://duckduckgo.com/duckduckgo-help-pages/company/partnerships" target="_blank" rel="noopener">DuckDuckGo — chính sách cấm đóng khung kết quả</a> · <a href="https://cloro.dev/blog/bing-search-api-key/" target="_blank" rel="noopener">cloro.dev — API Bing bị khai tử</a> · <a href="https://cludo.com/google-programmable-search-2027-change/" target="_blank" rel="noopener">cludo.com — thay đổi Programmable Search 2026–2027</a> · <a href="https://www.apishub.dev/apis/jina-ai" target="_blank" rel="noopener">apishub.dev — Jina Reader</a> · <a href="https://hermes-agent.nousresearch.com/docs/user-guide/skills/bundled/web/web-blocked-page-recovery" target="_blank" rel="noopener">nguồn nói ngược về Jina ẩn danh</a>.</p>
               </div>
             </section>
 
@@ -2679,8 +2772,28 @@
             <p id="brBlockedText"></p>
             <p class="br-block-alt" id="brBlockedAlt" hidden></p>
             <div class="br-blocked-actions">
-              <button type="button" class="br-open-out" id="brBlockedOut">Mở ở tab mới</button>
+              <button type="button" class="br-open-out" id="brBlockedRead">Đọc chữ trong game</button>
+              <button type="button" class="br-go-home" id="brBlockedOut">Mở ở tab mới</button>
               <button type="button" class="br-go-home" id="brBlockedHome">Về trang bắt đầu</button>
+            </div>
+          </div>
+          <div class="br-results" id="brResults" hidden>
+            <div class="br-res-wrap" id="brResWrap"></div>
+          </div>
+          <div class="br-reader" id="brReader" hidden>
+            <div class="br-reader-wrap" id="brReaderWrap"></div>
+          </div>
+          <div class="br-cardview" id="brCard" hidden>
+            <img class="br-card-thumb" id="brCardThumb" alt="" hidden />
+            <p class="br-card-host" id="brCardHost"></p>
+            <h4 id="brCardTitle"></h4>
+            <p id="brCardText"></p>
+            <p id="brCardReason" hidden></p>
+            <div class="br-blocked-actions">
+              <button type="button" class="br-open-out" id="brCardRead">Đọc chữ trong game</button>
+              <button type="button" class="br-go-home" id="brCardTry" hidden>Thử mở trang trong game</button>
+              <button type="button" class="br-go-home" id="brCardOut">Mở ở tab mới</button>
+              <button type="button" class="br-go-home" id="brCardHome">Về trang bắt đầu</button>
             </div>
           </div>
         </div>
@@ -7133,7 +7246,27 @@
        giải thích + nút mở tab mới (không tốn thời gian tải khung trắng);
        trang chưa rõ -> cứ tải iframe kèm thanh nhắc "trang trắng thì mở tab
        mới", vì bị chặn thì sự kiện load vẫn có thể chạy nên JS không phát
-       hiện chắc chắn được. Tab + lịch sử chỉ giữ trong phiên đang mở. */
+       hiện chắc chắn được. Tab + lịch sử chỉ giữ trong phiên đang mở.
+       BẢN THIẾT KẾ LẠI theo nghiên cứu "tìm gì cũng mở được trong app"
+       16/11/2026 (thư mục research_notes/tim-gi-mo-duoc-trong-app-20261116-0615):
+       kết luận của nghiên cứu là không có mẹo tĩnh miễn phí nào mở được MỌI
+       trang, nên Cảng Lướt dùng 3 lớp: (1) gõ từ khóa -> trang kết quả TỰ VẼ
+       trong game, gọi song song API MediaWiki của Wikipedia vi + en (CORS
+       origin=*, không khóa), DuckDuckGo Instant Answer (chỉ đáp án nhanh,
+       không phải kết quả web đầy đủ), Openverse (ảnh, CORS *) và tin RSS
+       VnExpress / Tuổi Trẻ qua allorigins (lớp dự phòng, hỏng thì bỏ qua);
+       (2) trang kết quả toàn web mở bằng iframe Bing / Cốc Cốc — hai trang
+       kết quả duy nhất được kiểm chứng trực tiếp ngày 16/11/2026 qua
+       testiframe.com là không cấm nhúng (Bing hiện kết quả thật; Cốc Cốc mới
+       xác nhận ở lệnh đầu trang, hình ảnh kết quả chưa xác nhận được);
+       (3) kết quả thuộc trang chặn / chưa rõ -> thẻ thông tin trong game kèm
+       nút "Đọc chữ trong game" qua Jina Reader (r.jina.ai, miễn phí không
+       khóa ~20 lượt/phút/IP; các nguồn mâu thuẫn nhau về việc dùng ẩn danh
+       còn chạy hay đã bị chặn 401, nên lớp này có thể lúc được lúc không —
+       kiểm tra dấu "Markdown Content:" trước khi nhận kết quả) + nút mở tab
+       mới. Các mục lịch sử đặc biệt trong tab: "search:<từ khóa>",
+       "reader:<url>", "card:<json>" — vẫn dùng chung cơ chế quay lại / tiến
+       tới / tải lại như trang thường. */
     var BR_BLOCKED = {
       "google.com": "X-Frame-Options: SAMEORIGIN",
       "facebook.com": "X-Frame-Options: DENY",
@@ -7153,7 +7286,12 @@
       "chatgpt.com": "CSP frame-ancestors 'none'",
       "maps.google.com": "X-Frame-Options: SAMEORIGIN",
       "open.spotify.com": "X-Frame-Options: SAMEORIGIN",
-      "youtube.com": "X-Frame-Options: SAMEORIGIN"
+      "youtube.com": "X-Frame-Options: SAMEORIGIN",
+      "duckduckgo.com": "CSP frame-ancestors 'self' (trang kết quả — kiểm chứng trực tiếp 16/11/2026)",
+      "html.duckduckgo.com": "X-Frame-Options: SAMEORIGIN + CSP frame-ancestors 'self'",
+      "lite.duckduckgo.com": "CSP frame-ancestors 'self' (X-Frame-Options: SAMEORIGIN bị lệnh CSP này ghi đè)",
+      "search.brave.com": "CSP frame-ancestors 'self' (trang kết quả — kiểm chứng trực tiếp 16/11/2026)",
+      "ecosia.org": "X-Frame-Options: SAMEORIGIN (trang kết quả — kiểm chứng trực tiếp 16/11/2026)"
     };
     /* Cách nhúng chính thức cho TỪNG MÓN LẺ của các trang chặn cả trang —
        hiện kèm trên thẻ chặn để người chơi biết còn đường nào xem trong game */
@@ -7166,14 +7304,35 @@
       "github.com": "Không nhúng được trang nào của GitHub; chỉ hiện được đoạn code Gist bằng thẻ script riêng của Gist.",
       "reddit.com": "Nhúng được 1 bài qua mục Chia sẻ → Nhúng trong bài viết đó (hoặc dán link bài vào Hộp nhúng ở trang bắt đầu).",
       "netflix.com": "Netflix không có bất kỳ cách nhúng chính thức nào — không nhúng được dù chỉ 1 phim.",
+      "duckduckgo.com": "Trang kết quả không nhúng được ở bất kỳ bản nào (hãng ghi rõ trong trang đối tác) — nhưng đáp án nhanh của DuckDuckGo vẫn hiện ngay trong trang kết quả tìm kiếm của Cảng Lướt.",
+      "html.duckduckgo.com": "Trang kết quả không nhúng được — nhưng đáp án nhanh của DuckDuckGo vẫn hiện ngay trong trang kết quả tìm kiếm của Cảng Lướt.",
+      "lite.duckduckgo.com": "Trang kết quả không nhúng được — nhưng đáp án nhanh của DuckDuckGo vẫn hiện ngay trong trang kết quả tìm kiếm của Cảng Lướt.",
+      "search.brave.com": "Trang kết quả Brave chặn nhúng; API tìm kiếm của Brave cần giấu khóa trên máy chủ riêng nên game tĩnh này không dùng.",
+      "ecosia.org": "Ecosia không có API tìm kiếm công khai và trang kết quả chặn nhúng.",
       "youtube.com": "Trang xem bị chặn, nhưng bản nhúng youtube.com/embed/{mã video} thì mở được — dán link video vào Hộp nhúng ở trang bắt đầu."
     };
     function brClassify(url) {
+      /* Các mục lịch sử đặc biệt của bản thiết kế lại: trang kết quả tự vẽ,
+         chế độ đọc chữ, thẻ trang — không phải URL thật nên xét trước */
+      if (typeof url === "string") {
+        if (url === "home") return { mode: "home" };
+        if (url.indexOf("search:") === 0) return { mode: "search" };
+        if (url.indexOf("reader:") === 0) return { mode: "reader" };
+        if (url.indexOf("card:") === 0) {
+          try { var pl0 = JSON.parse(decodeURIComponent(url.slice(5))); return { mode: "card", blocked: !!pl0.b }; }
+          catch (e) { return { mode: "card" }; }
+        }
+      }
       var u; try { u = new URL(url); } catch (e) { return { mode: "unknown" }; }
       var host = u.hostname.replace(/^www\./, "").toLowerCase();
       var path = u.pathname || "/";
       /* Các đầu nhúng chính thức thì luôn cho mở trong game */
       if (host === "youtube.com" && path.indexOf("/embed/") === 0) return { mode: "ok" };
+      /* Trang kết quả Bing + Cốc Cốc: kiểm chứng trực tiếp 16/11/2026 là
+         không gửi lệnh cấm nhúng (Bing hiện kết quả thật trong khung; Cốc
+         Cốc mới xác nhận ở lệnh đầu trang) */
+      if (host === "bing.com" && path.indexOf("/search") === 0) return { mode: "ok" };
+      if (host === "coccoc.com" && path.indexOf("/search") === 0) return { mode: "ok" };
       if (host === "youtube-nocookie.com") return { mode: "ok" };
       if (host === "google.com" && path.indexOf("/maps/embed") === 0) return { mode: "ok" };
       if (host === "player.vimeo.com") return { mode: "ok" };
@@ -7190,6 +7349,9 @@
     function brCur() { return brTabs[brActive] || null; }
     function brTitleFor(url) {
       if (!url || url === "home") return "Trang bắt đầu";
+      if (url.indexOf("search:") === 0) { try { return "Tìm: " + decodeURIComponent(url.slice(7)); } catch (e) { return "Kết quả tìm kiếm"; } }
+      if (url.indexOf("reader:") === 0) { try { return "Đọc: " + new URL(decodeURIComponent(url.slice(7))).hostname.replace(/^www\./, ""); } catch (e) { return "Đọc chữ"; } }
+      if (url.indexOf("card:") === 0) { try { var pl1 = JSON.parse(decodeURIComponent(url.slice(5))); return pl1.t || brTitleFor(pl1.u); } catch (e) { return "Thẻ trang"; } }
       try { return new URL(url).hostname.replace(/^www\./, ""); } catch (e) { return "Tab mới"; }
     }
     function brNewTab(url, title) {
@@ -7206,7 +7368,7 @@
         var b = document.createElement("button");
         b.type = "button"; b.className = "br-tab" + (i === brActive ? " active" : "");
         b.setAttribute("role", "tab");
-        var dot = document.createElement("span"); dot.className = "br-tab-dot" + (cls.mode === "blocked" ? " blocked" : "");
+        var dot = document.createElement("span"); dot.className = "br-tab-dot" + ((cls.mode === "blocked" || (cls.mode === "card" && cls.blocked)) ? " blocked" : "");
         var tt = document.createElement("span"); tt.className = "br-tab-title"; tt.textContent = t.title || brTitleFor(url);
         var x = document.createElement("span"); x.className = "br-tab-x"; x.textContent = "✕"; x.title = "Đóng tab";
         x.addEventListener("click", function (ev) { ev.stopPropagation(); brCloseTab(i); });
@@ -7231,19 +7393,78 @@
       var t = brCur(); if (!t) return;
       var url = t.hist[t.hi];
       var home = $("brHome"), frame = $("brFrame"), blocked = $("brBlocked");
+      var results = $("brResults"), reader = $("brReader"), card = $("brCard");
       var addr = $("brAddr"), chip = $("brChip"), helper = $("brHelper");
       $("brBack").disabled = t.hi <= 0;
       $("brFwd").disabled = t.hi >= t.hist.length - 1;
       if (url === "home") {
         home.style.display = ""; frame.hidden = true; blocked.hidden = true;
+        results.hidden = true; reader.hidden = true; card.hidden = true;
         if (frame.getAttribute("src")) frame.removeAttribute("src");
         addr.value = ""; chip.hidden = true; helper.hidden = true;
+        return;
+      }
+      /* --- Ba chế độ đặc biệt của bản thiết kế lại --- */
+      if (url.indexOf("search:") === 0) {
+        home.style.display = "none"; frame.hidden = true; blocked.hidden = true;
+        reader.hidden = true; card.hidden = true; results.hidden = false;
+        if (frame.getAttribute("src")) frame.removeAttribute("src");
+        var sq = ""; try { sq = decodeURIComponent(url.slice(7)); } catch (e) {}
+        addr.value = sq;
+        chip.hidden = false; chip.textContent = "Kết quả trong game"; chip.className = "br-chip";
+        helper.hidden = true;
+        brRunSearch(url, sq);
+        return;
+      }
+      if (url.indexOf("reader:") === 0) {
+        home.style.display = "none"; frame.hidden = true; blocked.hidden = true;
+        results.hidden = true; card.hidden = true; reader.hidden = false;
+        if (frame.getAttribute("src")) frame.removeAttribute("src");
+        var rt = ""; try { rt = decodeURIComponent(url.slice(7)); } catch (e) {}
+        addr.value = rt;
+        chip.hidden = false; chip.textContent = "Đọc chữ trong game"; chip.className = "br-chip";
+        helper.hidden = true;
+        brRunReader(url, rt);
+        return;
+      }
+      if (url.indexOf("card:") === 0) {
+        home.style.display = "none"; frame.hidden = true; blocked.hidden = true;
+        results.hidden = true; reader.hidden = true; card.hidden = false;
+        if (frame.getAttribute("src")) frame.removeAttribute("src");
+        var pl = null; try { pl = JSON.parse(decodeURIComponent(url.slice(5))); } catch (e) {}
+        if (!pl || !pl.u) { $("brCardTitle").textContent = "Thẻ trang này đã hỏng"; $("brCardText").textContent = "Bấm Về trang bắt đầu để tra cứu lại nhé."; brCardCur = null; addr.value = ""; chip.hidden = true; helper.hidden = true; return; }
+        brCardCur = pl;
+        addr.value = pl.u;
+        var chost = brTitleFor(pl.u);
+        chip.hidden = false;
+        if (pl.b) { chip.textContent = "Chặn nhúng"; chip.className = "br-chip blocked"; }
+        else { chip.textContent = "Thẻ trang"; chip.className = "br-chip unknown"; }
+        helper.hidden = true;
+        $("brCardHost").textContent = chost;
+        $("brCardTitle").textContent = pl.t || chost;
+        $("brCardText").textContent = pl.s || "";
+        var th = $("brCardThumb");
+        if (pl.i) { th.src = pl.i; th.hidden = false; } else { th.hidden = true; th.removeAttribute("src"); }
+        var rsn = $("brCardReason");
+        rsn.innerHTML = "";
+        if (pl.b && BR_BLOCKED[chost]) {
+          rsn.hidden = false;
+          var rs1 = document.createElement("span"); rs1.textContent = "Trang này chặn mở trong khung bằng lệnh ";
+          var rcd = document.createElement("code"); rcd.textContent = BR_BLOCKED[chost];
+          var rs2 = document.createElement("span"); rs2.textContent = " — nên Cảng Lướt không hiện nguyên trang tại đây được. Bạn vẫn đọc được phần chữ của trang ngay trong game, hoặc mở trang thật ở tab mới.";
+          rsn.append(rs1, rcd, rs2);
+        } else if (!pl.b) {
+          rsn.hidden = false;
+          rsn.textContent = "Cảng Lướt chưa biết chắc trang này có cho mở trong khung hay không. Bạn có thể thử mở nguyên trang trong game (khung trắng thì quay lại đây), đọc phần chữ ngay trong game, hoặc mở tab mới.";
+        } else rsn.hidden = true;
+        $("brCardTry").hidden = !!pl.b;
         return;
       }
       addr.value = url;
       var cls = brClassify(url);
       if (cls.mode === "blocked") {
         home.style.display = "none"; frame.hidden = true; blocked.hidden = false;
+        results.hidden = true; reader.hidden = true; card.hidden = true;
         if (frame.getAttribute("src")) frame.removeAttribute("src");
         chip.hidden = false; chip.textContent = "Chặn nhúng"; chip.className = "br-chip blocked";
         helper.hidden = true;
@@ -7269,6 +7490,7 @@
         return;
       }
       home.style.display = "none"; blocked.hidden = true; frame.hidden = false;
+      results.hidden = true; reader.hidden = true; card.hidden = true;
       if (frame.getAttribute("src") !== url) frame.src = url;
       chip.hidden = false;
       if (cls.mode === "ok") { chip.textContent = "Mở trong game"; chip.className = "br-chip"; }
@@ -7290,7 +7512,9 @@
       if (!raw) return null;
       if (/^https?:\/\//i.test(raw)) return raw;
       if (/^[\w-]+(\.[\w-]+)+(:\d+)?([/?#]\S*)?$/.test(raw) && raw.indexOf(" ") < 0) return "https://" + raw;
-      return "https://vi.wikipedia.org/w/index.php?search=" + encodeURIComponent(raw);
+      /* Từ khóa -> trang kết quả TỰ VẼ trong game (bản thiết kế lại), không
+         còn đẩy thẳng sang trang tìm kiếm của Wikipedia nữa */
+      return "search:" + encodeURIComponent(raw);
     }
     function brToEmbed(raw) {
       raw = (raw || "").trim();
@@ -7309,6 +7533,258 @@
       if (rd) return "https://www.reddit.com/" + rd[1] + "?ref_source=embed&ref=share&embed=true";
       return null;
     }
+    /* ================= LỚP 1 + 3: KẾT QUẢ TỰ VẼ & ĐỌC CHỮ =================
+       Mọi fetch đều bọc catch trả null/rỗng: mạng hỏng hay nguồn chết thì
+       phần đó lặng lẽ biến mất, không bao giờ làm sập trang kết quả. */
+    var brSearchCache = {}, brReaderCache = {}, brLastSearch = null, brLastQuery = "", brCardCur = null;
+    /* Thoát cả nháy đơn lẫn nháy kép: mọi giá trị lấy từ trang/API bên ngoài
+       đều được nhét vào thuộc tính bọc bằng nháy đơn trong các mẫu HTML tự vẽ
+       (kết quả tìm kiếm, bản đọc chữ) — thiếu nháy đơn là một trang độc có
+       thể chèn thuộc tính sự kiện (onerror…) thoát ra ngoài thuộc tính */
+    function brEsc(s) { return String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;"); }
+    function brFetchJson(url) {
+      return fetch(url).then(function (r) { if (!r.ok) throw new Error("http " + r.status); return r.json(); }).catch(function () { return null; });
+    }
+    function brWikiList(j) {
+      if (!j || !j.query || !j.query.pages) return [];
+      return Object.keys(j.query.pages).map(function (k) { return j.query.pages[k]; })
+        .sort(function (a, b) { return (a.index || 0) - (b.index || 0); })
+        .map(function (p) { return { title: p.title || "", text: p.extract || "", url: p.fullurl || "", thumb: (p.thumbnail && p.thumbnail.source) || "" }; })
+        .filter(function (p) { return !!p.url; });
+    }
+    function brNorm(s) {
+      return (s || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/đ/g, "d");
+    }
+    function brRunSearch(entry, q) {
+      brLastQuery = q;
+      var wrap = $("brResWrap"); if (!wrap) return;
+      var cached = brSearchCache[entry];
+      if (cached && cached.done) { brPaintSearch(q, cached); return; }
+      if (cached && cached.loading) return;
+      brSearchCache[entry] = { loading: true };
+      wrap.innerHTML = "";
+      var h = document.createElement("h4"); h.textContent = "Kết quả cho “" + q + "”";
+      var st = document.createElement("p"); st.className = "br-res-status";
+      st.textContent = "Đang hỏi cùng lúc Wikipedia tiếng Việt + tiếng Anh, đáp án nhanh DuckDuckGo, ảnh Openverse và tin RSS VnExpress / Tuổi Trẻ…";
+      wrap.append(h, st);
+      var enc = encodeURIComponent(q);
+      function wikiApi(lang, limit) {
+        return "https://" + lang + ".wikipedia.org/w/api.php?action=query&generator=search&gsrsearch=" + enc + "&gsrnamespace=0&gsrlimit=" + limit + "&prop=extracts%7Cpageimages%7Cinfo&inprop=url&exintro&explaintext&exsentences=2&exlimit=max&piprop=thumbnail&pithumbsize=240&format=json&origin=*";
+      }
+      Promise.all([
+        brFetchJson(wikiApi("vi", 8)),
+        brFetchJson(wikiApi("en", 5)),
+        brFetchJson("https://api.duckduckgo.com/?q=" + enc + "&format=json&no_html=1&skip_disambig=1"),
+        brFetchJson("https://api.openverse.org/v1/images/?q=" + enc + "&page_size=10")
+      ]).then(function (rs) {
+        var topics = [];
+        var ddg = rs[2];
+        if (ddg && ddg.RelatedTopics) {
+          ddg.RelatedTopics.forEach(function (tp) {
+            if (tp && tp.FirstURL && tp.Text) topics.push({ text: tp.Text, url: tp.FirstURL });
+            else if (tp && tp.Topics) tp.Topics.forEach(function (t2) { if (t2 && t2.FirstURL && t2.Text) topics.push({ text: t2.Text, url: t2.FirstURL }); });
+          });
+        }
+        var data = { done: true, wikiVi: brWikiList(rs[0]), wikiEn: brWikiList(rs[1]), ddg: ddg, topics: topics.slice(0, 8), imgs: (rs[3] && rs[3].results) || [], news: null };
+        brSearchCache[entry] = data;
+        var t = brCur();
+        if (t && t.hist[t.hi] === entry) brPaintSearch(q, data);
+        brRunNews(entry, q);
+      });
+    }
+    /* Tin tức: RSS không gửi CORS nên đi qua allorigins (lớp dự phòng theo
+       nghiên cứu — hỏng thì bỏ qua, không báo lỗi ầm ĩ) */
+    function brRunNews(entry, q) {
+      var tokens = brNorm(q).split(/\s+/).filter(function (w) { return w.length > 1; });
+      if (!tokens.length) {
+        var d0 = brSearchCache[entry];
+        if (d0 && d0.done) { d0.news = []; var t0 = brCur(); if (t0 && t0.hist[t0.hi] === entry) brPaintSearch(q, d0); }
+        return;
+      }
+      var feeds = ["https://vnexpress.net/rss/tin-moi-nhat.rss", "https://tuoitre.vn/rss/tin-moi-nhat.rss"];
+      Promise.all(feeds.map(function (f) {
+        return fetch("https://api.allorigins.win/raw?url=" + encodeURIComponent(f))
+          .then(function (r) { return r.ok ? r.text() : ""; }).catch(function () { return ""; });
+      })).then(function (texts) {
+        var items = [];
+        texts.forEach(function (tx, fi) {
+          if (!tx || items.length >= 6) return;
+          var doc; try { doc = new DOMParser().parseFromString(tx, "text/xml"); } catch (e) { return; }
+          var nodes = doc.querySelectorAll("item");
+          for (var i = 0; i < nodes.length && items.length < 6; i++) {
+            var it = nodes[i];
+            var gt = function (sel) { var n = it.querySelector(sel); return n ? (n.textContent || "") : ""; };
+            var title = gt("title").trim(), link = gt("link").trim();
+            var desc = gt("description").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
+            if (!title || !link) continue;
+            var hay = brNorm(title + " " + desc);
+            var hit = tokens.every(function (w) { return hay.indexOf(w) >= 0; });
+            if (hit) items.push({ title: title, url: link, text: desc.slice(0, 220), host: fi === 0 ? "VnExpress" : "Tuổi Trẻ" });
+          }
+        });
+        var data = brSearchCache[entry];
+        if (!data || !data.done) return;
+        data.news = items;
+        var t = brCur();
+        if (t && t.hist[t.hi] === entry) brPaintSearch(q, data);
+      });
+    }
+    function brPaintSearch(q, data) {
+      brLastSearch = data; brLastQuery = q;
+      var wrap = $("brResWrap"); if (!wrap) return;
+      var ddg = data.ddg || {};
+      var html = "<h4>Kết quả cho “" + brEsc(q) + "”</h4>";
+      html += "<p class='br-res-status'>Kết quả do Cảng Lướt tự tổng hợp và vẽ ngay trong game — bấm vào từng kết quả để mở tiếp tại đây. Nguồn: Wikipedia, DuckDuckGo, Openverse, RSS báo Việt.</p>";
+      /* Đáp án nhanh: ưu tiên DuckDuckGo, không có thì trích bài Wikipedia đầu tiên */
+      var ansText = ddg.AbstractText || ddg.Answer || ddg.Definition || "";
+      if (ansText) {
+        html += "<div class='br-res-answer'>" + (ddg.Image ? "<img src='" + brEsc(ddg.Image) + "' alt='' loading='lazy'>" : "")
+          + "<div class='br-res-kicker'>ĐÁP ÁN NHANH · DUCKDUCKGO" + (ddg.AbstractSource ? " · NGUỒN " + brEsc(String(ddg.AbstractSource).toUpperCase()) : "") + "</div>"
+          + "<p>" + brEsc(ansText) + "</p>"
+          + (ddg.AbstractURL ? "<button type='button' data-act='abstract'>Mở trang nguồn của đáp án này</button>" : "") + "</div>";
+      } else if (data.wikiVi.length && data.wikiVi[0].text) {
+        var w0 = data.wikiVi[0];
+        html += "<div class='br-res-answer'>" + (w0.thumb ? "<img src='" + brEsc(w0.thumb) + "' alt='' loading='lazy'>" : "")
+          + "<div class='br-res-kicker'>TRÍCH BÀI WIKIPEDIA TIẾNG VIỆT</div>"
+          + "<p><b>" + brEsc(w0.title) + "</b> — " + brEsc(w0.text) + "</p>"
+          + "<button type='button' data-act='wiki' data-src='vi' data-i='0'>Đọc cả bài trong game</button></div>";
+      }
+      /* Lớp 2: toàn web bằng Bing / Cốc Cốc + video trong app Xem video */
+      html += "<div class='br-res-webbar'>"
+        + "<button type='button' data-act='bing'><b>Toàn web bằng Bing</b><span>Mở nguyên trang kết quả Bing trong khung — đã kiểm chứng hiện được ngày 16/11/2026.</span></button>"
+        + "<button type='button' data-act='coccoc'><b>Toàn web bằng Cốc Cốc</b><span>Kết quả chỉnh cho tiếng Việt; đầu trang cho nhúng, hình ảnh kết quả chưa xác nhận trực tiếp được.</span></button>"
+        + "<button type='button' data-act='video'><b>Tìm video “" + brEsc(q) + "”</b><span>Sang app Xem video của game — phát ngay trong game.</span></button>"
+        + "</div>";
+      function itemHtml(act, src, i, title, text, thumb, host) {
+        return "<button type='button' class='br-res-item' data-act='" + act + "'" + (src ? " data-src='" + src + "'" : "") + " data-i='" + i + "'>"
+          + (thumb ? "<img src='" + brEsc(thumb) + "' alt='' loading='lazy'>" : "")
+          + "<span class='br-res-main'><b>" + brEsc(title) + "</b>"
+          + (text ? "<p>" + brEsc(text) + "</p>" : "")
+          + (host ? "<span class='br-res-host'>" + brEsc(host) + "</span>" : "") + "</span></button>";
+      }
+      if (data.wikiVi.length) {
+        html += "<div class='br-res-sec'><h5>TỪ WIKIPEDIA TIẾNG VIỆT — MỞ ĐƯỢC NGAY TRONG GAME</h5>";
+        data.wikiVi.forEach(function (w, i) { html += itemHtml("wiki", "vi", i, w.title, w.text, w.thumb, "vi.wikipedia.org"); });
+        html += "</div>";
+      }
+      if (data.wikiVi.length < 3 && data.wikiEn.length) {
+        html += "<div class='br-res-sec'><h5>WIKIPEDIA (ENGLISH) — BẢN TIẾNG VIỆT CÒN ÍT KẾT QUẢ</h5>";
+        data.wikiEn.forEach(function (w, i) { html += itemHtml("wiki", "en", i, w.title, w.text, w.thumb, "en.wikipedia.org"); });
+        html += "</div>";
+      }
+      if (data.news && data.news.length) {
+        html += "<div class='br-res-sec'><h5>TIN TỨC LIÊN QUAN — RSS MỚI NHẤT</h5>";
+        data.news.forEach(function (n, i) { html += itemHtml("news", "", i, n.title, n.text, "", n.host); });
+        html += "</div>";
+      } else if (data.news === null) {
+        html += "<p class='br-res-status'>Đang lục tin tức trong RSS VnExpress / Tuổi Trẻ…</p>";
+      }
+      if (data.topics && data.topics.length) {
+        html += "<div class='br-res-sec'><h5>LIÊN KẾT LIÊN QUAN — DUCKDUCKGO GỢI Ý</h5>";
+        data.topics.forEach(function (tp, i) { html += itemHtml("topic", "", i, tp.text, "", "", brTitleFor(tp.url)); });
+        html += "</div>";
+      }
+      if (data.imgs && data.imgs.length) {
+        html += "<div class='br-res-sec'><h5>HÌNH ẢNH — OPENVERSE (GIẤY PHÉP MỞ)</h5><div class='br-res-imgs'>";
+        data.imgs.forEach(function (im, i) {
+          html += "<button type='button' data-act='img' data-i='" + i + "'><img src='" + brEsc(im.thumbnail || im.url || "") + "' alt='" + brEsc(im.title || "Hình ảnh") + "' loading='lazy'><span>" + brEsc(im.title || "Hình ảnh") + (im.creator ? " · " + brEsc(im.creator) : "") + "</span></button>";
+        });
+        html += "</div></div>";
+      }
+      if (!data.wikiVi.length && !data.wikiEn.length && !ansText && !(data.topics && data.topics.length) && !(data.imgs && data.imgs.length) && !(data.news && data.news.length)) {
+        html += "<div class='br-res-empty'>Chưa thấy kết quả nào vẽ được ngay trong game cho từ khóa này (có thể do mất mạng, hoặc các nguồn miễn phí chưa có dữ liệu). Thử mở toàn web bằng Bing / Cốc Cốc ở trên, hoặc gõ lại từ khóa khác nhé.</div>";
+      }
+      wrap.innerHTML = html;
+    }
+    /* Mở 1 kết quả: trang cho nhúng -> iframe; trang chặn / chưa rõ -> thẻ
+       trang trong game (đúng luật mở từng kết quả của nghiên cứu) */
+    function brOpenResult(url, meta) {
+      meta = meta || {};
+      var cls = brClassify(url);
+      if (cls.mode === "ok") { brGo(url, meta.title || ""); return; }
+      var payload = { u: url, t: meta.title || "", s: meta.snippet || "", i: meta.thumb || "", b: cls.mode === "blocked" ? 1 : 0 };
+      brGo("card:" + encodeURIComponent(JSON.stringify(payload)), meta.title || brTitleFor(url));
+    }
+    /* Lớp 3: đọc chữ qua Jina Reader — chỉ nhận khi thấy dấu
+       "Markdown Content:" hoặc đoạn chữ dài không phải JSON lỗi, vì Jina có
+       kiểu từ chối mà HTTP vẫn 200 kèm phong bì JSON báo bị chặn */
+    function brRunReader(entry, target) {
+      var wrap = $("brReaderWrap"); if (!wrap) return;
+      var cached = brReaderCache[entry];
+      if (cached && cached.done) { brPaintReader(target, cached); return; }
+      if (cached && cached.loading) return;
+      brReaderCache[entry] = { loading: true };
+      wrap.innerHTML = "<div class='br-reader-head'><h4>Đang lấy chữ của trang…</h4><p>" + brEsc(target) + "</p></div>"
+        + "<p style='color:var(--ink-faint);font-size:14px;line-height:1.6'>Cảng Lướt đang nhờ dịch vụ đọc trang Jina Reader (r.jina.ai) tải trang về và lọc lấy phần chữ — thường mất vài giây, trang nặng có thể lâu hơn.</p>";
+      fetch("https://r.jina.ai/" + target)
+        .then(function (r) { return r.text().then(function (tx) { return { ok: r.ok, tx: tx }; }); })
+        .catch(function () { return { ok: false, tx: "" }; })
+        .then(function (res) {
+          var data = { done: true, ok: false, title: "", body: "" };
+          var tx = res.tx || "";
+          var marker = "Markdown Content:";
+          var idx = tx.indexOf(marker);
+          var head = idx >= 0 ? tx.slice(0, idx) : "";
+          var body = idx >= 0 ? tx.slice(idx + marker.length) : tx;
+          var tm = head.match(/Title:\s*(.+)/);
+          if (tm) data.title = tm[1].trim();
+          var trimmed = tx.trim();
+          var looksJson = trimmed.charAt(0) === "{" || trimmed.charAt(0) === "[";
+          if (res.ok && body.trim().length > 200 && tx.indexOf("Anonymous access to domain") < 0 && !(looksJson && idx < 0)) {
+            data.ok = true; data.body = body;
+          }
+          brReaderCache[entry] = data;
+          var t = brCur();
+          if (t && t.hist[t.hi] === entry) brPaintReader(target, data);
+        });
+    }
+    function brPaintReader(target, data) {
+      var wrap = $("brReaderWrap"); if (!wrap) return;
+      var host = brTitleFor(target);
+      if (!data.ok) {
+        wrap.innerHTML = "<div class='br-reader-head'><h4>Chưa đọc được trang này trong game</h4><p>" + brEsc(target) + "</p></div>"
+          + "<div class='br-reader-body'><p>Dịch vụ đọc chữ Jina Reader không lấy được nội dung trang này. Có vài lý do thường gặp: trang bắt đăng nhập, bắt trả phí hoặc chống bot (Jina nói rõ là họ không vượt các lớp bảo vệ đó); hoặc đường dùng ẩn danh của Jina đang bị chặn — các nguồn hiện nói khác nhau về việc này nên tính năng đọc chữ có thể lúc được lúc không.</p></div>"
+          + "<div class='br-blocked-actions' style='justify-content:flex-start'>"
+          + "<button type='button' class='br-open-out' data-ract='out'>Mở trang thật ở tab mới</button>"
+          + "<button type='button' class='br-go-home' data-ract='home'>Về trang bắt đầu</button></div>";
+        return;
+      }
+      wrap.innerHTML = "<div class='br-reader-head'><h4>" + brEsc(data.title || host) + "</h4>"
+        + "<p>Bản chữ lọc từ " + brEsc(target) + " — bấm liên kết trong bài để đi tiếp ngay trong Cảng Lướt.</p></div>"
+        + "<div class='br-reader-body'>" + brMdHtml(data.body) + "</div>"
+        + "<p class='br-reader-note'>Bản chữ do Jina Reader (r.jina.ai) lọc từ trang gốc: mất bố cục, phần lớn hình ảnh và mọi tính năng tương tác; trang bắt đăng nhập / trả phí / chống bot thì không đọc được. Nội dung thuộc về trang gốc — <a href='#' data-br-link='" + brEsc(target) + "'>mở trang gốc trong Cảng Lướt</a> hoặc bấm nút “Mở tab mới” trên thanh công cụ để xem bản đầy đủ.</p>";
+    }
+    /* Bộ dịch Markdown tối giản cho bản chữ của Jina: tiêu đề, đoạn, danh
+       sách, ảnh đứng riêng dòng, liên kết (đi tiếp trong game qua
+       data-br-link), chữ đậm và mã — đủ để đọc bài, không tham lam */
+    function brMdHtml(md) {
+      var lines = String(md || "").slice(0, 80000).split(/\n/);
+      var out = [], para = [], list = null;
+      function inline(s) {
+        s = brEsc(s);
+        s = s.replace(/!\[([^\]]*)\]\((https?:[^)\s]+)\)/g, function (m, alt) { return alt ? "[" + alt + "]" : ""; });
+        s = s.replace(/\[([^\]]+)\]\((https?:[^)\s]+)\)/g, function (m, t, u) { return "<a href='#' data-br-link='" + u + "'>" + t + "</a>"; });
+        s = s.replace(/\*\*([^*]+)\*\*/g, "<b>$1</b>");
+        s = s.replace(/`([^`]+)`/g, "<code>$1</code>");
+        return s;
+      }
+      function flushPara() { if (para.length) { out.push("<p>" + para.join(" ") + "</p>"); para = []; } }
+      function flushList() { if (list) { out.push("<ul>" + list.map(function (x) { return "<li>" + x + "</li>"; }).join("") + "</ul>"); list = null; } }
+      lines.forEach(function (raw) {
+        var line = raw.replace(/\s+$/, "");
+        var imgM = line.match(/^\s*!\[([^\]]*)\]\((https?:[^)\s]+)\)\s*$/);
+        if (imgM) { flushPara(); flushList(); out.push("<img loading='lazy' src='" + brEsc(imgM[2]) + "' alt='" + brEsc(imgM[1]) + "'>"); return; }
+        var hM = line.match(/^(#{1,4})\s+(.*)$/);
+        if (hM) { flushPara(); flushList(); out.push((hM[1].length <= 2 ? "<h3>" : "<h4>") + inline(hM[2]) + (hM[1].length <= 2 ? "</h3>" : "</h4>")); return; }
+        var liM = line.match(/^\s*(?:[-*•]|\d+[.)])\s+(.*)$/);
+        if (liM) { flushPara(); if (!list) list = []; list.push(inline(liM[1])); return; }
+        if (!line.trim()) { flushPara(); flushList(); return; }
+        flushList();
+        para.push(inline(line.replace(/^>\s?/, "")));
+      });
+      flushPara(); flushList();
+      return out.join("");
+    }
     function brInit() {
       if (brInited) return; brInited = true;
       brNewTab("home");
@@ -7323,24 +7799,84 @@
         var t = brCur(); if (!t) return;
         var url = t.hist[t.hi];
         if (url === "home") { brRender(); return; }
+        /* Chế độ đặc biệt: tải lại = xóa bộ nhớ đệm rồi chạy lại từ đầu */
+        if (url.indexOf("search:") === 0 || url.indexOf("reader:") === 0) {
+          delete brSearchCache[url]; delete brReaderCache[url]; brRender(); return;
+        }
+        if (url.indexOf("card:") === 0) { brRender(); return; }
         var f = $("brFrame"); var cur = f.getAttribute("src");
         if (cur) { f.removeAttribute("src"); setTimeout(function () { f.src = cur; }, 30); }
       });
       $("brHomeBtn").addEventListener("click", function () { brGo("home", "Trang bắt đầu"); });
+      /* Địa chỉ thật tương ứng của mục lịch sử hiện tại — dùng cho nút mở
+         tab mới: trang kết quả -> Bing ở tab mới; đọc chữ / thẻ -> trang gốc */
+      function brOutUrl(url) {
+        if (!url || url === "home") return null;
+        if (url.indexOf("search:") === 0) { try { return "https://www.bing.com/search?q=" + encodeURIComponent(decodeURIComponent(url.slice(7))); } catch (e) { return null; } }
+        if (url.indexOf("reader:") === 0) { try { return decodeURIComponent(url.slice(7)); } catch (e) { return null; } }
+        if (url.indexOf("card:") === 0) { try { return JSON.parse(decodeURIComponent(url.slice(5))).u || null; } catch (e) { return null; } }
+        return url;
+      }
       function openOutCurrent() {
         var t = brCur(); if (!t) return;
-        var url = t.hist[t.hi];
-        if (url && url !== "home") window.open(url, "_blank", "noopener");
+        var out = brOutUrl(t.hist[t.hi]);
+        if (out) window.open(out, "_blank", "noopener");
       }
       $("brOpenOut").addEventListener("click", openOutCurrent);
       $("brHelperOut").addEventListener("click", openOutCurrent);
       $("brBlockedOut").addEventListener("click", openOutCurrent);
       $("brBlockedHome").addEventListener("click", function () { brGo("home", "Trang bắt đầu"); });
+      $("brBlockedRead").addEventListener("click", function () {
+        var t = brCur(); if (!t) return;
+        var url = t.hist[t.hi];
+        if (url && url !== "home") brGo("reader:" + encodeURIComponent(url), "Đọc: " + brTitleFor(url));
+      });
+      /* Thẻ trang: đọc chữ / thử mở nguyên trang / mở tab mới / về nhà */
+      $("brCardRead").addEventListener("click", function () { if (brCardCur) brGo("reader:" + encodeURIComponent(brCardCur.u), "Đọc: " + brTitleFor(brCardCur.u)); });
+      $("brCardTry").addEventListener("click", function () { if (brCardCur) brGo(brCardCur.u, brCardCur.t || ""); });
+      $("brCardOut").addEventListener("click", function () { if (brCardCur) window.open(brCardCur.u, "_blank", "noopener"); });
+      $("brCardHome").addEventListener("click", function () { brGo("home", "Trang bắt đầu"); });
+      /* Trang kết quả tự vẽ: mọi nút đều mang data-act, tra dữ liệu ở
+         brLastSearch theo chỉ số — không nhét nội dung vào thuộc tính HTML */
+      $("brResults").addEventListener("click", function (e) {
+        var el = e.target.closest ? e.target.closest("[data-act]") : null;
+        if (!el || !brLastSearch) return;
+        var act = el.getAttribute("data-act"), i = parseInt(el.getAttribute("data-i") || "0", 10), d = brLastSearch;
+        if (act === "bing") brGo("https://www.bing.com/search?q=" + encodeURIComponent(brLastQuery), "Bing: " + brLastQuery);
+        else if (act === "coccoc") brGo("https://coccoc.com/search?query=" + encodeURIComponent(brLastQuery), "Cốc Cốc: " + brLastQuery);
+        else if (act === "video") {
+          openYoutube();
+          var inp = $("ytQuery"); if (inp) inp.value = brLastQuery;
+          ytDoSearch(brLastQuery);
+        }
+        else if (act === "wiki") { var w = (el.getAttribute("data-src") === "en" ? d.wikiEn : d.wikiVi)[i]; if (w) brGo(w.url, w.title); }
+        else if (act === "abstract") { if (d.ddg && d.ddg.AbstractURL) brOpenResult(d.ddg.AbstractURL, { title: d.ddg.Heading || "", snippet: d.ddg.AbstractText || "" }); }
+        else if (act === "topic") { var tp = (d.topics || [])[i]; if (tp) brOpenResult(tp.url, { title: tp.text, snippet: tp.text }); }
+        else if (act === "img") { var im = (d.imgs || [])[i]; if (im) brOpenResult(im.foreign_landing_url || im.url, { title: im.title || "Hình ảnh", snippet: "Ảnh từ Openverse" + (im.creator ? " — tác giả " + im.creator : "") + (im.license ? " · giấy phép " + String(im.license).toUpperCase() : ""), thumb: im.thumbnail || im.url }); }
+        else if (act === "news") { var n = (d.news || [])[i]; if (n) brOpenResult(n.url, { title: n.title, snippet: n.text }); }
+      });
+      /* Chế độ đọc chữ: liên kết trong bài đi tiếp ngay trong Cảng Lướt;
+         hai nút ở màn hình lỗi đọc (data-ract) xử lý tại đây luôn */
+      $("brReader").addEventListener("click", function (e) {
+        var t = brCur(); if (!t) return;
+        var cur = t.hist[t.hi];
+        var rb = e.target.closest ? e.target.closest("[data-ract]") : null;
+        if (rb) {
+          if (rb.getAttribute("data-ract") === "out") { var o = brOutUrl(cur); if (o) window.open(o, "_blank", "noopener"); }
+          else brGo("home", "Trang bắt đầu");
+          return;
+        }
+        var a = e.target.closest ? e.target.closest("[data-br-link]") : null;
+        if (!a) return;
+        e.preventDefault();
+        var u = a.getAttribute("data-br-link");
+        if (u) brOpenResult(u, { title: (a.textContent || "").trim().slice(0, 120) });
+      });
       $("brSearchForm").addEventListener("submit", function (e) {
         e.preventDefault();
         var q = $("brSearchInput").value.trim();
         if (!q) return;
-        brGo("https://vi.wikipedia.org/w/index.php?search=" + encodeURIComponent(q), "Tra cứu: " + q);
+        brGo("search:" + encodeURIComponent(q), "Tìm: " + q);
       });
       $("brGoogleSearch").addEventListener("click", function () {
         var q = $("brSearchInput").value.trim();
