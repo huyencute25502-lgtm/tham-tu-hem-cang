@@ -11019,24 +11019,26 @@
     var ytVolLastPush = 0, ytVolTrailTimer = null;
 
     function ytSendVolumeCmds(v) {
-      /* Mức 0: gọi mute() TRƯỚC, setVolume(0) SAU, mỗi lệnh một try
-         riêng — bản cũ gộp cả hai trong một try và gọi setVolume trước:
-         chỉ cần setVolume vấp lỗi (trình phát đang đệm / đổi trạng thái)
-         là mute() bị bỏ qua luôn trong nhịp đó. Tắt tiếng là lệnh chính
-         ở mức 0, chỉnh mức chỉ là phụ trợ. */
+      /* Thứ tự gửi: CHỈNH MỨC TRƯỚC, TẮT/BẬT TIẾNG SAU CÙNG, mỗi lệnh
+         một try riêng — trình phát YouTube thật xóa cờ tắt tiếng khi
+         setVolume chạy SAU mute() (bản v61 gửi mute trước rồi
+         setVolume(0): video đã im nhưng nút loa không chuyển sang đã
+         tắt tiếng khi kéo 53%→0%, đúng lỗi kiểm tra 18:08 ngày 16/11).
+         Gửi setVolume trước rồi mute/unMute sau thì mức 0 tắt tiếng
+         thật và mức >0 bật tiếng thật, cả hai đường gửi. */
       if (v === 0) {
-        try { ytPlayer.mute(); } catch (e) {}
         try { ytPlayer.setVolume(0); } catch (e) {}
+        try { ytPlayer.mute(); } catch (e) {}
       } else {
-        try { ytPlayer.unMute(); } catch (e) {}
         try { ytPlayer.setVolume(v); } catch (e) {}
+        try { ytPlayer.unMute(); } catch (e) {}
       }
       try {
         var fr = ytPlayer.getIframe && ytPlayer.getIframe();
         if (fr && fr.contentWindow) {
           var cmds = v === 0
-            ? [["mute", []], ["setVolume", [0]]]
-            : [["unMute", []], ["setVolume", [v]]];
+            ? [["setVolume", [0]], ["mute", []]]
+            : [["setVolume", [v]], ["unMute", []]];
           for (var i = 0; i < cmds.length; i++) {
             var msg = JSON.stringify({ event: "command", func: cmds[i][0], args: cmds[i][1] });
             fr.contentWindow.postMessage(msg, "https://www.youtube-nocookie.com");
@@ -13629,17 +13631,27 @@
          (đây là thông báo toàn server ở cấp desktop, không phải banner
          trong app chat). Bấm vào toast: mở app Tin nhắn + panel liệt kê
          tất cả thông báo chung và đánh dấu đã xem. Bấm ✕: tắt sớm, cũng
-         đánh dấu đã xem. Mỗi thông báo chỉ hiện 1 lần: renderBroadcastUI
-         đánh dấu đã xem ngay khi xếp toast nên tải lại trang không hiện
-         lại. Nhiều tin mới cùng lúc thì xếp hàng, hiện lần lượt. */
+         đánh dấu đã xem. Mỗi thông báo chỉ hiện 1 lần trong phiên:
+         renderBroadcastUI nhớ mốc nền các thông báo đã có ở lần nạp đầu
+         (bcastSessionSeen) và danh sách đã hiện toast (bcastToasted) —
+         KHÔNG dùng mốc "đã xem" chung trong localStorage nữa, vì mốc đó
+         dùng chung (mở panel Thông báo / bấm toast / tải lại đều đẩy lên
+         trước) nên tin mới đến lúc app đang mở bị tính là không mới và
+         không hiện toast (đúng lỗi kiểm tra 18:06 ngày 16/11). Nhiều tin
+         mới cùng lúc thì xếp hàng, hiện lần lượt; toast bị kẹt quá lâu
+         thì tự gỡ để hàng đợi không nghẽn vĩnh viễn. */
       var BCAST_TOAST_MS = 18000;
       var bcastToastTimer = null;
       var bcastToastQueue = [];
       var bcastToastCurrentId = "";
       var bcastToastWired = false;
+      var bcastToastShownAt = 0;   /* lúc toast hiện tại bắt đầu hiện (ms) — để tự gỡ kẹt */
+      var bcastSessionSeen = null; /* {id:true} các thông báo đã có ở lần nạp đầu trong phiên */
+      var bcastToasted = {};       /* {id:true} các thông báo đã hiện toast trong phiên */
       function hideBcastToast() {
         if (bcastToastTimer) { clearTimeout(bcastToastTimer); bcastToastTimer = null; }
         bcastToastCurrentId = "";
+        bcastToastShownAt = 0;
         var el = $("bcastToast");
         if (el) {
           el.classList.remove("show"); el.setAttribute("aria-hidden", "true");
@@ -13652,8 +13664,17 @@
         var el = $("bcastToast");
         if (!el || !bc) return;
         wireBcastToast();
+        /* Tự gỡ kẹt: toast hiện tại quá lâu mà không tắt (đồng hồ hẹn
+           giờ bị mất, ví dụ trang tải lại giữa chừng) thì hàng đợi
+           nghẽn vĩnh viễn — thấy quá 2 lần thời gian toast thì gỡ. */
+        if (bcastToastCurrentId && bcastToastShownAt && (Date.now() - bcastToastShownAt) > 2 * BCAST_TOAST_MS) {
+          bcastToastCurrentId = "";
+          bcastToastShownAt = 0;
+          if (bcastToastTimer) { clearTimeout(bcastToastTimer); bcastToastTimer = null; }
+        }
         if (bcastToastCurrentId) { bcastToastQueue.push(bc); return; }
         bcastToastCurrentId = bc.id;
+        bcastToastShownAt = Date.now();
         var body = $("bcastToastBody");
         if (body) body.textContent = (bc.title ? bc.title + " — " : "") + (bc.text || "");
         var tm = $("bcastToastTime");
@@ -13733,14 +13754,32 @@
             }
           } catch (e) { /* chuông không sẵn sàng: snapshot sau sẽ bù lại nhờ chống trùng theo id */ }
         }
-        if (!fresh.length) return;
-        /* Toast cấp desktop: hiện cho mỗi thông báo mới DÙ app Tin nhắn
-           đang mở hay chưa (xếp từ cũ lên mới để tin mới nhất hiện sau
-           cùng), mỗi tin ~18 giây. */
-        for (var k = fresh.length - 1; k >= 0; k--) showBcastToast(fresh[k]);
-        /* Cập nhật id đã xem lên tin mới nhất ngay: snapshot sau không
-           hiện lại toast. (Tin chuông không phụ thuộc vào mốc này nữa —
-           nó chống trùng theo id từng thông báo.) */
+        /* Toast cấp desktop: hiện cho mỗi thông báo MỚI TRONG PHIÊN —
+           id chưa có ở mốc nền lần nạp đầu và chưa hiện toast trong
+           phiên. KHÔNG dùng mốc "đã xem" chung trong localStorage nữa
+           (xem ghi chú ở đầu mục toast): mốc đó dùng chung nên tin mới
+           đến lúc app đang mở bị tính là không mới và không hiện toast.
+           Xếp từ cũ lên mới để tin mới nhất hiện sau cùng, mỗi tin
+           ~18 giây, dù app Tin nhắn đang mở hay chưa. */
+        if (bcastSessionSeen === null) {
+          /* Lần nạp đầu trong phiên: ghi mốc nền, không toast cho tin đã có sẵn. */
+          bcastSessionSeen = {};
+          for (var bi = 0; bi < broadcasts.length; bi++) bcastSessionSeen[broadcasts[bi].id] = true;
+        } else {
+          var newOnes = [];
+          for (var bj = 0; bj < broadcasts.length; bj++) {
+            var bcj = broadcasts[bj];
+            if (!bcastSessionSeen[bcj.id] && !bcastToasted[bcj.id]) newOnes.push(bcj);
+          }
+          for (var bk = newOnes.length - 1; bk >= 0; bk--) {
+            bcastToasted[newOnes[bk].id] = true;
+            showBcastToast(newOnes[bk]);
+          }
+          for (var bm = 0; bm < broadcasts.length; bm++) bcastSessionSeen[broadcasts[bm].id] = true;
+        }
+        /* Cập nhật id đã xem lên tin mới nhất ngay. (Tin chuông không
+           phụ thuộc vào mốc này nữa — nó chống trùng theo id từng
+           thông báo; toast nay dùng mốc nền trong phiên, xem trên.) */
         markBroadcastsSeen();
       }
       function watchBroadcasts() {
@@ -13985,15 +14024,9 @@
         return holder;
       }
 
-      /* Ảnh đại diện của admin trong nhóm chung: ảnh Google của admin
-         nếu có, không thì icon khiên vàng. */
+      /* Ảnh đại diện của admin trong nhóm chung: luôn là icon khiên
+         vàng — không hiện ảnh Google của admin để khỏi lộ ảnh cá nhân. */
       function adminAvatarNode(m) {
-        var url = (m && (m.senderPhoto || m.photoURL || m.photo)) || "";
-        if (url) {
-          var img = document.createElement("img");
-          img.src = url; img.alt = "";
-          return img;
-        }
         var holder = document.createElement("span");
         holder.style.display = "block"; holder.style.width = "100%"; holder.style.height = "100%";
         holder.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="#b8860b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:100%;height:100%"><path d="M12 2l8 3v6c0 5-3.5 9-8 11-4.5-2-8-6-8-11V5l8-3z"/><path d="M8.5 12l2.5 2.5 4.5-4.5"/></svg>';
