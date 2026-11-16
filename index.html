@@ -2835,6 +2835,7 @@
         </div>
         <div class="br-helper" id="brHelper" hidden>
           <span id="brHelperText"></span>
+          <button type="button" id="brHelperRead">Đọc chữ trong game</button>
           <button type="button" id="brHelperOut">Mở tab mới</button>
         </div>
         <div class="br-content">
@@ -3157,6 +3158,11 @@
          Xem › (cỡ icon, tự sắp xếp, căn lưới, về mặc định), Sắp xếp theo ›
          (Tên / Ngày nhận / Loại), Làm mới, Cài đặt hiển thị, Cá nhân hóa -->
     <div class="desk-menu" id="deskMenu" role="menu" aria-label="Menu chuột phải desktop" aria-hidden="true">
+      <button type="button" class="desk-menu-item" id="dmOpen" role="menuitem" hidden>
+        <span class="dm-ic"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+        <span class="dm-label" id="dmOpenLabel">Mở</span>
+      </button>
+      <div class="desk-menu-sep" id="dmOpenSep" hidden></div>
       <div class="desk-menu-item has-sub" id="dmView" role="menuitem" aria-haspopup="true" tabindex="0">
         <span class="dm-ic"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="3.5" width="7" height="7" rx="1"/><rect x="13.5" y="3.5" width="7" height="7" rx="1"/><rect x="3.5" y="13.5" width="7" height="7" rx="1"/><rect x="13.5" y="13.5" width="7" height="7" rx="1"/></svg></span>
         <span class="dm-label">Xem</span>
@@ -7652,7 +7658,9 @@
       "html.duckduckgo.com": "X-Frame-Options: SAMEORIGIN + CSP frame-ancestors 'self'",
       "lite.duckduckgo.com": "CSP frame-ancestors 'self' (X-Frame-Options: SAMEORIGIN bị lệnh CSP này ghi đè)",
       "search.brave.com": "CSP frame-ancestors 'self' (trang kết quả — kiểm chứng trực tiếp 16/11/2026)",
-      "ecosia.org": "X-Frame-Options: SAMEORIGIN (trang kết quả — kiểm chứng trực tiếp 16/11/2026)"
+      "ecosia.org": "X-Frame-Options: SAMEORIGIN (trang kết quả — kiểm chứng trực tiếp 16/11/2026)",
+      "vnexpress.net": "X-Frame-Options: SAMEORIGIN (đo trực tiếp 16/11/2026 — khung báo refused to connect)",
+      "coccoc.com": "Chặn nhúng (kiểm chứng trực tiếp 16/11/2026: khung trắng rồi báo lỗi)"
     };
     /* Cách nhúng chính thức cho TỪNG MÓN LẺ của các trang chặn cả trang —
        hiện kèm trên thẻ chặn để người chơi biết còn đường nào xem trong game */
@@ -7670,7 +7678,9 @@
       "lite.duckduckgo.com": "Trang kết quả không nhúng được — nhưng đáp án nhanh của DuckDuckGo vẫn hiện ngay trong trang kết quả tìm kiếm của Cảng Lướt.",
       "search.brave.com": "Trang kết quả Brave chặn nhúng; API tìm kiếm của Brave cần giấu khóa trên máy chủ riêng nên game tĩnh này không dùng.",
       "ecosia.org": "Ecosia không có API tìm kiếm công khai và trang kết quả chặn nhúng.",
-      "youtube.com": "Trang xem bị chặn, nhưng bản nhúng youtube.com/embed/{mã video} thì mở được. Muốn xem video này trong game, hãy dùng ô tìm chính ở trang bắt đầu để tìm lại nội dung đó, hoặc bấm nút “Đọc chữ trong game” trên thẻ này."
+      "youtube.com": "Trang xem bị chặn, nhưng bản nhúng youtube.com/embed/{mã video} thì mở được. Muốn xem video này trong game, hãy dùng ô tìm chính ở trang bắt đầu để tìm lại nội dung đó, hoặc bấm nút “Đọc chữ trong game” trên thẻ này.",
+      "vnexpress.net": "Không nhúng được trang VnExpress; muốn đọc bài này trong game thì bấm nút “Đọc chữ trong game” trên thẻ này, hoặc dùng ô tìm chính ở trang bắt đầu để tìm lại nội dung đó.",
+      "coccoc.com": "Trang kết quả Cốc Cốc không nhúng được trong game; bấm nút “Toàn web bằng Cốc Cốc” ở trang kết quả để mở Cốc Cốc ở tab mới."
     };
     /* ================= PROXY SCRAMJET (tích hợp 16/11/2026) =================
        Đã đọc kỹ client THẬT của app mẫu đang chạy tại PROXY_BASE trước khi
@@ -7728,11 +7738,11 @@
       var path = u.pathname || "/";
       /* Các đầu nhúng chính thức thì luôn cho mở trong game */
       if (host === "youtube.com" && path.indexOf("/embed/") === 0) return { mode: "ok" };
-      /* Trang kết quả Bing + Cốc Cốc: kiểm chứng trực tiếp 16/11/2026 là
-         không gửi lệnh cấm nhúng (Bing hiện kết quả thật trong khung; Cốc
-         Cốc mới xác nhận ở lệnh đầu trang) */
+      /* Trang kết quả Bing: kiểm chứng trực tiếp 16/11/2026 là không gửi
+         lệnh cấm nhúng (hiện kết quả thật trong khung). Cốc Cốc thì chặn
+         nhúng (khung trắng rồi báo lỗi) nên không còn ở danh sách cho
+         nhúng — xem BR_BLOCKED, nút Cốc Cốc mở ở tab mới. */
       if (host === "bing.com" && path.indexOf("/search") === 0) return { mode: "ok" };
-      if (host === "coccoc.com" && path.indexOf("/search") === 0) return { mode: "ok" };
       if (host === "youtube-nocookie.com") return { mode: "ok" };
       if (host === "google.com" && path.indexOf("/maps/embed") === 0) return { mode: "ok" };
       if (host === "player.vimeo.com") return { mode: "ok" };
@@ -7899,7 +7909,7 @@
         home.style.display = "none"; frame.hidden = true; blocked.hidden = false;
         results.hidden = true; reader.hidden = true; card.hidden = true; proxy.hidden = true;
         if (frame.getAttribute("src")) frame.removeAttribute("src");
-        chip.hidden = false; chip.textContent = "Chặn nhúng"; chip.className = "br-chip blocked";
+        chip.hidden = false; chip.textContent = "Chặn nhúng"; chip.className = "br-chip blocked"; chip.style.cursor = ""; chip.removeAttribute("title");
         helper.hidden = true;
         $("brBlockedTitle").textContent = brTitleFor(url) + " chặn mở trong game";
         $("brBlockedText").innerHTML = "";
@@ -7931,11 +7941,11 @@
       results.hidden = true; reader.hidden = true; card.hidden = true; proxy.hidden = true;
       if (frame.getAttribute("src") !== url) frame.src = url;
       chip.hidden = false;
-      if (cls.mode === "ok") { chip.textContent = "Mở trong game"; chip.className = "br-chip"; }
-      else { chip.textContent = "Chưa rõ"; chip.className = "br-chip unknown"; }
+      if (cls.mode === "ok") { chip.textContent = "Mở trong game"; chip.className = "br-chip"; chip.style.cursor = ""; chip.removeAttribute("title"); }
+      else { chip.textContent = "Chưa rõ"; chip.className = "br-chip unknown"; chip.style.cursor = "pointer"; chip.title = "Bấm để xem thẻ trang"; }
       if (cls.mode === "unknown") {
         helper.hidden = false;
-        $("brHelperText").textContent = "Chưa rõ trang này có cho nhúng không — nếu khung bên dưới trắng hoặc báo “refused to connect” thì trang đã chặn nhúng, bấm Mở tab mới để xem trang thật.";
+        $("brHelperText").textContent = "Chưa rõ trang này có cho nhúng không — nếu khung bên dưới trắng hoặc báo “refused to connect” thì trang đã chặn nhúng, bấm Đọc chữ trong game để đọc phần chữ, hoặc Mở tab mới để xem trang thật.";
       } else helper.hidden = true;
     }
     function brGo(url, title) {
@@ -8172,7 +8182,7 @@
       /* Lớp 2: toàn web bằng Bing / Cốc Cốc + video trong app Xem video */
       html += "<div class='br-res-webbar'>"
         + "<button type='button' data-act='bing'><b>Toàn web bằng Bing</b><span>Mở nguyên trang kết quả Bing trong khung — đã kiểm chứng hiện được ngày 16/11/2026.</span></button>"
-        + "<button type='button' data-act='coccoc'><b>Toàn web bằng Cốc Cốc</b><span>Kết quả chỉnh cho tiếng Việt; đầu trang cho nhúng, hình ảnh kết quả chưa xác nhận trực tiếp được.</span></button>"
+        + "<button type='button' data-act='coccoc'><b>Toàn web bằng Cốc Cốc</b><span>Kết quả chỉnh cho tiếng Việt — mở ở tab mới.</span></button>"
         + "<button type='button' data-act='video'><b>Tìm video “" + brEsc(q) + "”</b><span>Sang app Xem video của game — phát ngay trong game.</span></button>"
         + "</div>";
       function itemHtml(act, src, i, title, text, thumb, host) {
@@ -8615,6 +8625,13 @@
       }
       $("brOpenOut").addEventListener("click", openOutCurrent);
       $("brHelperOut").addEventListener("click", openOutCurrent);
+      /* Thanh nhắc "Chưa rõ" có thêm nút Đọc chữ: đọc phần chữ của trang
+         đang mở ngay trong game (qua Jina Reader). Huy hiệu "Chưa rõ" bấm
+         vào thì mở thẻ trang đầy đủ lựa chọn (đọc chữ / thử mở / tab mới). */
+      var brHelperReadBtn = $("brHelperRead");
+      if (brHelperReadBtn) brHelperReadBtn.addEventListener("click", function () { var t = brCur(); if (!t) return; var u = t.hist[t.hi]; if (u && u.indexOf("http") === 0) brGo("reader:" + encodeURIComponent(u), "Đọc: " + brTitleFor(u)); });
+      var brChipEl = $("brChip");
+      if (brChipEl) brChipEl.addEventListener("click", function () { var t = brCur(); if (!t) return; var u = t.hist[t.hi]; if (!u || u.indexOf("http") !== 0) return; if (brClassify(u).mode !== "unknown") return; brOpenResult(u, { title: brTitleFor(u) }); });
       $("brBlockedOut").addEventListener("click", openOutCurrent);
       $("brBlockedHome").addEventListener("click", function () { brGo("home", "Trang bắt đầu"); });
       $("brBlockedRead").addEventListener("click", function () {
@@ -8685,7 +8702,7 @@
         if (!el || !brLastSearch) return;
         var act = el.getAttribute("data-act"), i = parseInt(el.getAttribute("data-i") || "0", 10), d = brLastSearch;
         if (act === "bing") brGo("https://www.bing.com/search?q=" + encodeURIComponent(brLastQuery), "Bing: " + brLastQuery);
-        else if (act === "coccoc") brGo("https://coccoc.com/search?query=" + encodeURIComponent(brLastQuery), "Cốc Cốc: " + brLastQuery);
+        else if (act === "coccoc") { window.open("https://coccoc.com/search?query=" + encodeURIComponent(brLastQuery), "_blank", "noopener"); }
         else if (act === "video") {
           openYoutube();
           var inp = $("ytQuery"); if (inp) inp.value = brLastQuery;
@@ -8696,7 +8713,7 @@
         else if (act === "topic") { var tp = (d.topics || [])[i]; if (tp) brOpenResult(tp.url, { title: tp.text, snippet: tp.text }); }
         else if (act === "img") { var im = (d.imgs || [])[i]; if (im) brOpenResult(im.foreign_landing_url || im.url, { title: im.title || "Hình ảnh", snippet: "Ảnh từ Openverse" + (im.creator ? " — tác giả " + im.creator : "") + (im.license ? " · giấy phép " + String(im.license).toUpperCase() : ""), thumb: im.thumbnail || im.url }); }
         else if (act === "news") { var n = (d.news || [])[i]; if (n) brOpenResult(n.url, { title: n.title, snippet: n.text }); }
-        else if (act === "web") { var wr = (d.webResults || [])[i]; if (wr && wr.url) brNewTab(wr.url, wr.title || ""); }
+        else if (act === "web") { var wr = (d.webResults || [])[i]; if (wr && wr.url) brOpenResult(wr.url, { title: wr.title || "", snippet: wr.snippet || wr.content || "" }); }
       });
       /* Chế độ đọc chữ: liên kết trong bài đi tiếp ngay trong Cảng Lướt;
          hai nút ở màn hình lỗi đọc (data-ract) xử lý tại đây luôn */
@@ -11661,7 +11678,16 @@
         .slice(0, 3)
         .forEach(c => {
           any = true;
-          box.appendChild(newsCaseItem(c, "Vụ mới", null, () => { closeNewsPanel(); acceptCase(c.id); }));
+          /* Vụ đã cất tiến độ (đang làm dở, không phải phiên hiện tại):
+             hiện nhãn "Đang làm" kèm % manh mối đã ghim thay vì "Vụ mới".
+             acceptCase() đã tự khôi phục tiến độ đã cất nên bấm vào là
+             làm tiếp đúng chỗ đang dở. */
+          const prog = G.progress[c.id];
+          const tag = prog ? "Đang làm" : "Vụ mới";
+          const total = Object.keys(c.clues).length;
+          const foundN = prog ? (Array.isArray(prog.found) ? prog.found.length : 0) : 0;
+          const pct = prog ? Math.round(foundN / Math.max(1, total) * 100) : null;
+          box.appendChild(newsCaseItem(c, tag, pct, () => { closeNewsPanel(); acceptCase(c.id); }));
         });
       if (!any) {
         const p = document.createElement("p"); p.className = "news-empty";
@@ -12046,7 +12072,7 @@
             });
             drag = { id: e.pointerId, sx: e.clientX, sy: e.clientY, items: items, moved: false };
           });
-          ic.addEventListener("pointermove", function (e) {
+          window.addEventListener("pointermove", function (e) {
             if (!drag || e.pointerId !== drag.id) return;
             var dx = e.clientX - drag.sx, dy = e.clientY - drag.sy;
             if (!drag.moved) {
@@ -12084,8 +12110,8 @@
               }, 600);
             }
           }
-          ic.addEventListener("pointerup", endDrag);
-          ic.addEventListener("pointercancel", endDrag);
+          window.addEventListener("pointerup", endDrag);
+          window.addEventListener("pointercancel", endDrag);
         });
         /* Vừa kéo xong: chặn cú click theo sau để không mở app nhầm */
         desk.addEventListener("click", function (e) {
@@ -12261,6 +12287,21 @@
         function openDeskMenu(x, y) {
           if (!menu) return;
           syncMenu();
+          /* Mục "Mở ..." chỉ hiện khi chuột phải trúng 1 icon */
+          var openBtn = document.getElementById("dmOpen"), openSep = document.getElementById("dmOpenSep"), openLbl = document.getElementById("dmOpenLabel");
+          var targetIc = window.__deskMenuIcon || null;
+          if (openBtn) {
+            if (targetIc) {
+              var spans = targetIc.querySelectorAll("span");
+              var label = (spans && spans[1]) ? spans[1].textContent.trim() : (targetIc.dataset.app || "");
+              if (openLbl) openLbl.textContent = "Mở “" + label + "”";
+              openBtn.hidden = false;
+              if (openSep) openSep.hidden = false;
+            } else {
+              openBtn.hidden = true;
+              if (openSep) openSep.hidden = true;
+            }
+          }
           menu.classList.remove("flip", "sub-up");
           menu.classList.add("show"); menu.setAttribute("aria-hidden", "false");
           var mw = menu.offsetWidth || 238, mh = menu.offsetHeight || 196;
@@ -12273,10 +12314,28 @@
           menu.style.left = lx + "px";
           menu.style.top = ty + "px";
         }
+        var dmOpenBtn = document.getElementById("dmOpen");
+        if (dmOpenBtn) dmOpenBtn.addEventListener("click", function () {
+          var ic = window.__deskMenuIcon || null;
+          closeDeskMenu();
+          if (ic && typeof goApp === "function") goApp(ic.dataset.app);
+        });
         if (screenEl) screenEl.addEventListener("contextmenu", function (e) {
           if (document.body.classList.contains("locked")) return;
-          if (e.target !== screenEl && e.target !== desk) return;
+          var ic = e.target && e.target.closest ? e.target.closest(".d-icon") : null;
+          if (!ic && e.target !== screenEl && e.target !== desk) return;
           e.preventDefault(); e.stopPropagation();
+          /* Chuột phải trúng icon: chọn đúng icon đó rồi mới mở menu, để
+             menu có thêm mục "Mở ..." ở đầu (mở app của icon đó). */
+          if (ic) {
+            if (!ic.classList.contains("selected")) {
+              icons.forEach(function (o) { o.classList.remove("selected"); });
+              ic.classList.add("selected");
+            }
+            window.__deskMenuIcon = ic;
+          } else {
+            window.__deskMenuIcon = null;
+          }
           if (typeof closeNotifPanel === "function") closeNotifPanel();
           if (typeof window.__closeNewsPanel === "function") window.__closeNewsPanel();
           if (typeof window.__closeQsPanel === "function") window.__closeQsPanel();
