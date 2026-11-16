@@ -789,7 +789,10 @@
       }
 
       @media (max-width:760px){
-        .desktop-icons{ display:none; }
+        /* Icon desktop vẫn hiện ở cửa sổ hẹp (trước đây ẩn hẳn dưới
+           760px nên thu cửa sổ còn ~500px là desktop trống trơn, chỉ
+           vào app được qua menu Start) — JS xếp icon tự ngắt cột theo
+           chiều cao và kẹp trong vùng desktop nên không tràn ra ngoài. */
         .os-bar{ margin:8px 8px 0; top:4px; }
         #homeView, #caseView{ margin:0 8px 10px; }
         .os-addr{ display:none; }
@@ -1220,7 +1223,8 @@
       /* Menu Start bám theo đáy khung full màn, ngay trên taskbar */
       .start-menu{ bottom:60px; max-height:calc(100dvh - 76px); overflow-y:auto; }
       @media (max-width:760px){
-        .desktop-icons, body.in-case .desktop-icons{ display:none !important; }
+        /* Giữ icon desktop hiện đủ ở cửa sổ hẹp như ở cửa sổ rộng —
+           chỉ màn khóa mới ẩn icon (quy tắc body.locked ở trên). */
         .os-bar, body.in-case .os-bar{ margin:8px 8px 0; }
         #homeView, #caseView, #reportView, #howtoView, #badgesView, #youtubeView, #dailyView, #miniView,
         body.in-case #homeView, body.in-case #caseView, body.in-case #reportView, body.in-case #howtoView, body.in-case #badgesView, body.in-case #youtubeView, body.in-case #dailyView, body.in-case #miniView{
@@ -2318,7 +2322,7 @@
           <span class="app-ic" style="color:#57e6c9"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="7" width="19" height="11" rx="5.5"/><path d="M7.5 11v3M6 12.5h3"/><circle cx="15.8" cy="11.3" r="1.05" fill="currentColor" stroke="none"/><circle cx="18" cy="14" r="1.05" fill="currentColor" stroke="none"/></svg></span>
           <div class="case-head-main">
             <h2>Mini game hẻm</h2>
-            <p class="app-desc">Bốn trò chơi nhanh 30–60 giây để luyện mắt thám tử — thắng một ván được cộng 5 điểm danh tiếng. Thắng đủ cả 4 trò ít nhất một lần để nhận huy hiệu “Vua trò chơi”.</p>
+            <p class="app-desc">Bốn trò chơi nhanh 30–60 giây để luyện mắt thám tử — Lật thẻ và Tìm điểm khác nhau thắng ván +5 điểm, Ai nói dối? mỗi câu đúng +5 điểm, Giải mã mật thư mỗi thư đúng +5 điểm. Thắng đủ cả 4 trò ít nhất một lần để nhận huy hiệu “Vua trò chơi”.</p>
           </div>
           <div class="case-meta">
             <span class="pill">Đã thắng: <b id="miniWonPill">0/4 trò</b></span>
@@ -5858,7 +5862,13 @@
        vụ ngày và sổ tay có kho lưu riêng — danh tiếng / vụ đã phá / huy
        hiệu chỉ nằm trong bộ nhớ nên tải lại trang là về 0. Mọi chỗ thay
        đổi tiến trình (cộng/trừ điểm, phá án, nhận huy hiệu, thùng rác,
-       cất tiến độ vụ dở, đặt lại tiến trình) đều gọi saveProgress(). */
+       cất tiến độ vụ dở, đặt lại tiến trình) đều gọi saveProgress().
+       Kèm theo: PHIÊN VỤ ĐANG LÀM (G.run) cũng được ghi vào kho này ở
+       mục "run" mỗi lần saveProgress() — trước đây G.run chỉ nằm trong
+       bộ nhớ, còn G.progress chỉ được cất khi CHUYỂN sang vụ khác, nên
+       vừa nhận vụ xong mà tải lại trang là mục "Vụ đang làm" trống trơn,
+       phải nhận lại từ đầu. Nay tải lại trang là khôi phục đúng phiên
+       đang làm dở (kể cả vụ án hôm nay) với đủ manh mối đã ghim. */
     var PROGRESS_KEY = "hem-cang-progress-v1";
     function saveProgress() {
       try {
@@ -5866,6 +5876,7 @@
         localStorage.setItem(PROGRESS_KEY, JSON.stringify({
           rep: G.rep, wrongTotal: G.wrongTotal,
           solved: G.solved, badges: G.badges, progress: G.progress,
+          run: (G.run && !G.run.solvedHere && !G.solved[G.run.caseId]) ? serializeRun(G.run) : null,
           trash: G.trash, deletedCases: G.deletedCases, goneCases: G.goneCases,
           deletedClues: G.deletedClues, goneClues: G.goneClues, pendingClues: G.pendingClues,
           trashSeq: ts
@@ -5888,6 +5899,16 @@
           if (typeof s.trashSeq === "number" && isFinite(s.trashSeq)) trashSeq = Math.max(trashSeq, Math.floor(s.trashSeq));
           G.trash.forEach(function (it) { if (it.tid > trashSeq) trashSeq = it.tid; });
         } catch (e) { /* bộ đếm thùng rác chưa khởi tạo: tid cũ vẫn khôi phục được */ }
+        /* Khôi phục phiên vụ đang làm dở (vụ thường hoặc vụ án hôm nay)
+           để mục "Vụ đang làm" còn nguyên sau khi tải lại trang. */
+        if (s.run && typeof s.run === "object" && typeof s.run.caseId === "string" && !G.solved[s.run.caseId]) {
+          var rc = caseById(s.run.caseId);
+          if (rc) {
+            G.progress[s.run.caseId] = s.run;
+            var rr = restoreRunProgress(rc);
+            if (rr) G.run = rr;
+          }
+        }
       } catch (e) { /* dữ liệu lưu hỏng: bắt đầu với tiến trình trống */ }
     }
     function applyProfile() {
@@ -5905,18 +5926,25 @@
       };
     }
 
+    /* Chuyển một phiên điều tra (G.run) thành dữ liệu thuần để lưu xuống
+       kho: dùng cả cho G.progress (cất khi chuyển vụ) lẫn mục "run" của
+       kho tiến trình (phiên đang làm, khôi phục sau khi tải lại trang). */
+    function serializeRun(r) {
+      return {
+        caseId: r.caseId,
+        tab: r.tab, person: r.person,
+        found: [...r.found], asked: r.asked, readFeed: [...r.readFeed], looked: r.looked.slice(),
+        selSuspect: r.selSuspect, selEvidence: [...r.selEvidence],
+        attempts: r.attempts, hintsUsed: r.hintsUsed, startedAt: r.startedAt || Date.now()
+      };
+    }
     /* Cất tiến độ điều tra của vụ đang làm dở (chưa phá) để khi nhận vụ
        khác rồi quay lại — hoặc bấm nhận lại chính vụ đó — manh mối đã tìm,
        câu hỏi đã hỏi, lần thử và gợi ý đã dùng đều còn nguyên. */
     function saveRunProgress() {
       const r = G.run;
       if (!r || r.solvedHere || G.solved[r.caseId]) return;
-      G.progress[r.caseId] = {
-        tab: r.tab, person: r.person,
-        found: [...r.found], asked: r.asked, readFeed: [...r.readFeed], looked: r.looked.slice(),
-        selSuspect: r.selSuspect, selEvidence: [...r.selEvidence],
-        attempts: r.attempts, hintsUsed: r.hintsUsed, startedAt: r.startedAt || Date.now()
-      };
+      G.progress[r.caseId] = serializeRun(r);
       saveProgress();
     }
     function restoreRunProgress(c) {
@@ -5976,6 +6004,44 @@
     const notifs = [];
     let notifSeq = 0;
     let notifPopupTimer = null;
+
+    /* Danh sách thông báo lưu bền trên máy này (hem-cang-notifs-v1):
+       trước đây chuông chỉ giữ thông báo trong bộ nhớ — chơi một lúc
+       có cả chục tin chưa đọc, tải lại trang là mất hết, chỉ còn tin
+       chào mừng lúc đăng nhập. Nay mọi lần thêm tin / đánh dấu đã đọc /
+       xóa hết đều ghi xuống kho, mở lại trang là khôi phục đủ. */
+    var NOTIF_KEY = "hem-cang-notifs-v1";
+    function saveNotifs() {
+      try {
+        localStorage.setItem(NOTIF_KEY, JSON.stringify({
+          seq: notifSeq,
+          items: notifs.slice(0, 100).map(function (n) {
+            return { id: n.id, main: n.main, sub: n.sub, time: n.time instanceof Date ? n.time.getTime() : Number(n.time) || Date.now(), read: !!n.read };
+          })
+        }));
+      } catch (e) { /* hết chỗ lưu: thông báo vẫn còn trong phiên đang mở */ }
+    }
+    function loadNotifs() {
+      try {
+        var raw = localStorage.getItem(NOTIF_KEY);
+        if (!raw) return;
+        var s = JSON.parse(raw);
+        if (!s || !Array.isArray(s.items)) return;
+        notifs.length = 0;
+        s.items.forEach(function (it) {
+          if (!it || typeof it.main !== "string") return;
+          notifs.push({
+            id: typeof it.id === "number" ? it.id : ++notifSeq,
+            main: it.main,
+            sub: typeof it.sub === "string" ? it.sub : "",
+            time: new Date(typeof it.time === "number" ? it.time : Date.now()),
+            read: !!it.read
+          });
+        });
+        if (typeof s.seq === "number" && isFinite(s.seq)) notifSeq = Math.max(notifSeq, Math.floor(s.seq));
+        notifs.forEach(function (n) { if (n.id > notifSeq) notifSeq = n.id; });
+      } catch (e) { /* dữ liệu lưu hỏng: bắt đầu với chuông trống */ }
+    }
 
     function notifTimeStr(d) {
       return d.toLocaleTimeString("vi-VN", { hour: "2-digit", minute: "2-digit" });
@@ -6066,6 +6132,7 @@
       const n = { id: ++notifSeq, main: String(main), sub: sub ? String(sub) : "", time: new Date(), read: false };
       notifs.unshift(n);
       if (notifs.length > 100) notifs.length = 100;
+      saveNotifs();
       renderNotifs();
       updateNotifBadge();
       let dndOn = false;
@@ -6084,16 +6151,18 @@
       $("notifPanelClose").addEventListener("click", function () { closeNotifPanel(); });
       $("notifReadAll").addEventListener("click", function () {
         notifs.forEach(n => { n.read = true; });
+        saveNotifs();
         renderNotifs(); updateNotifBadge();
       });
       $("notifClearAll").addEventListener("click", function () {
         notifs.length = 0;
+        saveNotifs();
         renderNotifs(); updateNotifBadge();
       });
       $("notifList").addEventListener("click", function (e) {
         const item = e.target.closest(".notif-item"); if (!item) return;
         const n = notifs.find(x => String(x.id) === item.dataset.id);
-        if (n && !n.read) { n.read = true; renderNotifs(); updateNotifBadge(); }
+        if (n && !n.read) { n.read = true; saveNotifs(); renderNotifs(); updateNotifBadge(); }
       });
       document.addEventListener("click", function (e) {
         if (!notifPanelOpen()) return;
@@ -6103,6 +6172,7 @@
       document.addEventListener("keydown", function (e) {
         if (e.key === "Escape") { closeNotifPanel(); hideNotifPopup(); }
       });
+      loadNotifs();
       renderNotifs();
       updateNotifBadge();
     })();
@@ -6492,6 +6562,25 @@
     function saveMini(st) {
       try { localStorage.setItem(MINI_KEY, JSON.stringify(st)); } catch (e) { /* hết chỗ lưu: kỷ lục vẫn tính trong phiên đang mở */ }
     }
+    /* Tiến độ ván ĐANG CHƠI DỞ của từng trò, lưu chung trong kho mini
+       game (mục "resume"): trước đây ván dở chỉ nằm trong bộ nhớ của
+       hàm bắt đầu trò, tải lại trang là mất sạch ván đang chơi. Nay mỗi
+       trò tự ghi lại trạng thái sau mỗi nước đi / mỗi giây, mở lại trò
+       là chơi tiếp đúng chỗ dở; thắng xong hoặc bấm "Chơi lại" thì xóa. */
+    function mgGetResume(id) {
+      var st = loadMini();
+      return (st.resume && typeof st.resume === "object" && st.resume[id] && typeof st.resume[id] === "object") ? st.resume[id] : null;
+    }
+    function mgSetResume(id, data) {
+      var st = loadMini();
+      if (!st.resume || typeof st.resume !== "object") st.resume = {};
+      st.resume[id] = data;
+      saveMini(st);
+    }
+    function mgClearResume(id) {
+      var st = loadMini();
+      if (st.resume && st.resume[id]) { delete st.resume[id]; saveMini(st); }
+    }
     /* Bộ hẹn giờ riêng của mini game: rời app / về menu / chơi lại là hủy hết
        để đồng hồ của ván cũ không chạy chồng lên ván mới. */
     var mgTimers = [];
@@ -6582,7 +6671,7 @@
       mgSyncHead(st);
       pane.innerHTML = "";
       var h = mgEl("h3", "pane-title", "Chọn một trò chơi");
-      var sub = mgEl("p", "pane-sub", "Mỗi trò chỉ tốn khoảng 30–60 giây. Thắng một ván được cộng 5 điểm danh tiếng — thắng đủ cả 4 trò ít nhất một lần để nhận huy hiệu “Vua trò chơi”.");
+      var sub = mgEl("p", "pane-sub", "Mỗi trò chỉ tốn khoảng 30–60 giây. Cách cộng điểm theo từng trò: Lật thẻ và Tìm điểm khác nhau — thắng ván được +5 điểm; Ai nói dối? — mỗi câu đúng +5 điểm (đúng cả 10 câu là +50 điểm); Giải mã mật thư — mỗi thư giải đúng +5 điểm. Thắng đủ cả 4 trò ít nhất một lần để nhận huy hiệu “Vua trò chơi”.");
       pane.append(h, sub);
       var grid = mgEl("div", "mg-menu");
       var defs = [
@@ -6602,6 +6691,7 @@
         var b = mgEl("b", null, d.name);
         var p = mgEl("p", null, d.desc);
         var best = mgEl("span", "mg-best", mgBestText(d.id, st));
+        if (st.resume && st.resume[d.id]) best.textContent = "Đang chơi dở — bấm vào để chơi tiếp đúng chỗ cũ.";
         card.append(ic, b, p, best);
         if (st.wins && st.wins[d.id]) card.appendChild(mgEl("span", "mg-won", "Đã thắng ✓"));
         card.onclick = d.start;
@@ -6642,16 +6732,51 @@
       pane.appendChild(grid);
       var resultBox = mgEl("div");
       pane.appendChild(resultBox);
-      pane.appendChild(mgNavButtons(mgStartMemory));
+      pane.appendChild(mgNavButtons(function () { mgClearResume("memory"); mgStartMemory(); }));
 
-      var deck = mgShuffle(MG_MEM_SYMBOLS.concat(MG_MEM_SYMBOLS).map(function (s, i) { return { sym: s, key: i }; }));
-      var first = null, lock = false, flips = 0, matched = 0, secs = 0, started = false;
+      /* Có ván dở đã lưu thì dựng lại đúng bộ bài, các cặp đã mở, lượt
+         lật và thời gian cũ — chơi tiếp đúng chỗ dở, kể cả sau khi tải
+         lại trang. Không có thì xáo bộ bài mới như thường lệ. */
+      var memResume = mgGetResume("memory");
+      var deck, first = null, lock = false, flips = 0, matched = 0, secs = 0, started = false;
+      var matchedPos = {};
+      if (memResume && Array.isArray(memResume.deck) && memResume.deck.length === 16) {
+        deck = memResume.deck.map(function (id, i) {
+          var s = MG_MEM_SYMBOLS.find(function (x) { return x.id === id; }) || MG_MEM_SYMBOLS[i % MG_MEM_SYMBOLS.length];
+          return { sym: s, key: i };
+        });
+        (Array.isArray(memResume.matched) ? memResume.matched : []).forEach(function (p) {
+          if (typeof p === "number" && p >= 0 && p < 16) matchedPos[p] = true;
+        });
+        matched = Object.keys(matchedPos).length / 2;
+        flips = memResume.flips || 0;
+        secs = memResume.secs || 0;
+        started = flips > 0 || matched > 0 || secs > 0 || memResume.first != null;
+        hud.spans.flips.textContent = String(flips);
+        hud.spans.pairs.textContent = matched + "/8 cặp";
+        hud.spans.time.textContent = fmtDuration(secs);
+      } else {
+        deck = mgShuffle(MG_MEM_SYMBOLS.concat(MG_MEM_SYMBOLS).map(function (s, i) { return { sym: s, key: i }; }));
+      }
+      var memBtns = [];
+      function saveMemState() {
+        if (matched >= 8) { mgClearResume("memory"); return; }
+        var mp = [];
+        memBtns.forEach(function (b, i) { if (b && b.classList.contains("matched")) mp.push(i); });
+        mgSetResume("memory", {
+          deck: deck.map(function (d) { return d.sym.id; }),
+          matched: mp,
+          first: first ? first.pos : null,
+          flips: flips, secs: secs
+        });
+      }
       mgEvery(function () {
         if (!started || matched >= 8) return;
         secs++;
         hud.spans.time.textContent = fmtDuration(secs);
+        saveMemState();
       }, 1000);
-      deck.forEach(function (cardData) {
+      deck.forEach(function (cardData, pos) {
         var btn = mgEl("button", "mg-mem-card");
         btn.type = "button";
         btn.setAttribute("aria-label", "Thẻ úp — " + cardData.sym.name);
@@ -6660,12 +6785,15 @@
         face.innerHTML = cardData.sym.svg;
         face.appendChild(mgEl("small", null, cardData.sym.name));
         btn.append(back, face);
+        memBtns[pos] = btn;
+        if (matchedPos[pos]) btn.classList.add("open", "matched");
+        else if (memResume && memResume.first === pos) { btn.classList.add("open"); first = { btn: btn, data: cardData, pos: pos }; }
         btn.onclick = function () {
           if (lock || btn.classList.contains("open")) return;
           started = true;
           btn.classList.add("open");
           beep(880, 0.08, 0);
-          if (!first) { first = { btn: btn, data: cardData }; return; }
+          if (!first) { first = { btn: btn, data: cardData, pos: pos }; saveMemState(); return; }
           flips++;
           hud.spans.flips.textContent = String(flips);
           if (first.data.sym.id === cardData.sym.id) {
@@ -6675,6 +6803,7 @@
             hud.spans.pairs.textContent = matched + "/8 cặp";
             sndClue();
             first = null;
+            saveMemState();
             if (matched >= 8) {
               var finalSecs = Math.max(1, secs);
               mgAward5("Lật thẻ trí nhớ — mở hết 8 cặp trong " + flips + " lượt lật.");
@@ -6695,6 +6824,7 @@
               f.btn.classList.remove("open");
               btn.classList.remove("open");
               lock = false;
+              saveMemState();
             }, 1000);
           }
         };
@@ -6780,9 +6910,16 @@
       pane.appendChild(hud.hud);
       var body = mgEl("div");
       pane.appendChild(body);
-      pane.appendChild(mgNavButtons(mgStartLiar));
+      pane.appendChild(mgNavButtons(function () { mgClearResume("liar"); mgStartLiar(); }));
 
+      /* Có ván dở đã lưu thì chơi tiếp từ vòng chưa trả lời, giữ nguyên
+         số câu đúng đã có — kể cả sau khi tải lại trang. */
+      var liarResume = mgGetResume("liar");
       var idx = 0, correct = 0, locked = false, remain = 30;
+      if (liarResume && typeof liarResume.idx === "number" && liarResume.idx > 0 && liarResume.idx < MG_LIAR_ROUNDS.length) {
+        idx = Math.floor(liarResume.idx);
+        correct = Math.max(0, Math.min(idx, Math.floor(liarResume.correct || 0)));
+      }
       function tick() {
         hud.spans.time.textContent = remain + " giây";
         hud.spans.time.parentElement.classList.toggle("low", remain <= 8);
@@ -6830,6 +6967,11 @@
         }
         hud.spans.score.textContent = correct + " câu";
         hud.spans.time.textContent = "—";
+        /* Lưu ván dở ở vòng TIẾP THEO ngay khi đã chấm câu này: tải lại
+           trang giữa chừng thì chơi tiếp từ vòng sau, không trả lời lại
+           câu đã chấm (tránh cộng điểm hai lần cho cùng một câu). */
+        if (idx + 1 >= MG_LIAR_ROUNDS.length) mgClearResume("liar");
+        else mgSetResume("liar", { idx: idx + 1, correct: correct });
         body.querySelectorAll(".mg-claim").forEach(function (b, bi) {
           b.disabled = true;
           if (bi === r.liar) b.classList.add("lie");
@@ -6851,6 +6993,7 @@
       }
       function finish() {
         mgClearTimers();
+        mgClearResume("liar");
         body.innerHTML = "";
         var win = correct >= 6;
         var res = mgEl("div", "mg-result");
@@ -6958,24 +7101,46 @@
       pane.appendChild(hud.hud);
       var body = mgEl("div");
       pane.appendChild(body);
-      pane.appendChild(mgNavButtons(mgStartSpot));
+      pane.appendChild(mgNavButtons(function () { mgClearResume("spot"); mgStartSpot(); }));
 
       var scenes = mgSpotScenes();
       var sceneIdx = 0, totalSecs = 0, timerOn = true;
+      /* Điểm đã tìm của từng cảnh: giữ cả khi chuyển cảnh lẫn khi tải
+         lại trang — ván dở lưu vào kho mini game, mở lại là chơi tiếp
+         đúng cảnh và đúng các điểm đã tìm được. */
+      var foundByScene = { 0: [], 1: [] };
+      var spotResume = mgGetResume("spot");
+      if (spotResume) {
+        if (spotResume.sceneIdx === 1) sceneIdx = 1;
+        if (typeof spotResume.secs === "number" && spotResume.secs > 0) totalSecs = Math.floor(spotResume.secs);
+        if (spotResume.found && typeof spotResume.found === "object") {
+          [0, 1].forEach(function (k) {
+            if (Array.isArray(spotResume.found[k])) {
+              foundByScene[k] = spotResume.found[k].filter(function (si) { return typeof si === "number" && si >= 0 && si < 5; });
+            }
+          });
+        }
+        hud.spans.time.textContent = fmtDuration(totalSecs);
+      }
+      function saveSpotState() {
+        mgSetResume("spot", { sceneIdx: sceneIdx, found: foundByScene, secs: totalSecs });
+      }
       mgEvery(function () {
         if (!timerOn) return;
         totalSecs++;
         hud.spans.time.textContent = fmtDuration(totalSecs);
+        saveSpotState();
       }, 1000);
       function renderScene() {
         var sc = scenes[sceneIdx];
         hud.spans.scene.textContent = (sceneIdx + 1) + "/2";
-        hud.spans.found.textContent = "0/5 điểm";
         body.innerHTML = "";
         body.appendChild(mgEl("h4", "pane-title", sc.title));
         var wrap = mgEl("div", "mg-spot-wrap");
         var foundSet = {};
         var foundCount = 0;
+        (foundByScene[sceneIdx] || []).forEach(function (si) { foundSet[si] = true; foundCount++; });
+        hud.spans.found.textContent = foundCount + "/5 điểm";
         [["Hình A", sc.a], ["Hình B", sc.b]].forEach(function (pair, fi) {
           var fig = mgEl("figure", "mg-spot-fig");
           var cap = mgEl("figcaption", null, pair[0]);
@@ -7012,10 +7177,26 @@
         var listBox = mgEl("div");
         listBox.style.marginTop = "12px";
         body.appendChild(listBox);
+        /* Ván dở khôi phục: hiện lại vòng khoanh và dòng đã tìm của cảnh này */
+        (foundByScene[sceneIdx] || []).forEach(function (si) {
+          body.querySelectorAll('[data-spot-ring="' + si + '"]').forEach(function (r) { r.style.display = ""; });
+          var li0 = mgEl("p", null, "✓ " + sc.spots[si].label);
+          li0.style.margin = "0 0 4px";
+          listBox.appendChild(li0);
+        });
+        if (foundCount >= 5 && sceneIdx === 0) {
+          var nx0 = mgEl("button", "to-report-btn", "Đủ 5 điểm! Sang cảnh 2 →");
+          nx0.type = "button";
+          nx0.style.marginTop = "10px";
+          nx0.onclick = function () { sceneIdx = 1; saveSpotState(); renderScene(); };
+          listBox.appendChild(nx0);
+        }
         function markFound(si) {
           if (foundSet[si]) return;
           foundSet[si] = true;
           foundCount++;
+          if (foundByScene[sceneIdx].indexOf(si) < 0) foundByScene[sceneIdx].push(si);
+          saveSpotState();
           sndClue();
           body.querySelectorAll('[data-spot-ring="' + si + '"]').forEach(function (r) { r.style.display = ""; });
           hud.spans.found.textContent = foundCount + "/5 điểm";
@@ -7027,11 +7208,12 @@
               var nx = mgEl("button", "to-report-btn", "Đủ 5 điểm! Sang cảnh 2 →");
               nx.type = "button";
               nx.style.marginTop = "10px";
-              nx.onclick = function () { sceneIdx = 1; renderScene(); };
+              nx.onclick = function () { sceneIdx = 1; saveSpotState(); renderScene(); };
               listBox.appendChild(nx);
               toast("Đã tìm đủ 5 điểm khác nhau", "Cảnh 1 xong — sang cảnh 2: sạp cá ở bến.");
             } else {
               timerOn = false;
+              mgClearResume("spot");
               var finalSecs = Math.max(1, totalSecs);
               mgAward5("Tìm điểm khác nhau — tìm đủ 10 điểm ở cả 2 cảnh.");
               mgRecordWin("spot", { secs: finalSecs }, function (old, nw) { return nw.secs < old.secs; });
@@ -7053,7 +7235,7 @@
       { plain: "MANH MOI NAM DUOI CHAN DEN", shift: 3 },
       { plain: "CHIA KHOA GIAU TRONG TUI AO", shift: 5 },
       { plain: "CAMERA GHI LAI TAT CA", shift: 7 },
-      { plain: "NGUOI CHUNG O BEN CA", shift: 2 },
+      { plain: "NGUOI CHUNG O BEN CA NOI THAT", shift: 2 },
       { plain: "DAU VET CON MOI TINH", shift: 4 }
     ];
     function mgCaesar(text, shift) {
@@ -7076,9 +7258,24 @@
       pane.appendChild(hud.hud);
       var body = mgEl("div");
       pane.appendChild(body);
-      pane.appendChild(mgNavButtons(mgStartCipher));
+      pane.appendChild(mgNavButtons(function () { mgClearResume("cipher"); mgStartCipher(); }));
 
+      /* Có ván dở đã lưu thì chơi tiếp từ bức thư chưa giải, giữ nguyên
+         số thư đã giải và tổng thời gian — kể cả sau khi tải lại trang. */
+      var cipherResume = mgGetResume("cipher");
       var idx = 0, solved = 0, locked = false, remain = 60, totalSecs = 0;
+      if (cipherResume && typeof cipherResume.idx === "number" && cipherResume.idx > 0 && cipherResume.idx < MG_CIPHER_LETTERS.length) {
+        idx = Math.floor(cipherResume.idx);
+        solved = Math.max(0, Math.min(idx, Math.floor(cipherResume.solved || 0)));
+        totalSecs = Math.max(0, Math.floor(cipherResume.totalSecs || 0));
+      }
+      /* Lưu ván dở ở bức thư TIẾP THEO ngay khi một thư đã chấm xong:
+         tải lại trang giữa chừng thì chơi tiếp từ thư sau, không giải
+         lại thư đã chấm (tránh cộng điểm hai lần cho cùng một thư). */
+      function saveCipherState() {
+        if (idx + 1 >= MG_CIPHER_LETTERS.length) mgClearResume("cipher");
+        else mgSetResume("cipher", { idx: idx + 1, solved: solved, totalSecs: totalSecs });
+      }
       function tick() {
         hud.spans.time.textContent = remain + " giây";
         hud.spans.time.parentElement.classList.toggle("low", remain <= 10);
@@ -7134,6 +7331,7 @@
             mgClearTimers();
             solved++;
             totalSecs += (60 - remain);
+            saveCipherState();
             mgAward5("Giải mã mật thư — thư " + (idx + 1) + "/5 giải đúng.");
             hud.spans.solved.textContent = solved + " thư";
             msg.className = "mg-cipher-msg good";
@@ -7169,6 +7367,7 @@
             locked = true;
             mgClearTimers();
             totalSecs += 60;
+            saveCipherState();
             sndBad();
             msg.className = "mg-cipher-msg bad";
             msg.textContent = "Hết 60 giây! Thư thật viết: “" + L.plain + "”.";
@@ -7180,6 +7379,7 @@
       }
       function finish() {
         mgClearTimers();
+        mgClearResume("cipher");
         body.innerHTML = "";
         var win = solved >= MG_CIPHER_LETTERS.length;
         var res = mgEl("div", "mg-result");
@@ -7273,6 +7473,7 @@
       if (G.run && G.run.caseId === c.id && !G.run.solvedHere) { openInvestigate(); return; }
       var restored = (!G.solved[c.id] && G.progress[c.id]) ? restoreRunProgress(c) : null;
       G.run = restored || newRun(c);
+      saveProgress();
       $("caseTitle").textContent = c.title;
       toast("Bạn đã nhận vụ án hôm nay: " + c.title, "Phá xong trong hôm nay để giữ chuỗi ngày phá liên tiếp nhé.");
       openInvestigate();
@@ -7462,7 +7663,7 @@
       /* Vụ án hôm nay là vụ chung của ngày: không cho vào Thùng rác,
          chỉ hủy phiên đang làm dở nếu có. */
       if (c.daily) {
-        if (G.run && G.run.caseId === caseId) { saveRunProgress(); G.run = null; }
+        if (G.run && G.run.caseId === caseId) { saveRunProgress(); G.run = null; saveProgress(); }
         toast("Vụ án hôm nay không xóa được", "Đây là vụ chung của ngày hôm nay — ngày mai sẽ có vụ mới.");
         return;
       }
@@ -7707,7 +7908,7 @@
             rows: [["Vụ án", c.title], ["Manh mối đã ghim", r.found.size + "/" + Object.keys(c.clues).length], ["Danh sách manh mối", clueTitles.length ? clueTitles.join(" · ") : "Chưa ghim manh mối nào"], ["Câu hỏi đã hỏi", String(askedCount)], ["Bài Mạng hẻm đã đọc", r.readFeed.size + "/" + c.feed.length], ["Lần thử buộc tội", String(r.attempts)], ["Gợi ý đã dùng", String(r.hintsUsed)]],
             note: "Xóa file này sẽ hủy phiên làm vụ hiện tại — vụ không còn ở mục “Vụ đang làm” nữa, muốn chơi tiếp phải nhận lại từ đầu.",
             exportFn: function () { downloadGenerated("tien-do-vu-dang-lam.json", JSON.stringify(runData, null, 2)); toast("Đã xuất file tiến độ vụ đang làm", "tien-do-vu-dang-lam.json đã tải xuống máy của bạn."); },
-            deleteFn: function () { if (G.run) delete G.progress[G.run.caseId]; G.run = null; renderHome(); toast("Đã xóa file tiến độ vụ đang làm", "Phiên làm vụ đã hủy — nhận lại vụ ở app Nhận nhiệm vụ khi muốn chơi tiếp."); }
+            deleteFn: function () { if (G.run) delete G.progress[G.run.caseId]; G.run = null; saveProgress(); renderHome(); toast("Đã xóa file tiến độ vụ đang làm", "Phiên làm vụ đã hủy — nhận lại vụ ở app Nhận nhiệm vụ khi muốn chơi tiếp."); }
           });
         }
       }
@@ -7867,6 +8068,9 @@
         G.run = newRun(c);
       }
       if (G.solved[id]) G.run.solvedHere = true;
+      /* Ghi phiên vừa nhận xuống kho ngay: tải lại trang là vụ vẫn ở
+         mục "Vụ đang làm", không phải nhận lại từ đầu. */
+      saveProgress();
       /* Manh mối từng bị xóa rồi được khôi phục ở Thùng rác sẽ chờ sẵn trên Bảng ghim */
       let restoredCount = 0;
       const pend = G.pendingClues[id];
@@ -7927,6 +8131,10 @@
       const pane = $("pane"); pane.innerHTML = "";
       syncTaskbar();
       ({ mail: renderMail, chat: renderChat, feed: renderFeed, lookup: renderLookup, board: renderBoard, note: renderNote, accuse: renderAccuse })[r.tab](pane, c);
+      /* Mọi thao tác trong vụ (đổi tab, hỏi chuyện, chọn nghi phạm…) đều
+         chạy qua renderCase — ghi phiên đang làm xuống kho ngay tại đây
+         để tải lại trang giữa chừng vẫn còn nguyên tiến độ. */
+      saveProgress();
     }
 
     function gainClue(c, clueId, sourceLabel) {
@@ -7935,6 +8143,7 @@
       /* Manh mối đang nằm trong Thùng rác hoặc đã xóa vĩnh viễn thì không ghim lại */
       if ((G.deletedClues[c.id] && G.deletedClues[c.id][clueId]) || (G.goneClues[c.id] && G.goneClues[c.id][clueId])) return;
       r.found.add(clueId);
+      saveProgress();
       sndClue();
       toast("📌 Manh mối mới: " + c.clues[clueId].title, "Đã thêm vào Bảng ghim" + (sourceLabel ? " · " + sourceLabel : ""));
       updateCaseMeta();
@@ -8620,10 +8829,14 @@
             ? [["setVolume", [0]], ["mute", []]]
             : [["unMute", []], ["setVolume", [v]]];
           for (var i = 0; i < cmds.length; i++) {
-            fr.contentWindow.postMessage(
-              JSON.stringify({ event: "command", func: cmds[i][0], args: cmds[i][1] }),
-              "https://www.youtube-nocookie.com"
-            );
+            var msg = JSON.stringify({ event: "command", func: cmds[i][0], args: cmds[i][1] });
+            fr.contentWindow.postMessage(msg, "https://www.youtube-nocookie.com");
+            /* Gửi thêm một bản với đích "*": khung phát thật đôi khi
+               chạy ở biến thể miền khác của YouTube (nocookie / thường)
+               khiến bản gửi đích danh bị lọc bỏ — lệnh âm lượng không
+               chứa dữ liệu nhạy cảm nên gửi mở vẫn an toàn, và trình
+               phát chỉ nhận lệnh đúng định dạng của nó. */
+            fr.contentWindow.postMessage(msg, "*");
           }
         }
       } catch (e) {}
@@ -8673,6 +8886,22 @@
       ytPushVolumeNow();
     }
     window.__syncVideoVolume = ytApplyVolume;
+    /* Đồng hồ canh âm lượng cho TRÌNH PHÁT THẬT (bản sửa lần này):
+       kiểm chứng các bản trước dùng trình phát giả — hàm setVolume/mute
+       của nó nhận lệnh là ăn ngay — nên không lộ ra hành vi của trình
+       phát YouTube thật: nó có mức âm lượng TỰ LƯU RIÊNG và tự khôi
+       phục mức đó ở nhiều thời điểm (đổi video, hết quảng cáo, đệm
+       xong, tự phát tiếp), nuốt mất lệnh tắt tiếng gửi một lần; vòng
+       thử lại cũ lại bỏ cuộc sau ~10 lần trong vài giây. Nay chừng nào
+       còn video đang mở, mỗi giây đối chiếu mức THẬT của trình phát
+       (getVolume/isMuted) với mức Âm lượng video đang chọn — lệch là
+       gửi lại lệnh ngay, canh liên tục không bỏ cuộc, nên kéo về 0%
+       là tiếng tắt hẳn và giữ nguyên như vậy. */
+    setInterval(function () {
+      if (!ytPlayer || !ytPlayerReady || ytStopped || !ytCurrentId) return;
+      var v = ytGameVolume();
+      if (!ytPlayerMatches(v)) ytSendVolumeCmds(v);
+    }, 1000);
     /* Thanh trượt trong app ghi mức mới: lưu bền videoVol vào kho cài
        đặt chung (giữ nguyên các mục khác), áp ngay vào trình phát, rồi
        báo app Cài đặt nạp lại kho để thanh bên đó khớp khi mở ra. */
@@ -9233,6 +9462,18 @@
 
     loadProfile();
     loadProgress();
+    /* Phiên vụ đang làm đã khôi phục: điền sẵn tên vụ cho khung Làm nhiệm vụ */
+    if (G.run) {
+      var ct0 = document.getElementById("caseTitle");
+      var cc0 = caseById(G.run.caseId);
+      if (ct0 && cc0) ct0.textContent = cc0.title;
+    }
+    /* Mạng lưới an toàn: sắp đóng/tải lại trang hoặc ẩn tab là ghi lại
+       tiến trình (kèm phiên vụ đang làm) lần cuối cho chắc. */
+    window.addEventListener("beforeunload", function () { saveProgress(); });
+    document.addEventListener("visibilitychange", function () {
+      if (document.visibilityState === "hidden") saveProgress();
+    });
     var savedPinHint = document.getElementById("lockPinHint");
     if (savedPinHint) savedPinHint.textContent = G.profile.pin;
     applyProfile();
@@ -9733,7 +9974,12 @@
         var btn = document.querySelector(".tb-time");
         var panel = document.getElementById("calPanel");
         if (!btn || !panel) return;
-        var OFFSETS = { s1: -6, s2: -4, s3: -2, v1: -1, v2: 0, v3: 1, d1: -5, d2: -3, d3: 2, l1: -7, l2: 3, l3: -9, l4: 4, l5: -10, l6: 5 };
+        /* Lệch ngày của 18 vụ thường. Riêng hôm nay (lệch 0) KHÔNG gán vụ
+           thường nào: "vụ án của ngày hôm nay" là vụ mini của app Vụ án
+           hôm nay, và bảng Lịch cũng gọi đúng vụ đó cho ngày hôm nay —
+           trước đây v2 nằm ở lệch 0 nên Lịch ghi "Vụ án ngày …" mà lại
+           liệt kê một vụ thường, hai chỗ gọi hai vụ khác nhau. */
+        var OFFSETS = { s1: -6, s2: -4, s3: -2, v1: -1, v2: 6, v3: 1, d1: -5, d2: -3, d3: 2, l1: -7, l2: 3, l3: -9, l4: 4, l5: -10, l6: 5 };
         function dayStart(d) { var x = new Date(d); x.setHours(0, 0, 0, 0); return x; }
         function caseDate(c) { var t = dayStart(new Date()); t.setDate(t.getDate() + (OFFSETS[c.id] || 0)); return t; }
         function sameDay(a, b) { return a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate(); }
@@ -9750,8 +9996,30 @@
           if (!title || !body) return;
           title.textContent = "Vụ án ngày " + sel.toLocaleDateString("vi-VN", { day: "numeric", month: "numeric", year: "numeric" });
           body.innerHTML = "";
+          /* Ngày hôm nay: vụ của ngày là vụ mini trong app "Vụ án hôm
+             nay" — hiện đúng vụ đó ở đầu danh sách (bấm vào là mở app
+             Vụ án hôm nay) để Lịch và app gọi cùng một vụ cho hôm nay. */
+          if (sameDay(sel, today) && typeof todaysDailyCase === "function") {
+            var dc = todaysDailyCase();
+            if (dc) {
+              var b0 = document.createElement("button"); b0.type = "button"; b0.className = "cal-case";
+              var main0 = document.createElement("span"); main0.className = "cal-case-main";
+              var t0 = document.createElement("b"); t0.textContent = dc.title;
+              var m0 = document.createElement("span"); m0.textContent = "Vụ án hôm nay · " + dc.place;
+              main0.append(t0, m0);
+              var chip0 = document.createElement("span"); chip0.className = "chip";
+              var dDone = (typeof dailySolvedToday === "function") && dailySolvedToday();
+              var dActive = !!(G.run && G.run.caseId === dc.id && !G.run.solvedHere);
+              if (dActive) { chip0.textContent = "Đang làm"; chip0.classList.add("diff-tb"); }
+              else if (dDone) { chip0.textContent = "Đã phá ✓"; chip0.classList.add("done"); }
+              else { chip0.textContent = "Nhận vụ hôm nay →"; chip0.classList.add("diff-de"); }
+              b0.append(main0, chip0);
+              b0.onclick = function () { closeCal(); if (typeof openDaily === "function") openDaily(); };
+              body.appendChild(b0);
+            }
+          }
           var list = casesOn(sel);
-          if (!list.length) {
+          if (!list.length && !body.children.length) {
             var p = document.createElement("p"); p.className = "cal-empty";
             p.textContent = "Ngày này không có vụ án nào trong hồ sơ. Các ngày có chấm vàng là ngày có vụ.";
             body.appendChild(p); return;
@@ -9798,7 +10066,7 @@
             cell.className = "cal-day" + (dim ? " dim" : "") + (sameDay(ddate, today) ? " today" : "") + (sameDay(ddate, sel) ? " sel" : "");
             cell.textContent = dnum;
             cell.setAttribute("aria-label", ddate.toLocaleDateString("vi-VN", { day: "numeric", month: "long", year: "numeric" }));
-            if (casesOn(ddate).length) { var dot = document.createElement("span"); dot.className = "cal-dot"; cell.appendChild(dot); }
+            if (casesOn(ddate).length || sameDay(ddate, today)) { var dot = document.createElement("span"); dot.className = "cal-dot"; cell.appendChild(dot); }
             (function (dd) { cell.onclick = function () { sel = new Date(dd); viewY = sel.getFullYear(); viewM = sel.getMonth(); renderCal(); }; })(ddate);
             grid.appendChild(cell);
           }
