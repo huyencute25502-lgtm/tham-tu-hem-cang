@@ -352,7 +352,7 @@
         right:max(12px, env(safe-area-inset-right, 0px));
         bottom:calc(64px + env(safe-area-inset-bottom, 0px));
         width:min(392px, calc(100vw - 24px));
-        max-height:min(72dvh, 620px); display:flex; flex-direction:column;
+        max-height:min(620px, calc(100dvh - 76px)); display:flex; flex-direction:column;
         background:rgba(32,32,36,.94); backdrop-filter:blur(24px) saturate(1.5); -webkit-backdrop-filter:blur(24px) saturate(1.5);
         color:#eef1f5; border:1px solid rgba(255,255,255,.14); border-radius:10px;
         box-shadow:0 24px 60px rgba(0,0,0,.55);
@@ -376,9 +376,12 @@
         background:none; border:none; border-radius:6px; color:inherit; opacity:.8; cursor:pointer;
       }
       .notif-panel-close:hover{ background:rgba(127,127,127,.25); opacity:1; }
-      .notif-list{ overflow-y:auto; overflow-x:hidden; padding:2px 12px 12px; display:flex; flex-direction:column; gap:9px; overscroll-behavior:contain; }
-      /* Mỗi thông báo một khung riêng, xếp dọc: tiêu đề + nội dung đầy đủ + giờ + chấm chưa đọc */
+      .notif-list{ flex:1 1 auto; min-height:0; overflow-y:auto; overflow-x:hidden; padding:2px 12px 12px; display:flex; flex-direction:column; gap:9px; overscroll-behavior:contain; }
+      /* Mỗi thông báo một khung riêng, xếp dọc: tiêu đề + nội dung đầy đủ + giờ + chấm chưa đọc.
+         flex:0 0 auto để thẻ KHÔNG bị flex ép co chiều cao khi danh sách dài — trước đây
+         thẻ bị ép thấp hơn nội dung, chữ 2–3 dòng tràn sang thẻ kế tiếp chồng lên nhau. */
       .notif-item{
+        flex:0 0 auto;
         display:flex; gap:10px; align-items:flex-start; width:100%; text-align:left; height:auto; overflow:visible;
         background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.1); border-radius:10px;
         padding:12px 14px; color:inherit; font-family:inherit; cursor:pointer;
@@ -439,7 +442,7 @@
       html[data-theme="dark"] .notif-item{ background:rgba(255,255,255,.06); border-color:rgba(255,255,255,.1); }
       @media (max-width:760px){
         .notif-popup, .notif-panel{ right:8px; width:calc(100vw - 16px); bottom:calc(60px + env(safe-area-inset-bottom, 0px)); }
-        .notif-panel{ max-height:76dvh; }
+        .notif-panel{ max-height:calc(100dvh - 72px); }
       }
 
       @media (max-width:760px){
@@ -1506,6 +1509,12 @@
       table.br-table{ width:100%; border-collapse:collapse; font-size:13.5px; line-height:1.55; }
       .br-table th{ text-align:left; background:var(--panel2); color:var(--ink); font-size:12.5px; letter-spacing:.02em; padding:10px 12px; border-bottom:1px solid var(--line); vertical-align:top; }
       .br-table td{ padding:11px 12px; border-bottom:1px solid var(--line); color:var(--ink-dim); vertical-align:top; overflow-wrap:anywhere; }
+      /* Cột tên trang: KHÔNG ngắt dòng giữa từ — overflow-wrap:anywhere ở trên
+         từng làm cột này co hẹp tới mức "Instagram" vỡ thành "Instag ram",
+         "YouTube" thành "YouTu be". Tên trang + tên miền giữ nguyên một
+         khối, cột giữ bề ngang tối thiểu đủ cho tên dài nhất. */
+      .br-table td.br-site-cell{ overflow-wrap:normal; word-break:normal; min-width:138px; }
+      .br-table td.br-site-cell b{ white-space:nowrap; }
       .br-table tr:last-child td{ border-bottom:none; }
       .br-table td b, .br-table td strong{ color:var(--ink); }
       .br-table code{ background:var(--panel2); border:1px solid var(--line); border-radius:6px; padding:1px 6px; font-size:12px; overflow-wrap:anywhere; }
@@ -6580,6 +6589,12 @@
       updateNotifBadge();
       if (typeof updateTrashBadge === "function") updateTrashBadge();
       if (typeof G !== "undefined" && G.currentApp === "trash" && typeof renderTrash === "function") renderTrash();
+      /* Đồng bộ TỨC THÌ sang Cài đặt → Thông báo khi mục đó đang mở: trước
+         đây đánh dấu đã đọc / xóa ở chuông xong, danh sách trong Cài đặt
+         vẫn giữ trạng thái cũ cho tới khi chuyển mục khác rồi quay lại. */
+      if (typeof G !== "undefined" && G.currentApp === "settings" && window.__lastSettingsPane === "notifs" && typeof window.__renderSettings === "function") {
+        window.__renderSettings("notifs");
+      }
     }
     function trashNotifById(id) {
       const n = notifs.find(x => x.id === id);
@@ -6590,7 +6605,10 @@
     function restoreTrashedNotif(id) {
       const n = notifs.find(x => x.id === id);
       if (!n || !n.deleted) return;
-      n.deleted = false; n.deletedAt = 0; n.read = true;
+      /* Giữ NGUYÊN trạng thái đã đọc / chưa đọc như trước khi bị xóa:
+         trước đây khôi phục ép read=true nên tin chưa đọc bị mất dấu
+         chưa đọc, khôi phục xong không biết tin nào mình chưa xem. */
+      n.deleted = false; n.deletedAt = 0;
       afterNotifChange();
     }
     function permDeleteTrashedNotif(id) {
@@ -6625,23 +6643,25 @@
       }
     };
 
-    /* Bảng chuông chỉ hiện GỌN: mọi tin chưa đọc + tối đa 3 tin đã đọc mới
-       nhất. Toàn bộ tin (đã đọc lẫn chưa đọc) xem ở Cài đặt → Thông báo. */
-    var NOTIF_PANEL_READ_SHOWN = 3;
+    /* Bảng chuông (popup) CHỈ hiện tin CHƯA ĐỌC — Huyền dặn 16/11: tin đã
+       đọc hay đã xóa mà còn hiện ở popup thì popup dài lê thê. Tin đã đọc
+       chỉ xem lại ở Cài đặt → Thông báo, tin đã xóa chỉ nằm trong Thùng
+       rác. Đánh dấu đã đọc / xóa ngay trong popup là tin biến khỏi popup
+       ngay (renderNotifs chạy lại qua afterNotifChange). */
     function renderNotifs() {
       const list = $("notifList"); if (!list) return;
       list.innerHTML = "";
       const active = notifActive();
       const unreadItems = active.filter(n => !n.read);
       const readItems = active.filter(n => n.read);
-      const shown = unreadItems.concat(readItems.slice(0, NOTIF_PANEL_READ_SHOWN));
+      const shown = unreadItems;
       shown.forEach(n => {
         const item = document.createElement("div");
-        item.className = "notif-item " + (n.read ? "read" : "unread");
+        item.className = "notif-item unread";
         item.dataset.id = String(n.id);
         item.tabIndex = 0;
         item.setAttribute("role", "button");
-        item.title = n.read ? "Tin đã đọc — toàn bộ tin xem ở Cài đặt → Thông báo" : "Bấm để đánh dấu đã đọc";
+        item.title = "Bấm để đánh dấu đã đọc";
         const dot = document.createElement("span");
         dot.className = "notif-dot"; dot.setAttribute("aria-hidden", "true");
         const main = document.createElement("span");
@@ -6665,15 +6685,16 @@
         empty.hidden = shown.length > 0;
         empty.textContent = active.length === 0
           ? "Chưa có thông báo nào. Khi có tin mới, chuông ở góc phải taskbar sẽ hiện số chưa đọc."
-          : "Không còn tin chưa đọc. Mọi tin đã đọc nằm trong Cài đặt → Thông báo.";
+          : "Không còn tin chưa đọc. Tin đã đọc xem lại trong Cài đặt → Thông báo, tin đã xóa nằm trong app Thùng rác.";
       }
+      /* Còn tin đã đọc đang lưu thì hiện lối tắt sang Cài đặt — popup chỉ
+         chứa tin chưa đọc nên không tự liệt kê chúng ở đây nữa. */
       const more = $("notifOpenSettings");
-      if (more) more.hidden = active.length <= shown.length;
+      if (more) more.hidden = readItems.length === 0;
       const count = $("notifPanelCount");
       if (count) {
         const u = unreadItems.length;
-        const hiddenRead = readItems.length - Math.min(readItems.length, NOTIF_PANEL_READ_SHOWN);
-        count.textContent = active.length === 0 ? "" : (u > 0 ? u + " chưa đọc" : "Đã đọc hết") + (hiddenRead > 0 ? " · tin cũ ở Cài đặt" : "");
+        count.textContent = active.length === 0 ? "" : (u > 0 ? u + " chưa đọc" : "Đã đọc hết") + (readItems.length > 0 ? " · tin đã đọc ở Cài đặt" : "");
       }
     }
 
@@ -6734,6 +6755,11 @@
       saveNotifs();
       renderNotifs();
       updateNotifBadge();
+      /* Tin mới đến trong lúc Cài đặt → Thông báo đang mở thì danh sách
+         bên đó cũng vẽ lại ngay, khỏi lệch nhau với chuông. */
+      if (typeof G !== "undefined" && G.currentApp === "settings" && window.__lastSettingsPane === "notifs" && typeof window.__renderSettings === "function") {
+        window.__renderSettings("notifs");
+      }
       let dndOn = false;
       try { dndOn = !!JSON.parse(localStorage.getItem("hem-cang-settings-v1") || "{}").dnd; } catch (e) {}
       if (!dndOn) { ringNotifBell(); if (!notifPanelOpen()) showNotifPopup(n); }
@@ -7355,9 +7381,18 @@
       try { return new URL(url).hostname.replace(/^www\./, ""); } catch (e) { return "Tab mới"; }
     }
     function brNewTab(url, title) {
-      brTabs.push({ hist: [url || "home"], hi: 0, title: title || brTitleFor(url) });
+      var u = url || "home";
+      /* Tiêu đề lưu THEO TỪNG MỤC lịch sử (titles[i] đi với hist[i]) chứ
+         không phải một tiêu đề chung cho cả tab: trước đây bấm Quay lại /
+         Tiến thì trang đã đổi mà tiêu đề tab vẫn giữ của trang mới nhất
+         (đang hiện bài Wikipedia mà tab vẫn ghi "google.com"). */
+      brTabs.push({ hist: [u], titles: [title || brTitleFor(u)], hi: 0 });
       brActive = brTabs.length - 1;
       brRender();
+    }
+    function brTabTitle(t) {
+      var url = t.hist[t.hi];
+      return (t.titles && t.titles[t.hi]) || t.title || brTitleFor(url);
     }
     function brRenderTabs() {
       var wrap = $("brTabs"); if (!wrap) return;
@@ -7369,7 +7404,7 @@
         b.type = "button"; b.className = "br-tab" + (i === brActive ? " active" : "");
         b.setAttribute("role", "tab");
         var dot = document.createElement("span"); dot.className = "br-tab-dot" + ((cls.mode === "blocked" || (cls.mode === "card" && cls.blocked)) ? " blocked" : "");
-        var tt = document.createElement("span"); tt.className = "br-tab-title"; tt.textContent = t.title || brTitleFor(url);
+        var tt = document.createElement("span"); tt.className = "br-tab-title"; tt.textContent = brTabTitle(t);
         var x = document.createElement("span"); x.className = "br-tab-x"; x.textContent = "✕"; x.title = "Đóng tab";
         x.addEventListener("click", function (ev) { ev.stopPropagation(); brCloseTab(i); });
         b.append(dot, tt, x);
@@ -7503,8 +7538,10 @@
     function brGo(url, title) {
       var t = brCur(); if (!t) { brNewTab(url, title); return; }
       t.hist = t.hist.slice(0, t.hi + 1);
-      t.hist.push(url); t.hi = t.hist.length - 1;
-      t.title = title || brTitleFor(url);
+      if (!Array.isArray(t.titles)) t.titles = t.hist.map(function (u) { return brTitleFor(u); });
+      t.titles = t.titles.slice(0, t.hi + 1);
+      t.hist.push(url); t.titles.push(title || brTitleFor(url));
+      t.hi = t.hist.length - 1;
       brRender();
     }
     function brParseInput(raw) {
@@ -9361,8 +9398,9 @@
         card.append(ic, main, acts);
         pane.appendChild(card);
       });
-      /* Thông báo đã xóa: khôi phục thì tin quay về Cài đặt → Thông báo
-         (ở trạng thái đã đọc), xóa vĩnh viễn thì mất hẳn khỏi kho chuông. */
+      /* Thông báo đã xóa: khôi phục thì tin quay về Cài đặt → Thông báo,
+         GIỮ NGUYÊN trạng thái đã đọc / chưa đọc như trước khi bị xóa;
+         xóa vĩnh viễn thì mất hẳn khỏi kho chuông. */
       if (trashedNotifs.length) {
         const head = document.createElement("h3");
         head.textContent = "Thông báo đã xóa";
@@ -12376,17 +12414,18 @@
       }
 
       /* Mục Thông báo trong Cài đặt: nơi xem TOÀN BỘ thông báo (đã đọc lẫn
-         chưa đọc) — bảng chuông ngoài taskbar chỉ hiện gọn tin chưa đọc +
-         3 tin đã đọc mới nhất. Xóa ở đây là chuyển vào Thùng rác, khôi
+         chưa đọc) — bảng chuông ngoài taskbar CHỈ hiện tin chưa đọc cho
+         gọn (Huyền dặn 16/11). Xóa ở đây là chuyển vào Thùng rác, khôi
          phục lại được ở app Thùng rác. Dữ liệu qua window.__notifAPI của
-         trung tâm thông báo nên chuông / huy hiệu / Thùng rác luôn khớp. */
+         trung tâm thông báo nên chuông / huy hiệu / Thùng rác luôn khớp,
+         và afterNotifChange vẽ lại mục này ngay khi nó đang mở. */
       function renderNotifsPane() {
         var api = window.__notifAPI;
         var all = api ? api.snapshot() : [];
         var active = all.filter(function (n) { return !n.deleted; });
         var trashedCount = all.length - active.length;
         var unread = active.filter(function (n) { return !n.read; }).length;
-        var h = '<h3>Thông báo</h3><p class="set-sub">Toàn bộ thông báo của văn phòng nằm ở đây. Bảng chuông ở taskbar chỉ hiện tin chưa đọc và 3 tin đã đọc mới nhất cho gọn — tin đã đọc xem lại tại mục này, tin đã xóa nằm trong app Thùng rác.</p>';
+        var h = '<h3>Thông báo</h3><p class="set-sub">Toàn bộ thông báo của văn phòng nằm ở đây. Bảng chuông ở taskbar chỉ hiện tin chưa đọc cho gọn — tin đã đọc xem lại tại mục này, tin đã xóa nằm trong app Thùng rác.</p>';
         h += '<div class="set-card"><div class="set-row"><div class="lbl"><b>' + unread + ' chưa đọc · ' + active.length + ' tin đang lưu' + (trashedCount ? ' · ' + trashedCount + ' tin trong Thùng rác' : '') + '</b><span>Đánh dấu đã đọc hết, hoặc mở Thùng rác để xem và khôi phục các tin đã xóa.</span></div>' +
           '<div style="display:flex;gap:8px;flex-wrap:wrap"><button type="button" class="set-btn ghost" id="setNotifReadAll">Đã đọc hết</button><button type="button" class="set-btn ghost" id="setNotifOpenTrash">Mở Thùng rác</button></div></div></div>';
         if (!active.length) {
