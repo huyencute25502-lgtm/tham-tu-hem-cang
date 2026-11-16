@@ -346,6 +346,49 @@
       }
       .notif-popup-close:hover{ background:rgba(127,127,127,.25); opacity:1; }
 
+      /* Toast thông báo chung của admin ở CẤP DESKTOP: góc dưới-phải, phía
+         trên taskbar, khung kính mờ kiểu thông báo Win 11. Hiện ~18 giây
+         cho mỗi thông báo chung mới (kể cả khi app Tin nhắn đang mở),
+         bấm vào mở app Tin nhắn + panel thông báo chung, bấm ✕ tắt sớm. */
+      .bcast-toast{
+        position:fixed; z-index:96;
+        right:max(12px, env(safe-area-inset-right, 0px));
+        bottom:calc(64px + env(safe-area-inset-bottom, 0px));
+        width:min(384px, calc(100vw - 24px));
+        display:flex; align-items:flex-start; gap:10px;
+        background:rgba(32,32,36,.94); backdrop-filter:blur(24px) saturate(1.5); -webkit-backdrop-filter:blur(24px) saturate(1.5);
+        color:#eef1f5; border:1px solid rgba(255,255,255,.16); border-radius:12px;
+        box-shadow:0 22px 55px rgba(0,0,0,.55); padding:14px 8px 14px 14px;
+        opacity:0; transform:translateX(28px); visibility:hidden; pointer-events:none;
+        transition:opacity .28s ease, transform .28s ease, visibility .28s;
+      }
+      .bcast-toast.show{ opacity:1; transform:translateX(0); visibility:visible; pointer-events:auto; }
+      .bcast-toast-ic{
+        flex:0 0 auto; width:38px; height:38px; border-radius:10px; display:grid; place-items:center;
+        background:rgba(232,163,61,.18); color:var(--accent);
+      }
+      .bcast-toast-main{
+        flex:1 1 auto; min-width:0; background:none; border:none; padding:2px 0 0; min-height:0;
+        text-align:left; color:inherit; font-family:inherit; cursor:pointer;
+      }
+      .bcast-toast-title{ display:block; font-size:14.5px; font-weight:700; line-height:1.4; white-space:normal; overflow-wrap:break-word; }
+      .bcast-toast-body{ display:block; font-size:13.5px; line-height:1.5; opacity:.85; margin-top:2px; white-space:normal; overflow-wrap:break-word; }
+      .bcast-toast-body:empty{ display:none; }
+      .bcast-toast-time{ display:block; font-size:11.5px; opacity:.55; margin-top:5px; font-variant-numeric:tabular-nums; }
+      .bcast-toast-close{
+        flex:0 0 auto; width:30px; height:30px; min-height:30px; padding:0; display:grid; place-items:center;
+        background:none; border:none; border-radius:6px; color:inherit; opacity:.75; cursor:pointer;
+      }
+      .bcast-toast-close:hover{ background:rgba(127,127,127,.25); opacity:1; }
+      @media (prefers-color-scheme: light){
+        .bcast-toast{ background:rgba(250,250,250,.95); color:#1c1c1c; border-color:rgba(0,0,0,.12); }
+      }
+      html[data-theme="light"] .bcast-toast{ background:rgba(250,250,250,.95); color:#1c1c1c; border-color:rgba(0,0,0,.12); }
+      html[data-theme="dark"] .bcast-toast{ background:rgba(32,32,36,.94); color:#eef1f5; border-color:rgba(255,255,255,.16); }
+      @media (max-width:760px){
+        .bcast-toast{ right:8px; width:calc(100vw - 16px); bottom:calc(60px + env(safe-area-inset-bottom, 0px)); }
+      }
+
       /* Bảng thông báo: trượt lên từ góc phải dưới khi bấm chuông */
       .notif-panel{
         position:fixed; z-index:90;
@@ -3291,6 +3334,19 @@
         <span class="notif-popup-time" id="notifPopupTime"></span>
       </button>
       <button type="button" class="notif-popup-close" id="notifPopupClose" aria-label="Đóng thông báo" tabindex="-1">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 5l14 14M19 5L5 19"/></svg>
+      </button>
+    </div>
+
+    <!-- Toast thông báo chung của admin ở cấp desktop: góc dưới-phải trên taskbar, hiện ~18 giây, bấm vào mở app Tin nhắn + panel thông báo chung, bấm ✕ tắt sớm (vẫn đánh dấu đã xem) -->
+    <div class="bcast-toast" id="bcastToast" role="alert" aria-hidden="true">
+      <span class="bcast-toast-ic" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11v3l4 1 2 5h2l-1.8-5.4L21 18V6L7 10H3v1Z"/><path d="M7 10v5"/></svg></span>
+      <button type="button" class="bcast-toast-main" id="bcastToastMain" tabindex="-1">
+        <span class="bcast-toast-title">Thông báo từ admin</span>
+        <span class="bcast-toast-body" id="bcastToastBody"></span>
+        <span class="bcast-toast-time" id="bcastToastTime"></span>
+      </button>
+      <button type="button" class="bcast-toast-close" id="bcastToastClose" aria-label="Đóng thông báo" tabindex="-1">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 5l14 14M19 5L5 19"/></svg>
       </button>
     </div>
@@ -6510,6 +6566,24 @@
     function hasDetectiveProfile() {
       if (window.__detectiveCreatedHere) return true;
       try { return !!localStorage.getItem(PROFILE_KEY); } catch (e) { return false; }
+    }
+    /* Phiên đăng nhập bền: đăng nhập PIN thành công thì đặt cờ này —
+       tải lại trang vẫn vào thẳng desktop, KHÔNG phải nhập lại PIN.
+       Chỉ nút Khóa máy (nút nguồn ở chân menu Start) mới xóa cờ và bắt
+       đăng nhập lại. Cờ trong bộ nhớ là dự phòng khi localStorage không
+       ghi được (khi đó phiên chỉ bền trong lần mở trang này). */
+    var SESSION_KEY = "hem-cang-session-v1";
+    function markSessionUnlocked() {
+      window.__hemCangSessionUnlocked = true;
+      try { localStorage.setItem(SESSION_KEY, "unlocked"); } catch (e) { /* không lưu được: giữ cờ trong bộ nhớ phiên này */ }
+    }
+    function clearSessionUnlocked() {
+      window.__hemCangSessionUnlocked = false;
+      try { localStorage.removeItem(SESSION_KEY); } catch (e) { /* bỏ qua */ }
+    }
+    function isSessionUnlocked() {
+      if (window.__hemCangSessionUnlocked) return true;
+      try { return localStorage.getItem(SESSION_KEY) === "unlocked"; } catch (e) { return false; }
     }
     /* Giấy nhớ trên màn khóa: chưa có nhân vật thì ẩn dòng PIN và hiện
        hướng dẫn tạo nhân vật; đã có nhân vật thì hiện PIN hiện tại. */
@@ -11454,6 +11528,11 @@
     applyProfile();
     renderHome();
     updateTrashBadge();
+    /* Đã có nhân vật VÀ phiên đăng nhập còn mở (đã nhập PIN thành công
+       trước đó, chưa bấm Khóa máy) thì bỏ qua màn khóa, vào thẳng
+       desktop — tải lại trang không phải đăng nhập lại. Chưa có nhân
+       vật thì giữ nguyên màn khóa + tạo nhân vật trước. */
+    if (hasDetectiveProfile() && isSessionUnlocked()) document.body.classList.remove("locked");
     showDesktop();
     </script>
 
@@ -12399,6 +12478,9 @@
         if (typeof refreshLockNote === "function") refreshLockNote();
       }
       window.lockMachine = function () {
+        /* Khóa máy = kết thúc phiên: xóa cờ đăng nhập bền, lần vào sau
+           (kể cả tải lại trang) bắt buộc nhập lại PIN. */
+        if (typeof clearSessionUnlocked === "function") clearSessionUnlocked();
         document.body.classList.add("locked");
         document.body.classList.remove("in-case");
         showLock();
@@ -12429,6 +12511,9 @@
           return;
         }
         if (pin && pin.value.trim() === G.profile.pin) {
+          /* Đăng nhập thành công (kể cả bằng PIN mới sau khi đổi/quên
+             PIN): đặt cờ phiên bền — tải lại trang vào thẳng desktop. */
+          if (typeof markSessionUnlocked === "function") markSessionUnlocked();
           document.body.classList.remove("locked");
           showDesktop();
           /* Chào mừng chỉ một lần duy nhất: đã chào rồi (cờ lưu bền
@@ -12613,7 +12698,12 @@
           saveBtn.disabled = false;
           if (card) card.classList.remove("stamped");
           closeCreator();
-          toast("Đã cấp thẻ cho " + G.profile.name + "!", "Thẻ đã lưu trên máy này. Giờ bấm Đăng nhập để vào máy nhé.");
+          /* Tạo nhân vật xong thì tự đăng nhập luôn: đặt cờ phiên bền
+             rồi vào thẳng desktop, tải lại trang cũng không phải nhập PIN. */
+          if (typeof markSessionUnlocked === "function") markSessionUnlocked();
+          document.body.classList.remove("locked");
+          showDesktop();
+          toast("Đã cấp thẻ cho " + G.profile.name + "!", "Đã đăng nhập luôn vào desktop — từ giờ tải lại trang vẫn vào thẳng, chỉ khóa máy mới phải nhập lại PIN.");
         }, 1100);
       };
       paintCreator();
@@ -13316,20 +13406,69 @@
         if (!broadcasts.length) return;
         try { localStorage.setItem(BROADCAST_SEEN_KEY, broadcasts[0].id); } catch (e) { /* lưu không được thì lần sau đẩy lại vào chuông — vô hại */ }
       }
+      /* ----- Toast cấp desktop cho thông báo chung (kiểu Win 11) -----
+         Khung kính mờ ở góc dưới-phải, phía trên taskbar, hiện ~18 giây
+         cho MỖI thông báo chung mới — hiện cả khi app Tin nhắn đang mở
+         (đây là thông báo toàn server ở cấp desktop, không phải banner
+         trong app chat). Bấm vào toast: mở app Tin nhắn + panel liệt kê
+         tất cả thông báo chung và đánh dấu đã xem. Bấm ✕: tắt sớm, cũng
+         đánh dấu đã xem. Mỗi thông báo chỉ hiện 1 lần: renderBroadcastUI
+         đánh dấu đã xem ngay khi xếp toast nên tải lại trang không hiện
+         lại. Nhiều tin mới cùng lúc thì xếp hàng, hiện lần lượt. */
+      var BCAST_TOAST_MS = 18000;
+      var bcastToastTimer = null;
+      var bcastToastQueue = [];
+      var bcastToastCurrentId = "";
+      var bcastToastWired = false;
+      function hideBcastToast() {
+        if (bcastToastTimer) { clearTimeout(bcastToastTimer); bcastToastTimer = null; }
+        bcastToastCurrentId = "";
+        var el = $("bcastToast");
+        if (el) {
+          el.classList.remove("show"); el.setAttribute("aria-hidden", "true");
+          var m = $("bcastToastMain"); if (m) m.tabIndex = -1;
+          var c = $("bcastToastClose"); if (c) c.tabIndex = -1;
+        }
+        if (bcastToastQueue.length) showBcastToast(bcastToastQueue.shift());
+      }
+      function showBcastToast(bc) {
+        var el = $("bcastToast");
+        if (!el || !bc) return;
+        wireBcastToast();
+        if (bcastToastCurrentId) { bcastToastQueue.push(bc); return; }
+        bcastToastCurrentId = bc.id;
+        var body = $("bcastToastBody");
+        if (body) body.textContent = (bc.title ? bc.title + " — " : "") + (bc.text || "");
+        var tm = $("bcastToastTime");
+        if (tm) tm.textContent = bc.date ? fmtDateTime(bc.date) : fmtTime(new Date());
+        el.classList.add("show"); el.setAttribute("aria-hidden", "false");
+        var m = $("bcastToastMain"); if (m) m.tabIndex = 0;
+        var c = $("bcastToastClose"); if (c) c.tabIndex = 0;
+        if (bcastToastTimer) clearTimeout(bcastToastTimer);
+        bcastToastTimer = setTimeout(hideBcastToast, BCAST_TOAST_MS);
+      }
+      function wireBcastToast() {
+        if (bcastToastWired) return;
+        bcastToastWired = true;
+        var main = $("bcastToastMain");
+        if (main) main.addEventListener("click", function () {
+          markBroadcastsSeen();
+          hideBcastToast();
+          if (typeof openMessages === "function") openMessages();
+          if (typeof window.__msgOpenBroadcasts === "function") window.__msgOpenBroadcasts();
+        });
+        var closeBtn = $("bcastToastClose");
+        if (closeBtn) closeBtn.addEventListener("click", function (e) {
+          e.stopPropagation();
+          markBroadcastsSeen();
+          hideBcastToast();
+        });
+      }
       function renderBroadcastUI() {
         if (panelMode === "broadcasts") renderBroadcastPanel();
         if (!broadcasts.length) return;
-        /* App đang mở sẵn mà thông báo mới về tới thì coi như đã xem:
-           chỉ đánh dấu đã xem, KHÔNG đẩy chuông. */
-        var v = $("msgView");
-        if (v && v.style.display !== "none") { markBroadcastsSeen(); return; }
-        /* App Tin nhắn chưa mở: đẩy các thông báo chưa xem vào chuông
-           thông báo của game (toast với hành động "broadcast" — bấm vào
-           tin chuông sẽ mở app Tin nhắn + panel liệt kê tất cả thông
-           báo chung). Danh sách xếp mới nhất trước: lấy phần đầu tới
-           khi gặp id đã xem thì dừng; đẩy từ cũ lên mới để popup cuối
-           cùng là tin mới nhất. Đẩy xong cập nhật id đã xem lên tin mới
-           nhất để snapshot sau không đẩy trùng. */
+        /* Danh sách xếp mới nhất trước: lấy phần đầu tới khi gặp id đã
+           xem thì dừng — đó là các thông báo mới chưa xem. */
         var seenId = seenBroadcastId();
         var fresh = [];
         for (var i = 0; i < broadcasts.length; i++) {
@@ -13337,12 +13476,28 @@
           fresh.push(broadcasts[i]);
         }
         if (!fresh.length) return;
-        for (var j = fresh.length - 1; j >= 0; j--) {
-          var bc = fresh[j];
-          try {
-            if (typeof toast === "function") toast("Thông báo từ admin", (bc.title ? bc.title + " — " : "") + bc.text, "broadcast");
-          } catch (e) { /* chuông không sẵn sàng: bỏ qua, đã xem vẫn được cập nhật bên dưới */ }
+        var v = $("msgView");
+        var appOpen = !!(v && v.style.display !== "none");
+        /* Toast cấp desktop: hiện cho mỗi thông báo mới DÙ app Tin nhắn
+           đang mở hay chưa (xếp từ cũ lên mới để tin mới nhất hiện sau
+           cùng). Khi app đang mở thì vẫn đánh dấu đã xem như cũ và
+           KHÔNG đẩy chuông trùng — nhưng toast vẫn hiện đủ ~18 giây. */
+        for (var k = fresh.length - 1; k >= 0; k--) showBcastToast(fresh[k]);
+        /* App Tin nhắn chưa mở: đẩy thêm các thông báo chưa xem vào
+           chuông thông báo của game (toast với hành động "broadcast" —
+           bấm vào tin chuông sẽ mở app Tin nhắn + panel liệt kê tất cả
+           thông báo chung), từ cũ lên mới để popup cuối cùng là tin mới
+           nhất. */
+        if (!appOpen) {
+          for (var j = fresh.length - 1; j >= 0; j--) {
+            var bc = fresh[j];
+            try {
+              if (typeof toast === "function") toast("Thông báo từ admin", (bc.title ? bc.title + " — " : "") + bc.text, "broadcast");
+            } catch (e) { /* chuông không sẵn sàng: bỏ qua, đã xem vẫn được cập nhật bên dưới */ }
+          }
         }
+        /* Cập nhật id đã xem lên tin mới nhất ngay: snapshot sau không
+           đẩy trùng, tải lại trang không hiện lại toast/chuông. */
         markBroadcastsSeen();
       }
       function watchBroadcasts() {
