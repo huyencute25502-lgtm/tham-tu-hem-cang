@@ -1403,16 +1403,103 @@
       html[data-theme="dark"] .sm-power{ color:#dfe5ee; }
       html[data-theme="dark"] #homeView, html[data-theme="dark"] #caseView, html[data-theme="dark"] #reportView, html[data-theme="dark"] #howtoView, html[data-theme="dark"] #badgesView, html[data-theme="dark"] #youtubeView, html[data-theme="dark"] #settingsView, html[data-theme="dark"] #dailyView, html[data-theme="dark"] #miniView{ border-color:rgba(255,255,255,.1); }
       /* ================= MÁY TÍNH NÀY + THÙNG RÁC (app thật) ================= */
-      #pcView, #trashView{ display:none; margin:0 14px 14px 104px; position:relative; z-index:2;
+      #pcView, #trashView, #browserView{ display:none; margin:0 14px 14px 104px; position:relative; z-index:2;
         background:var(--bg); border:1px solid rgba(255,255,255,.1); border-top:none;
         border-radius:0 0 8px 8px; box-shadow:0 24px 54px rgba(0,0,0,.42);
         flex:1 1 auto; min-height:0; overflow-y:auto; overflow-x:hidden; overscroll-behavior:contain; }
-      @media (prefers-color-scheme: light){ #pcView, #trashView{ border-color:rgba(0,0,0,.1); } }
-      html[data-theme="light"] #pcView, html[data-theme="light"] #trashView{ border-color:rgba(0,0,0,.1); }
-      html[data-theme="dark"] #pcView, html[data-theme="dark"] #trashView{ border-color:rgba(255,255,255,.1); }
-      body.locked #pcView, body.locked #trashView{ display:none !important; }
-      body.on-desktop #pcView, body.on-desktop #trashView{ display:none !important; }
-      @media (max-width:760px){ #pcView, #trashView{ margin:0 8px 10px; } }
+      @media (prefers-color-scheme: light){ #pcView, #trashView, #browserView{ border-color:rgba(0,0,0,.1); } }
+      html[data-theme="light"] #pcView, html[data-theme="light"] #trashView, html[data-theme="light"] #browserView{ border-color:rgba(0,0,0,.1); }
+      html[data-theme="dark"] #pcView, html[data-theme="dark"] #trashView, html[data-theme="dark"] #browserView{ border-color:rgba(255,255,255,.1); }
+      body.locked #pcView, body.locked #trashView, body.locked #browserView{ display:none !important; }
+      body.on-desktop #pcView, body.on-desktop #trashView, body.on-desktop #browserView{ display:none !important; }
+      @media (max-width:760px){ #pcView, #trashView, #browserView{ margin:0 8px 10px; } }
+
+      /* ================= APP TRÌNH DUYỆT "CẢNG LƯỚT" =================
+         Trình duyệt riêng của văn phòng: tên, logo con thuyền và giao diện
+         teal đậm tự thiết kế — chỉ lấy DỮ KIỆN từ nghiên cứu (trang nào cho
+         nhúng iframe, trang nào chặn bằng X-Frame-Options / CSP), không dùng
+         logo hay thiết kế của Cốc Cốc / Chrome. Thanh tab + thanh địa chỉ giữ
+         tông slate đậm ở cả hai chế độ sáng/tối như một app riêng. */
+      .br-shell{ display:flex; flex-direction:column; min-height:100%; }
+      .br-tabstrip{ display:flex; align-items:flex-end; gap:6px; background:#101c26; padding:8px 10px 0; overflow-x:auto; scrollbar-width:none; }
+      .br-tabstrip::-webkit-scrollbar{ display:none; }
+      .br-tab{ display:flex; align-items:center; gap:8px; max-width:220px; min-width:0; background:#22303d; color:#c8d4df; border:none; border-radius:9px 9px 0 0; padding:8px 8px 8px 12px; font-family:inherit; font-size:13px; cursor:pointer; }
+      .br-tab.active{ background:#f4efe3; color:#22303d; font-weight:700; }
+      html[data-theme="dark"] .br-tab.active{ background:#1a2839; color:#ece5d3; }
+      @media (prefers-color-scheme: dark){ .br-tab.active{ background:#1a2839; color:#ece5d3; } }
+      .br-tab .br-tab-dot{ flex:0 0 auto; width:8px; height:8px; border-radius:50%; background:#35c4b5; }
+      .br-tab .br-tab-dot.blocked{ background:#e4573d; }
+      .br-tab-title{ flex:1 1 auto; min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; text-align:left; }
+      .br-tab-x{ flex:0 0 auto; width:22px; height:22px; min-height:22px; border:none; border-radius:6px; background:none; color:inherit; font-size:14px; line-height:1; display:grid; place-items:center; cursor:pointer; }
+      .br-tab-x:hover{ background:rgba(127,127,127,.25); }
+      .br-tab-add{ flex:0 0 auto; width:30px; height:30px; min-height:30px; margin-bottom:2px; border:none; border-radius:8px; background:#22303d; color:#c8d4df; font-size:17px; line-height:1; cursor:pointer; }
+      .br-tab-add:hover{ background:#2c3f4f; color:#fff; }
+      .br-toolbar{ display:flex; align-items:center; gap:7px; background:#16242f; padding:8px 10px; flex-wrap:wrap; }
+      .br-nav-btn{ flex:0 0 auto; width:34px; height:34px; min-height:34px; border:none; border-radius:8px; background:none; color:#dbe5ee; display:grid; place-items:center; cursor:pointer; }
+      .br-nav-btn:hover:not(:disabled){ background:rgba(255,255,255,.1); }
+      .br-nav-btn:disabled{ opacity:.32; cursor:default; }
+      .br-addr{ flex:1 1 220px; display:flex; align-items:center; gap:8px; background:#0d1720; border:1.5px solid #31485c; border-radius:999px; padding:0 6px 0 14px; min-width:0; }
+      .br-addr:focus-within{ border-color:#35c4b5; }
+      .br-addr input{ flex:1; min-width:0; background:none; border:none; outline:none; color:#eef4f9; font-size:14.5px; font-family:inherit; padding:8px 2px; min-height:0; }
+      .br-addr input::placeholder{ color:#7e93a6; }
+      .br-chip{ flex:0 0 auto; font-size:11px; font-weight:800; letter-spacing:.02em; border-radius:999px; padding:3px 9px; background:rgba(53,196,181,.16); color:#5fd8ca; white-space:nowrap; }
+      .br-chip.blocked{ background:rgba(228,87,61,.18); color:#ff9a86; }
+      .br-chip.unknown{ background:rgba(232,163,61,.16); color:#f5c877; }
+      .br-chip[hidden]{ display:none; }
+      .br-out-btn{ flex:0 0 auto; display:inline-flex; align-items:center; gap:6px; background:#35c4b5; color:#062a26; border:none; font-weight:800; font-size:13px; font-family:inherit; border-radius:999px; padding:8px 14px; min-height:34px; cursor:pointer; }
+      .br-out-btn:hover{ background:#4ad2c3; }
+      .br-helper{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; background:var(--panel2); border-bottom:1px solid var(--line); color:var(--ink-dim); font-size:13px; padding:7px 14px; }
+      .br-helper[hidden]{ display:none; }
+      .br-helper button{ background:none; border:1px solid var(--line); color:var(--ink); font-family:inherit; font-weight:700; font-size:12.5px; border-radius:8px; padding:4px 11px; min-height:0; cursor:pointer; }
+      .br-content{ position:relative; flex:1 1 auto; min-height:420px; display:flex; flex-direction:column; background:var(--bg2); }
+      .br-content iframe{ flex:1 1 auto; width:100%; min-height:420px; border:0; display:block; background:#fff; }
+      .br-content iframe[hidden]{ display:none; }
+      .br-home{ overflow-y:auto; padding:0 0 34px; }
+      .br-hero{ background:#0f3d3e; color:#eafaf7; padding:30px 22px 26px; text-align:center; }
+      .br-hero-mark{ width:62px; height:62px; margin:0 auto 10px; border-radius:18px; background:#0a2e2f; border:1px solid rgba(95,216,202,.4); display:grid; place-items:center; color:#5fd8ca; }
+      .br-hero h3{ margin:0 0 4px; font-size:24px; letter-spacing:.01em; }
+      .br-hero p{ margin:0 auto 18px; max-width:520px; font-size:14px; color:#b9ded9; }
+      .br-search{ display:flex; align-items:stretch; max-width:620px; margin:0 auto; }
+      .br-search-field{ flex:1 1 auto; display:flex; align-items:center; background:#fff; border-radius:999px 0 0 999px; padding:0 8px 0 18px; min-width:0; }
+      .br-search-field input{ flex:1; min-width:0; border:none; outline:none; background:none; color:#22303d; font-size:15.5px; font-family:inherit; padding:11px 4px; min-height:0; }
+      .br-search-go{ flex:0 0 auto; border:none; background:#35c4b5; color:#062a26; font-weight:800; font-size:14.5px; font-family:inherit; padding:0 20px; border-radius:0 999px 999px 0; cursor:pointer; }
+      .br-search-alt{ margin-top:11px; font-size:13px; color:#b9ded9; }
+      .br-search-alt button{ background:none; border:none; color:#5fd8ca; font-weight:700; font-family:inherit; font-size:13px; text-decoration:underline; cursor:pointer; padding:0; min-height:0; }
+      .br-sec{ max-width:880px; margin:24px auto 0; padding:0 18px; }
+      .br-sec h4{ margin:0 0 4px; font-size:16.5px; color:var(--ink); display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+      .br-sec .br-sec-note{ margin:0 0 12px; font-size:13px; color:var(--ink-faint); }
+      .br-tiles{ display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:10px; }
+      .br-tile{ display:flex; flex-direction:column; align-items:flex-start; gap:7px; text-align:left; background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:13px 14px; color:var(--ink); font-family:inherit; cursor:pointer; min-height:0; }
+      .br-tile:hover{ border-color:#35c4b5; }
+      .br-tile b{ font-size:14.5px; line-height:1.3; }
+      .br-tile span{ font-size:12px; color:var(--ink-dim); line-height:1.4; }
+      .br-tile .br-tag{ font-size:10.5px; font-weight:800; letter-spacing:.03em; border-radius:999px; padding:2px 8px; background:rgba(53,196,181,.14); color:#2aa79a; }
+      html[data-theme="dark"] .br-tile .br-tag{ color:#5fd8ca; }
+      .br-tile .br-tag.out{ background:rgba(228,87,61,.12); color:#c94a33; }
+      html[data-theme="dark"] .br-tile .br-tag.out{ color:#ff9a86; }
+      .br-embed-box{ background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:15px 16px; }
+      .br-embed-box p{ margin:0 0 10px; font-size:13.5px; color:var(--ink-dim); line-height:1.55; }
+      .br-embed-row{ display:flex; gap:8px; flex-wrap:wrap; }
+      .br-embed-row input{ flex:1 1 260px; background:var(--bg2); border:1.5px solid var(--line); border-radius:10px; color:var(--ink); font-family:inherit; font-size:14px; padding:10px 13px; min-height:0; outline:none; }
+      .br-embed-row input:focus{ border-color:#35c4b5; }
+      .br-embed-row button{ background:#35c4b5; color:#062a26; border:none; font-weight:800; font-size:14px; font-family:inherit; border-radius:10px; padding:10px 18px; min-height:0; cursor:pointer; }
+      .br-embed-msg{ margin:9px 0 0; font-size:13px; color:var(--red); min-height:1.1em; }
+      .br-facts{ background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:16px 18px; font-size:14px; color:var(--ink-dim); line-height:1.65; }
+      .br-facts b{ color:var(--ink); }
+      .br-facts ul{ margin:8px 0; padding-left:20px; }
+      .br-facts li{ margin-bottom:7px; }
+      .br-facts a{ color:#2aa79a; font-weight:700; }
+      html[data-theme="dark"] .br-facts a{ color:#5fd8ca; }
+      .br-blocked{ padding:38px 20px; text-align:center; color:var(--ink-dim); }
+      .br-blocked[hidden]{ display:none; }
+      .br-blocked .br-block-ic{ width:60px; height:60px; margin:0 auto 14px; border-radius:16px; background:rgba(228,87,61,.12); color:var(--red); display:grid; place-items:center; }
+      .br-blocked h4{ margin:0 0 8px; font-size:19px; color:var(--ink); }
+      .br-blocked p{ margin:0 auto 10px; max-width:560px; font-size:14.5px; line-height:1.6; }
+      .br-blocked code{ background:var(--panel2); border:1px solid var(--line); border-radius:6px; padding:1px 7px; font-size:12.5px; }
+      .br-blocked-actions{ display:flex; gap:9px; justify-content:center; flex-wrap:wrap; margin-top:16px; }
+      .br-blocked-actions .br-open-out{ background:#35c4b5; color:#062a26; border:none; font-weight:800; font-size:14.5px; font-family:inherit; border-radius:10px; padding:11px 20px; min-height:0; cursor:pointer; }
+      .br-blocked-actions .br-go-home{ background:var(--panel2); border:1px solid var(--line); color:var(--ink); font-weight:700; font-size:14.5px; font-family:inherit; border-radius:10px; padding:11px 20px; min-height:0; cursor:pointer; }
+      @media (max-width:560px){ .br-hero h3{ font-size:21px; } .br-content, .br-content iframe{ min-height:360px; } .br-out-btn span{ display:none; } }
 
       /* File Explorer kiểu Win 11 cho Máy tính này */
       .pc-crumb{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:9px 14px; font-size:13.5px; color:var(--ink-dim); margin-bottom:14px; }
@@ -2196,6 +2283,7 @@
               <button type="button" class="d-icon" data-app="trash" style="background:none;border:none;font-family:inherit;cursor:pointer;left:14px;top:640px"><span class="d-glyph" style="color:#d7dee9"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 6.5h15M9.5 6V4.2A1.2 1.2 0 0 1 10.7 3h2.6a1.2 1.2 0 0 1 1.2 1.2V6M6.5 6.5l1 13a1.6 1.6 0 0 0 1.6 1.5h5.8a1.6 1.6 0 0 0 1.6-1.5l1-13M10 10.5v6M14 10.5v6"/></svg></span><span>Thùng rác</span><span class="d-badge" id="trashBadge" hidden>0</span></button>
               <button type="button" class="d-icon" data-app="daily" style="background:none;border:none;font-family:inherit;cursor:pointer;left:14px;top:744px"><span class="d-glyph" style="color:#e8a33d"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/><path d="m9.2 16.2 2 2 3.6-3.8"/></svg></span><span>Vụ án hôm nay</span></button>
               <button type="button" class="d-icon" data-app="minigames" style="background:none;border:none;font-family:inherit;cursor:pointer;left:14px;top:848px"><span class="d-glyph" style="color:#57e6c9"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="7" width="19" height="11" rx="5.5"/><path d="M7.5 11v3M6 12.5h3"/><circle cx="15.8" cy="11.3" r="1.05" fill="currentColor" stroke="none"/><circle cx="18" cy="14" r="1.05" fill="currentColor" stroke="none"/></svg></span><span>Mini game hẻm</span></button>
+              <button type="button" class="d-icon" data-app="browser" style="background:none;border:none;font-family:inherit;cursor:pointer;left:14px;top:952px"><span class="d-glyph" style="color:#35c4b5"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v10.5"/><path d="M12 3l5.5 8H12"/><path d="M12 6.2 7.6 13H12"/><path d="M4.5 16.5c1.8 1.5 3.6-1.2 5.4 0 1.4 1 2.4 1 3.8 0 1.8-1.2 3.6 1.5 5.4 0"/><path d="M4.5 20.5c1.8 1.5 3.6-1.2 5.4 0 1.4 1 2.4 1 3.8 0 1.8-1.2 3.6 1.5 5.4 0"/></svg></span><span>Trình duyệt</span></button>
             </div>
             <div class="os-bar" aria-hidden="true">
               <span class="os-dots"><i></i><i></i><i></i></span>
@@ -2402,6 +2490,112 @@
           </div>
         </div>
         <section class="pane" id="miniPane"></section>
+      </div>
+    </div>
+
+    <!-- ================= APP TRÌNH DUYỆT "CẢNG LƯỚT" =================
+         Tên, logo con thuyền và giao diện tự thiết kế riêng cho game — chỉ lấy
+         dữ kiện từ nghiên cứu duyệt web trong game: trang đích tự quyết có cho
+         nhúng iframe hay không qua X-Frame-Options / CSP frame-ancestors,
+         không trình duyệt nào (Chrome, Cốc Cốc…) đổi được. Trang cho nhúng thì
+         mở ngay trong cửa sổ này; trang chặn thì hiện thẻ giải thích + nút mở
+         tab mới, đúng cách các bản giả lập Win11 trên web (win11React) vẫn làm. -->
+    <div id="browserView">
+      <div class="br-shell">
+        <div class="br-tabstrip" id="brTabs" role="tablist" aria-label="Các tab đang mở"></div>
+        <div class="br-toolbar">
+          <button type="button" class="br-nav-btn" id="brBack" aria-label="Quay lại"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button>
+          <button type="button" class="br-nav-btn" id="brFwd" aria-label="Tiến tới"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg></button>
+          <button type="button" class="br-nav-btn" id="brReload" aria-label="Tải lại trang"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12a8 8 0 1 1-2.3-5.6"/><path d="M20 3.5V8h-4.5"/></svg></button>
+          <button type="button" class="br-nav-btn" id="brHomeBtn" aria-label="Trang bắt đầu"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11.5 12 4l8 7.5"/><path d="M6 10v9.5h12V10"/></svg></button>
+          <form class="br-addr" id="brAddrForm" role="search">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#7e93a6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="10.5" width="14" height="9.5" rx="1.8"/><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5"/></svg>
+            <input id="brAddr" type="text" placeholder="Gõ địa chỉ trang web hoặc từ khóa tra cứu…" autocomplete="off" spellcheck="false" aria-label="Thanh địa chỉ" />
+            <span class="br-chip" id="brChip" hidden></span>
+          </form>
+          <button type="button" class="br-out-btn" id="brOpenOut"><span>Mở tab mới</span><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4h6v6"/><path d="M20 4 11 13"/><path d="M20 14v5a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 19V6a1.5 1.5 0 0 1 1.5-1.5H10"/></svg></button>
+        </div>
+        <div class="br-helper" id="brHelper" hidden>
+          <span id="brHelperText"></span>
+          <button type="button" id="brHelperOut">Mở tab mới</button>
+        </div>
+        <div class="br-content">
+          <div class="br-home" id="brHome">
+            <div class="br-hero">
+              <div class="br-hero-mark"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v10.5"/><path d="M12 3l5.5 8H12"/><path d="M12 6.2 7.6 13H12"/><path d="M4.5 16.5c1.8 1.5 3.6-1.2 5.4 0 1.4 1 2.4 1 3.8 0 1.8-1.2 3.6 1.5 5.4 0"/><path d="M4.5 20.5c1.8 1.5 3.6-1.2 5.4 0 1.4 1 2.4 1 3.8 0 1.8-1.2 3.6 1.5 5.4 0"/></svg></div>
+              <h3>Cảng Lướt</h3>
+              <p>Trình duyệt của văn phòng thám tử — ra khơi tra cứu ngay trong cửa sổ game. Trang nào cho nhúng thì hiện tại đây, trang nào chặn thì Cảng Lướt nói rõ lý do và mở tab mới cho bạn.</p>
+              <form class="br-search" id="brSearchForm" role="search">
+                <div class="br-search-field"><input id="brSearchInput" type="search" placeholder="Tra cứu trên Wikipedia tiếng Việt…" autocomplete="off" aria-label="Tra cứu trên Wikipedia" /></div>
+                <button type="submit" class="br-search-go">Tra cứu</button>
+              </form>
+              <p class="br-search-alt">Ô tìm kiếm ở đây tra trong Wikipedia (trang cho mở trong game). Muốn tìm bằng Google? <button type="button" id="brGoogleSearch">Mở Google ở tab mới</button> — vì Google chặn nhúng, xem mục dưới.</p>
+            </div>
+
+            <section class="br-sec">
+              <h4>Mở ngay trong game</h4>
+              <p class="br-sec-note">Các trang này không cấm nhúng khung (iframe) nên hiện nguyên trang thật ngay trong cửa sổ Cảng Lướt.</p>
+              <div class="br-tiles">
+                <button type="button" class="br-tile" data-br-open="https://vi.wikipedia.org/wiki/Trang_Chính" data-br-title="Wikipedia tiếng Việt"><span class="br-tag">TRONG GAME</span><b>Wikipedia tiếng Việt</b><span>Bách khoa toàn thư — tra cứu manh mối, địa danh, nhân vật.</span></button>
+                <button type="button" class="br-tile" data-br-open="https://vi.wikipedia.org/wiki/Cổng_thông_tin:Thời_sự" data-br-title="Thời sự · Wikipedia"><span class="br-tag">TRONG GAME</span><b>Thời sự trên Wikipedia</b><span>Tin nhanh do cộng đồng Wikipedia cập nhật — đọc ngay tại đây.</span></button>
+                <button type="button" class="br-tile" data-br-open="https://en.wikipedia.org/wiki/Main_Page" data-br-title="Wikipedia (English)"><span class="br-tag">TRONG GAME</span><b>Wikipedia (English)</b><span>Bản tiếng Anh khi bản tiếng Việt chưa có bài.</span></button>
+                <button type="button" class="br-tile" data-br-open="https://example.com" data-br-title="Example.com"><span class="br-tag">TRONG GAME</span><b>Example.com</b><span>Trang mẫu quốc tế — để thử xem khung nhúng chạy thế nào.</span></button>
+              </div>
+            </section>
+
+            <section class="br-sec">
+              <h4>Hộp nhúng — video &amp; bản đồ</h4>
+              <p class="br-sec-note">Trang xem YouTube thường bị chặn nhúng, nhưng bản <b>nhúng</b> của chính YouTube / Vimeo / Google Maps thì được sinh ra để mở trong trang khác. Dán link vào đây, Cảng Lướt tự đổi sang bản nhúng.</p>
+              <div class="br-embed-box">
+                <p>Dán link video YouTube (youtube.com/watch hoặc youtu.be), link Vimeo, link nhúng Google Maps (trong Google Maps: Chia sẻ → Nhúng bản đồ), hoặc link bài Instagram dạng nhúng — rồi bấm Mở trong game.</p>
+                <div class="br-embed-row">
+                  <input id="brEmbedInput" type="text" placeholder="Dán link vào đây…" autocomplete="off" spellcheck="false" aria-label="Link cần đổi sang bản nhúng" />
+                  <button type="button" id="brEmbedGo">Mở trong game</button>
+                </div>
+                <p class="br-embed-msg" id="brEmbedMsg" role="status"></p>
+              </div>
+            </section>
+
+            <section class="br-sec">
+              <h4>Chỉ mở được ở tab mới</h4>
+              <p class="br-sec-note">Các trang dưới đây tự gửi lệnh cấm nhúng (ghi trên từng ô) — mở trong game sẽ chỉ thấy khung trắng báo “refused to connect”. Bấm ô là mở tab mới ngoài game, đăng nhập và dùng bình thường.</p>
+              <div class="br-tiles">
+                <button type="button" class="br-tile" data-br-out="https://www.google.com" data-br-title="Google Tìm kiếm"><span class="br-tag out">TAB MỚI · SAMEORIGIN</span><b>Google Tìm kiếm</b><span>Google cấm nhúng trang tìm kiếm của mình.</span></button>
+                <button type="button" class="br-tile" data-br-out="https://www.facebook.com" data-br-title="Facebook"><span class="br-tag out">TAB MỚI · DENY</span><b>Facebook</b><span>Chỉ cho nhúng bài viết qua tiện ích riêng, không nhúng cả trang.</span></button>
+                <button type="button" class="br-tile" data-br-out="https://www.instagram.com" data-br-title="Instagram"><span class="br-tag out">TAB MỚI · SAMEORIGIN</span><b>Instagram</b><span>Chỉ bài công khai mới có bản nhúng riêng.</span></button>
+                <button type="button" class="br-tile" data-br-out="https://www.youtube.com" data-br-title="YouTube"><span class="br-tag out">TAB MỚI · SAMEORIGIN</span><b>YouTube (trang xem)</b><span>Muốn xem trong game thì dán link video vào Hộp nhúng ở trên.</span></button>
+                <button type="button" class="br-tile" data-br-out="https://x.com" data-br-title="X (Twitter)"><span class="br-tag out">TAB MỚI · DENY</span><b>X (Twitter)</b><span>Cấm nhúng toàn trang.</span></button>
+                <button type="button" class="br-tile" data-br-out="https://github.com" data-br-title="GitHub"><span class="br-tag out">TAB MỚI · DENY</span><b>GitHub</b><span>Cấm nhúng toàn trang.</span></button>
+                <button type="button" class="br-tile" data-br-out="https://www.reddit.com" data-br-title="Reddit"><span class="br-tag out">TAB MỚI · CSP ’SELF’</span><b>Reddit</b><span>Chỉ cho tự nhúng chính mình; từng bài có bản nhúng riêng ở embed.reddit.com.</span></button>
+                <button type="button" class="br-tile" data-br-out="https://www.netflix.com" data-br-title="Netflix"><span class="br-tag out">TAB MỚI · DENY</span><b>Netflix</b><span>Cấm nhúng — xem phim vẫn phải ra tab mới.</span></button>
+              </div>
+            </section>
+
+            <section class="br-sec">
+              <h4>Vì sao có trang mở được, có trang không?</h4>
+              <div class="br-facts">
+                <ul>
+                  <li><b>Trang đích tự quyết, không phải trình duyệt quyết.</b> Mỗi trang web tự gửi lệnh <code>X-Frame-Options</code> hoặc <code>CSP frame-ancestors</code>: <b>DENY</b> là cấm hẳn, <b>SAMEORIGIN</b> là chỉ trang cùng nhà mới được nhúng. Mọi trình duyệt — Chrome, Cốc Cốc hay trình duyệt khác — đều phải nghe theo, nên <b>không có trình duyệt nào mở được mọi trang ngay trong game</b>. Mục đích của lệnh cấm là chống “clickjacking”: giấu trang thật dưới nút giả để lừa người dùng bấm nhầm.</li>
+                  <li><b>Khi bị chặn, bạn thấy gì?</b> Khung trắng hoặc trang lỗi “refused to connect” của trình duyệt. Ngay cả sự kiện tải xong của khung cũng có thể vẫn chạy khi bị chặn, nên <b>trang web không phát hiện chắc chắn được</b> là trang đích đã chặn hay chưa — vì vậy Cảng Lướt luôn có sẵn nút “Mở tab mới” ở thanh địa chỉ.</li>
+                  <li><b>Trang tin tức thì sao?</b> Chưa có luật chung: mỗi tòa soạn (thậm chí từng loại trang của cùng một báo) đặt lệnh riêng, và lệnh có thể đổi bất cứ lúc nào. Nghiên cứu chưa kiểm chứng được từng báo cụ thể — cứ gõ địa chỉ vào thanh địa chỉ để thử; trang nào trắng thì bấm “Mở tab mới”.</li>
+                  <li><b>Cách duy nhất mở được mọi trang trong game</b> là chạy một trình duyệt thật trên máy chủ rồi truyền hình ảnh về như video (dịch vụ Hyperbeam): miễn phí 10.000 phút mỗi tháng, sau đó tính $0,007 mỗi phút thêm cho mỗi người — ví dụ 1.000 người xem 30 phút thì khoảng $140/tháng ngoài phần miễn phí — và phải có máy chủ giữ khóa bí mật. Game tĩnh miễn phí này không dùng cách đó; đi đường vòng bằng máy chủ trung gian gỡ lệnh cấm thì đăng nhập hay hỏng và dễ vi phạm điều khoản của trang đích, nên cũng không làm.</li>
+                  <li><b>Các bản giả lập Windows trên web cũng vậy:</b> bản Win11 nổi tiếng win11React cũng chỉ dùng khung nhúng và ghi thẳng là nếu hiện “Refused to connect” thì đó là do trang đích không cho, họ không sửa được.</li>
+                </ul>
+                <p style="margin:0">Nguồn dữ kiện: <a href="https://www.iframe-viewer.com/learn/" target="_blank" rel="noopener">iframe-viewer.com/learn</a> (bảng trang cho/chặn nhúng, cập nhật 07/11/2026) · <a href="https://hyperbeam.com" target="_blank" rel="noopener">hyperbeam.com</a> (giá &amp; phút miễn phí) · <a href="https://github.com/blueedgetechno/win11React/issues/867" target="_blank" rel="noopener">win11React issue #867</a>.</p>
+              </div>
+            </section>
+          </div>
+          <iframe id="brFrame" title="Trang web đang mở trong Cảng Lướt" hidden></iframe>
+          <div class="br-blocked" id="brBlocked" hidden>
+            <div class="br-block-ic"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M6 6l12 12"/></svg></div>
+            <h4 id="brBlockedTitle">Trang này chặn mở trong game</h4>
+            <p id="brBlockedText"></p>
+            <div class="br-blocked-actions">
+              <button type="button" class="br-open-out" id="brBlockedOut">Mở ở tab mới</button>
+              <button type="button" class="br-go-home" id="brBlockedHome">Về trang bắt đầu</button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -2704,6 +2898,7 @@
         <button type="button" class="sm-app" data-go="daily"><span class="sm-ic" style="color:#e8a33d"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/><path d="m9.2 16.2 2 2 3.6-3.8"/></svg></span>Vụ án hôm nay</button>
         <button type="button" class="sm-app" data-go="minigames"><span class="sm-ic" style="color:#57e6c9"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="7" width="19" height="11" rx="5.5"/><path d="M7.5 11v3M6 12.5h3"/><circle cx="15.8" cy="11.3" r="1.05" fill="currentColor" stroke="none"/><circle cx="18" cy="14" r="1.05" fill="currentColor" stroke="none"/></svg></span>Mini game hẻm</button>
         <button type="button" class="sm-app" data-go="youtube"><span class="sm-ic" style="color:#f5c877"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="5" width="19" height="14" rx="3"/><path d="M10 9.2v5.6L15 12Z" fill="currentColor" stroke="none"/></svg></span>Xem video</button>
+        <button type="button" class="sm-app" data-go="browser"><span class="sm-ic" style="color:#35c4b5"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v10.5"/><path d="M12 3l5.5 8H12"/><path d="M12 6.2 7.6 13H12"/><path d="M4.5 16.5c1.8 1.5 3.6-1.2 5.4 0 1.4 1 2.4 1 3.8 0 1.8-1.2 3.6 1.5 5.4 0"/><path d="M4.5 20.5c1.8 1.5 3.6-1.2 5.4 0 1.4 1 2.4 1 3.8 0 1.8-1.2 3.6 1.5 5.4 0"/></svg></span>Trình duyệt</button>
         <button type="button" class="sm-app" data-go="settings"><span class="sm-ic" style="color:#9fb0c3"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3.2"/><path d="M19.4 13.6a7.9 7.9 0 0 0 0-3.2l2-1.5-2-3.4-2.3 1a8 8 0 0 0-2.8-1.6L14 2.5h-4l-.3 2.4a8 8 0 0 0-2.8 1.6l-2.3-1-2 3.4 2 1.5a7.9 7.9 0 0 0 0 3.2l-2 1.5 2 3.4 2.3-1a8 8 0 0 0 2.8 1.6l.3 2.4h4l.3-2.4a8 8 0 0 0 2.8-1.6l2.3 1 2-3.4-2-1.5Z"/></svg></span>Cài đặt</button>
         <button type="button" class="sm-app" data-go="thispc"><span class="sm-ic" style="color:#7cc4ff"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="4" width="19" height="12.5" rx="1.6"/><path d="M9.5 20.5h5M12 16.5v4"/></svg></span>Máy tính này</button>
         <button type="button" class="sm-app" data-go="trash"><span class="sm-ic" style="color:#d7dee9"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 6.5h15M9.5 6V4.2A1.2 1.2 0 0 1 10.7 3h2.6a1.2 1.2 0 0 1 1.2 1.2V6M6.5 6.5l1 13a1.6 1.6 0 0 0 1.6 1.5h5.8a1.6 1.6 0 0 0 1.6-1.5l1-13M10 10.5v6M14 10.5v6"/></svg></span>Thùng rác</button>
@@ -6608,6 +6803,7 @@
       $("youtubeView").style.display = "none";
       $("dailyView").style.display = "none";
       $("miniView").style.display = "none";
+      $("browserView").style.display = "none";
       if (typeof mgClearTimers === "function") mgClearTimers();
       $("settingsView").style.display = "none";
       $("pcView").style.display = "none";
@@ -6832,6 +7028,228 @@
       document.body.classList.add("in-case");
       setWinTitle("Mini game hẻm");
       renderMiniMenu();
+      syncTaskbar();
+      window.scrollTo({ top: 0 });
+    }
+
+    /* ==================== APP TRÌNH DUYỆT "CẢNG LƯỚT" ====================
+       Trình duyệt riêng của game: tên + logo con thuyền + giao diện teal tự
+       thiết kế, chỉ lấy DỮ KIỆN từ nghiên cứu — danh sách trang cho nhúng /
+       chặn nhúng dưới đây chép đúng bảng của iframe-viewer.com (cập nhật
+       07/11/2026, tra lại 16/11/2026): trang đích tự gửi X-Frame-Options /
+       CSP frame-ancestors, không trình duyệt nào (kể cả Cốc Cốc, vốn cũng là
+       Chromium) đổi được. Trang cho nhúng -> hiện trong iframe; trang chặn ->
+       hiện thẻ giải thích + nút mở tab mới (không tốn thời gian tải khung
+       trắng); trang chưa rõ -> cứ tải iframe kèm thanh nhắc "trang trắng thì
+       mở tab mới", vì bị chặn thì sự kiện load vẫn có thể chạy nên JS không
+       phát hiện chắc chắn được. Tab + lịch sử chỉ giữ trong phiên đang mở. */
+    var BR_BLOCKED = {
+      "google.com": "X-Frame-Options: SAMEORIGIN",
+      "facebook.com": "X-Frame-Options: DENY",
+      "instagram.com": "X-Frame-Options: SAMEORIGIN",
+      "x.com": "X-Frame-Options: DENY",
+      "twitter.com": "X-Frame-Options: DENY",
+      "github.com": "X-Frame-Options: DENY",
+      "reddit.com": "CSP frame-ancestors 'self'",
+      "linkedin.com": "X-Frame-Options: SAMEORIGIN",
+      "amazon.com": "X-Frame-Options: SAMEORIGIN",
+      "stackoverflow.com": "X-Frame-Options: SAMEORIGIN",
+      "apple.com": "X-Frame-Options: SAMEORIGIN",
+      "microsoft.com": "X-Frame-Options: SAMEORIGIN",
+      "paypal.com": "X-Frame-Options: SAMEORIGIN",
+      "netflix.com": "X-Frame-Options: DENY",
+      "openai.com": "X-Frame-Options: DENY",
+      "chatgpt.com": "CSP frame-ancestors 'none'",
+      "maps.google.com": "X-Frame-Options: SAMEORIGIN",
+      "open.spotify.com": "X-Frame-Options: SAMEORIGIN",
+      "youtube.com": "X-Frame-Options: SAMEORIGIN"
+    };
+    function brClassify(url) {
+      var u; try { u = new URL(url); } catch (e) { return { mode: "unknown" }; }
+      var host = u.hostname.replace(/^www\./, "").toLowerCase();
+      var path = u.pathname || "/";
+      /* Các đầu nhúng chính thức thì luôn cho mở trong game */
+      if (host === "youtube.com" && path.indexOf("/embed/") === 0) return { mode: "ok" };
+      if (host === "youtube-nocookie.com") return { mode: "ok" };
+      if (host === "google.com" && path.indexOf("/maps/embed") === 0) return { mode: "ok" };
+      if (host === "player.vimeo.com") return { mode: "ok" };
+      if (host === "embed.reddit.com") return { mode: "ok" };
+      if (host === "instagram.com" && /\/embed\/?$/.test(path)) return { mode: "ok" };
+      if (host === "wikipedia.org" || /\.wikipedia\.org$/.test(host)) return { mode: "ok" };
+      if (host === "example.com") return { mode: "ok" };
+      if (BR_BLOCKED[host]) return { mode: "blocked", reason: BR_BLOCKED[host], host: host };
+      return { mode: "unknown", host: host };
+    }
+    var brTabs = [], brActive = -1, brInited = false;
+    function brCur() { return brTabs[brActive] || null; }
+    function brTitleFor(url) {
+      if (!url || url === "home") return "Trang bắt đầu";
+      try { return new URL(url).hostname.replace(/^www\./, ""); } catch (e) { return "Tab mới"; }
+    }
+    function brNewTab(url, title) {
+      brTabs.push({ hist: [url || "home"], hi: 0, title: title || brTitleFor(url) });
+      brActive = brTabs.length - 1;
+      brRender();
+    }
+    function brRenderTabs() {
+      var wrap = $("brTabs"); if (!wrap) return;
+      wrap.innerHTML = "";
+      brTabs.forEach(function (t, i) {
+        var url = t.hist[t.hi];
+        var cls = brClassify(url);
+        var b = document.createElement("button");
+        b.type = "button"; b.className = "br-tab" + (i === brActive ? " active" : "");
+        b.setAttribute("role", "tab");
+        var dot = document.createElement("span"); dot.className = "br-tab-dot" + (cls.mode === "blocked" ? " blocked" : "");
+        var tt = document.createElement("span"); tt.className = "br-tab-title"; tt.textContent = t.title || brTitleFor(url);
+        var x = document.createElement("span"); x.className = "br-tab-x"; x.textContent = "✕"; x.title = "Đóng tab";
+        x.addEventListener("click", function (ev) { ev.stopPropagation(); brCloseTab(i); });
+        b.append(dot, tt, x);
+        b.addEventListener("click", function () { brActive = i; brRender(); });
+        wrap.appendChild(b);
+      });
+      var add = document.createElement("button");
+      add.type = "button"; add.className = "br-tab-add"; add.textContent = "+"; add.title = "Tab mới";
+      add.addEventListener("click", function () { brNewTab("home"); });
+      wrap.appendChild(add);
+    }
+    function brCloseTab(i) {
+      brTabs.splice(i, 1);
+      if (!brTabs.length) { brNewTab("home"); return; }
+      if (brActive >= brTabs.length) brActive = brTabs.length - 1;
+      else if (i < brActive) brActive -= 1;
+      brRender();
+    }
+    function brRender() {
+      brRenderTabs();
+      var t = brCur(); if (!t) return;
+      var url = t.hist[t.hi];
+      var home = $("brHome"), frame = $("brFrame"), blocked = $("brBlocked");
+      var addr = $("brAddr"), chip = $("brChip"), helper = $("brHelper");
+      $("brBack").disabled = t.hi <= 0;
+      $("brFwd").disabled = t.hi >= t.hist.length - 1;
+      if (url === "home") {
+        home.style.display = ""; frame.hidden = true; blocked.hidden = true;
+        if (frame.getAttribute("src")) frame.removeAttribute("src");
+        addr.value = ""; chip.hidden = true; helper.hidden = true;
+        return;
+      }
+      addr.value = url;
+      var cls = brClassify(url);
+      if (cls.mode === "blocked") {
+        home.style.display = "none"; frame.hidden = true; blocked.hidden = false;
+        if (frame.getAttribute("src")) frame.removeAttribute("src");
+        chip.hidden = false; chip.textContent = "Chặn nhúng"; chip.className = "br-chip blocked";
+        helper.hidden = true;
+        $("brBlockedTitle").textContent = brTitleFor(url) + " chặn mở trong game";
+        $("brBlockedText").innerHTML = "";
+        var p1 = document.createElement("span");
+        p1.textContent = "Trang này tự gửi lệnh cấm nhúng ";
+        var cd = document.createElement("code"); cd.textContent = cls.reason;
+        var p2 = document.createElement("span");
+        p2.textContent = " nên mọi trình duyệt (Chrome, Cốc Cốc…) đều phải từ chối hiện nó trong khung của game — cố mở cũng chỉ thấy khung trắng “refused to connect”. Bấm nút dưới để mở trang thật ở tab mới, đăng nhập và dùng bình thường.";
+        $("brBlockedText").append(p1, cd, p2);
+        return;
+      }
+      home.style.display = "none"; blocked.hidden = true; frame.hidden = false;
+      if (frame.getAttribute("src") !== url) frame.src = url;
+      chip.hidden = false;
+      if (cls.mode === "ok") { chip.textContent = "Mở trong game"; chip.className = "br-chip"; }
+      else { chip.textContent = "Chưa rõ"; chip.className = "br-chip unknown"; }
+      if (cls.mode === "unknown") {
+        helper.hidden = false;
+        $("brHelperText").textContent = "Chưa rõ trang này có cho nhúng không — nếu khung bên dưới trắng hoặc báo “refused to connect” thì trang đã chặn nhúng, bấm Mở tab mới để xem trang thật.";
+      } else helper.hidden = true;
+    }
+    function brGo(url, title) {
+      var t = brCur(); if (!t) { brNewTab(url, title); return; }
+      t.hist = t.hist.slice(0, t.hi + 1);
+      t.hist.push(url); t.hi = t.hist.length - 1;
+      t.title = title || brTitleFor(url);
+      brRender();
+    }
+    function brParseInput(raw) {
+      raw = (raw || "").trim();
+      if (!raw) return null;
+      if (/^https?:\/\//i.test(raw)) return raw;
+      if (/^[\w-]+(\.[\w-]+)+(:\d+)?([/?#]\S*)?$/.test(raw) && raw.indexOf(" ") < 0) return "https://" + raw;
+      return "https://vi.wikipedia.org/w/index.php?search=" + encodeURIComponent(raw);
+    }
+    function brToEmbed(raw) {
+      raw = (raw || "").trim();
+      if (!raw) return null;
+      var m = raw.match(/<iframe[^>]+src="([^"]+)"/i);
+      if (m) raw = m[1];
+      var yt = raw.match(/(?:youtube\.com\/watch\?[^#]*v=|youtu\.be\/|youtube\.com\/shorts\/)([\w-]{6,})/i) || raw.match(/^([\w-]{11})$/);
+      if (yt) return "https://www.youtube.com/embed/" + yt[1];
+      if (/youtube\.com\/embed\//i.test(raw)) return raw;
+      var vm = raw.match(/vimeo\.com\/(\d+)/i);
+      if (vm) return "https://player.vimeo.com/video/" + vm[1];
+      if (/google\.com\/maps\/embed/i.test(raw)) return raw;
+      var ig = raw.match(/instagram\.com\/p\/([\w-]+)/i);
+      if (ig) return "https://www.instagram.com/p/" + ig[1] + "/embed/";
+      return null;
+    }
+    function brInit() {
+      if (brInited) return; brInited = true;
+      brNewTab("home");
+      $("brAddrForm").addEventListener("submit", function (e) {
+        e.preventDefault();
+        var url = brParseInput($("brAddr").value);
+        if (url) brGo(url);
+      });
+      $("brBack").addEventListener("click", function () { var t = brCur(); if (t && t.hi > 0) { t.hi -= 1; brRender(); } });
+      $("brFwd").addEventListener("click", function () { var t = brCur(); if (t && t.hi < t.hist.length - 1) { t.hi += 1; brRender(); } });
+      $("brReload").addEventListener("click", function () {
+        var t = brCur(); if (!t) return;
+        var url = t.hist[t.hi];
+        if (url === "home") { brRender(); return; }
+        var f = $("brFrame"); var cur = f.getAttribute("src");
+        if (cur) { f.removeAttribute("src"); setTimeout(function () { f.src = cur; }, 30); }
+      });
+      $("brHomeBtn").addEventListener("click", function () { brGo("home", "Trang bắt đầu"); });
+      function openOutCurrent() {
+        var t = brCur(); if (!t) return;
+        var url = t.hist[t.hi];
+        if (url && url !== "home") window.open(url, "_blank", "noopener");
+      }
+      $("brOpenOut").addEventListener("click", openOutCurrent);
+      $("brHelperOut").addEventListener("click", openOutCurrent);
+      $("brBlockedOut").addEventListener("click", openOutCurrent);
+      $("brBlockedHome").addEventListener("click", function () { brGo("home", "Trang bắt đầu"); });
+      $("brSearchForm").addEventListener("submit", function (e) {
+        e.preventDefault();
+        var q = $("brSearchInput").value.trim();
+        if (!q) return;
+        brGo("https://vi.wikipedia.org/w/index.php?search=" + encodeURIComponent(q), "Tra cứu: " + q);
+      });
+      $("brGoogleSearch").addEventListener("click", function () {
+        var q = $("brSearchInput").value.trim();
+        window.open("https://www.google.com/search?q=" + encodeURIComponent(q), "_blank", "noopener");
+      });
+      $("brEmbedGo").addEventListener("click", function () {
+        var msg = $("brEmbedMsg");
+        var url = brToEmbed($("brEmbedInput").value);
+        if (!url) { msg.textContent = "Chưa nhận ra link này — hãy dán link video YouTube/Vimeo, link nhúng Google Maps hoặc link bài Instagram nhé."; return; }
+        msg.textContent = "";
+        brGo(url, "Bản nhúng");
+      });
+      $("brHome").addEventListener("click", function (e) {
+        var tile = e.target.closest ? e.target.closest("[data-br-open],[data-br-out]") : null;
+        if (!tile) return;
+        if (tile.getAttribute("data-br-open")) brGo(tile.getAttribute("data-br-open"), tile.getAttribute("data-br-title") || "");
+        else window.open(tile.getAttribute("data-br-out"), "_blank", "noopener");
+      });
+    }
+    function openBrowser() {
+      G.currentApp = "browser";
+      hideAllViews();
+      $("browserView").style.display = "block";
+      document.body.classList.remove("on-desktop");
+      document.body.classList.add("in-case");
+      setWinTitle("Trình duyệt Cảng Lướt");
+      brInit();
+      brRender();
       syncTaskbar();
       window.scrollTo({ top: 0 });
     }
@@ -8913,6 +9331,7 @@
       { id: "daily",       label: "Vụ án hôm nay", color: "#e8a33d", icon: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/><path d="m9.2 16.2 2 2 3.6-3.8"/></svg>' },
       { id: "minigames",   label: "Mini game hẻm", color: "#57e6c9", icon: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="7" width="19" height="11" rx="5.5"/><path d="M7.5 11v3M6 12.5h3"/><circle cx="15.8" cy="11.3" r="1.05" fill="currentColor" stroke="none"/><circle cx="18" cy="14" r="1.05" fill="currentColor" stroke="none"/></svg>' },
       { id: "youtube",     label: "Xem video",     color: "#f5c877", icon: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="5" width="19" height="14" rx="3"/><path d="M10 9.2v5.6L15 12Z" fill="currentColor" stroke="none"/></svg>' },
+      { id: "browser",     label: "Trình duyệt",   color: "#35c4b5", icon: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v10.5"/><path d="M12 3l5.5 8H12"/><path d="M12 6.2 7.6 13H12"/><path d="M4.5 16.5c1.8 1.5 3.6-1.2 5.4 0 1.4 1 2.4 1 3.8 0 1.8-1.2 3.6 1.5 5.4 0"/><path d="M4.5 20.5c1.8 1.5 3.6-1.2 5.4 0 1.4 1 2.4 1 3.8 0 1.8-1.2 3.6 1.5 5.4 0"/></svg>' },
       { id: "thispc",      label: "Máy tính này",  color: "#7cc4ff", icon: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="4" width="19" height="12.5" rx="1.6"/><path d="M9.5 20.5h5M12 16.5v4"/></svg>' },
       { id: "trash",       label: "Thùng rác",     color: "#d7dee9", icon: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 6.5h15M9.5 6V4.2A1.2 1.2 0 0 1 10.7 3h2.6a1.2 1.2 0 0 1 1.2 1.2V6M6.5 6.5l1 13a1.6 1.6 0 0 0 1.6 1.5h5.8a1.6 1.6 0 0 0 1.6-1.5l1-13M10 10.5v6M14 10.5v6"/></svg>' },
       { id: "settings",    label: "Cài đặt",       color: "#9fb0c3", icon: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.2"/><path d="M19.4 13.6a7.9 7.9 0 0 0 0-3.2l2-1.5-2-3.4-2.3 1a8 8 0 0 0-2.8-1.6L14 2.5h-4l-.3 2.4a8 8 0 0 0-2.8 1.6l-2.3-1-2 3.4 2 1.5a7.9 7.9 0 0 0 0 3.2l-2 1.5 2 3.4 2.3-1a8 8 0 0 0 2.8 1.6l.3 2.4h4l.3-2.4a8 8 0 0 0 2.8-1.6l2.3 1 2-3.4-2-1.5Z"/></svg>' }
@@ -8954,6 +9373,7 @@
           else if (app.id === "daily") openDaily();
           else if (app.id === "minigames") openMini();
           else if (app.id === "youtube") openYoutube();
+          else if (app.id === "browser") openBrowser();
           else if (app.id === "thispc") openThisPC();
           else if (app.id === "trash") openTrash();
           else if (app.id === "settings") openSettings(window.__lastSettingsPane || "profile");
@@ -9794,6 +10214,7 @@
         else if (go === "daily") openDaily();
         else if (go === "minigames") openMini();
         else if (go === "youtube") openYoutube();
+        else if (go === "browser") openBrowser();
         else if (go === "thispc") openThisPC();
         else if (go === "trash") openTrash();
         else if (go === "settings") openSettings();
