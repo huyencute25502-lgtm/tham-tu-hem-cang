@@ -2352,6 +2352,11 @@
       .msg-row.mine{ align-self:flex-end; align-items:flex-end; }
       .msg-row.theirs{ align-self:flex-start; align-items:flex-start; }
       .msg-who{ font-size:11.5px; color:var(--ink-faint); margin:0 2px 3px; }
+      .msg-who{ display:flex; align-items:center; gap:6px; flex-wrap:wrap; }
+      .msg-who .msg-ava{ width:22px; height:22px; font-size:11px; border-width:1px; }
+      .msg-who b{ color:var(--ink); font-size:12px; }
+      .msg-who-meta{ font-size:11px; color:var(--ink-faint); }
+      .msg-row.mine .msg-who{ justify-content:flex-end; }
       .msg-bubble{ background:var(--panel2); border:1px solid var(--line); border-radius:14px; border-bottom-left-radius:5px; padding:9px 12px; font-size:14.5px; line-height:1.5; overflow-wrap:break-word; white-space:pre-wrap; }
       .msg-row.mine .msg-bubble{ background:rgba(232,163,61,.17); border-color:rgba(232,163,61,.45); border-radius:14px; border-bottom-right-radius:5px; }
       .msg-bubble.bug{ border-color:var(--red); box-shadow:inset 0 0 0 1px var(--red); }
@@ -3007,19 +3012,20 @@
     </div>
 
     <!-- ================= APP TIN NHẮN =================
-         Chat thật qua Firebase (project tham-tu-hem-cang-chat): mỗi người
-         chơi có 1 đoạn chat riêng với admin (web admin chỉ admin vào được),
-         nhắn riêng 1:1 với thám tử khác (không cần kết bạn trước — tin đầu
-         từ người chưa phải bạn vào mục Tin nhắn chờ), tạo nhóm phá án chung.
-         Ảnh/tài liệu gửi qua Cloudinary (upload không ký) — cấu hình ở đầu
-         script chat cuối trang. -->
+         Chat thật qua Firebase (project tham-tu-hem-cang-chat): KHÔNG còn
+         nhắn riêng 1:1 giữa người chơi với nhau. Mọi người chơi tự động
+         được thêm vào một nhóm chung duy nhất "Nhóm Hẻm Cảng" (doc cố định
+         groups/nhom-hem-cang, admin quản lý nhóm) ngay khi mở app lần đầu;
+         nhắn riêng chỉ còn đoạn chat với admin (web admin chỉ admin vào
+         được). Ảnh/tài liệu gửi qua Cloudinary (upload không ký) — cấu
+         hình ở đầu script chat cuối trang. -->
     <div id="msgView" style="display:none">
       <div class="case-shell">
         <div class="case-head">
           <span class="app-ic" style="color:#57b06a"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5c-1.4 0-2.8-.3-4-.9L3 20l1-5.4a8.5 8.5 0 1 1 17-3.1Z"/><path d="M8.5 10.5h7M8.5 13.5h4.5"/></svg></span>
           <div class="case-head-main">
             <h2>Tin nhắn</h2>
-            <p class="app-desc">Nhắn riêng với admin và các thám tử khác — không cần kết bạn trước, tin đầu tiên từ người chưa phải bạn sẽ vào mục Tin nhắn chờ. Lập nhóm chat chung để cùng phá án. Gửi được ảnh, tài liệu, icon vui và báo lỗi cho admin.</p>
+            <p class="app-desc">Mọi thám tử trò chuyện chung trong Nhóm Hẻm Cảng — bạn được tự động thêm vào nhóm khi mở app, admin là người quản lý nhóm. Nhắn riêng chỉ với admin thôi (hỗ trợ, báo lỗi). Gửi được ảnh, tài liệu và icon vui.</p>
           </div>
           <div class="case-meta">
             <button type="button" class="msg-bcast-btn" id="msgBroadcastBtn" title="Xem tất cả thông báo chung từ admin"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4V5Z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.6 5.4a9 9 0 0 1 0 13.2"/></svg><span>Thông báo</span></button>
@@ -3039,10 +3045,8 @@
               </div>
               <div class="msg-tools">
                 <button type="button" class="msg-tool" id="msgToolSearch">Tìm thám tử</button>
-                <button type="button" class="msg-tool" id="msgToolGroup">Tạo nhóm</button>
-                <button type="button" class="msg-tool" id="msgToolReq">Tin nhắn chờ<span class="msg-count" id="msgReqCount" hidden>0</span></button>
               </div>
-              <p class="msg-privacy">Admin chỉ xem tin nhắn riêng/nhóm khi có người báo cáo, để xử lý quấy rối.</p>
+              <p class="msg-privacy">Nhóm Hẻm Cảng là nhóm chung do admin quản lý — hãy nhắn văn minh nhé. Đoạn chat riêng với admin chỉ admin xem được.</p>
               <div class="msg-panel" id="msgPanel" hidden></div>
               <div class="msg-sec-title">Hội thoại</div>
               <div class="msg-convos" id="msgConvoList">
@@ -3059,18 +3063,11 @@
                 <button type="button" class="msg-report-convo" id="msgReportConvoBtn" title="Báo cáo cả đoạn chat này cho admin" hidden>Báo cáo đoạn chat</button>
               </div>
               <div class="msg-msgs" id="msgMsgs">
-                <p class="msg-empty">Nhắn cho admin nếu cần hỗ trợ hoặc báo lỗi, bấm “Tìm thám tử” để nhắn riêng với thám tử khác, hoặc tạo nhóm để cùng nhau phá án.</p>
+                <p class="msg-empty">Vào Nhóm Hẻm Cảng để trò chuyện chung với mọi thám tử, hoặc nhắn riêng cho admin nếu cần hỗ trợ hay báo lỗi.</p>
               </div>
               <div class="msg-emoji" id="msgEmoji" hidden>
                 <div class="msg-emoji-grid" id="msgEmojiGrid"></div>
                 <div class="msg-emoji-meme" id="msgMemeRow"></div>
-              </div>
-              <div class="msg-pending-bar" id="msgPendingBar" hidden>
-                <span id="msgPendingText"></span>
-                <span class="msg-pending-btns" id="msgPendingBtns">
-                  <button type="button" class="msg-mini-btn" id="msgPendingAccept">Chấp nhận</button>
-                  <button type="button" class="msg-pick" id="msgPendingDecline">Từ chối</button>
-                </span>
               </div>
               <form class="msg-composer" id="msgComposer">
                 <button type="button" class="msg-cbtn" id="msgEmojiBtn" title="Icon vui và meme" aria-label="Mở bảng icon vui"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M8.5 14.5c1 1.2 2.2 1.8 3.5 1.8s2.5-.6 3.5-1.8"/><circle cx="9" cy="9.5" r="1.05" fill="currentColor" stroke="none"/><circle cx="15" cy="9.5" r="1.05" fill="currentColor" stroke="none"/></svg></button>
@@ -13454,22 +13451,29 @@
     /* ==================== APP TIN NHẮN ====================
        Chat thật giữa các máy qua Firebase (project tham-tu-hem-cang-chat,
        gói Spark miễn phí): đăng nhập ẩn danh, mỗi người chơi một UID.
-       - Nhắn admin: threads/{uid}/messages — web admin riêng (chỉ tài khoản
-         Google của admin vào được) đọc mọi thread và trả lời riêng từng người.
-       - Nhắn riêng: ai cũng nhắn được cho ai, KHÔNG cần kết bạn trước.
-         dms/{uidA_uidB} mang status: "pending" (tin đầu từ người chưa phải
-         bạn — nằm trong mục Tin nhắn chờ của người nhận, initiator là người
-         nhắn trước), "accepted" (đã là bạn bè, chat thường), "declined"
-         (người nhận từ chối: tin chờ bị xóa hết, declinedBy ghi người từ
-         chối và người gửi không gửi lại được nữa). Người nhận bấm Chấp
-         nhận tin chờ thì ghi bạn bè hai chiều vào friends/{uid}/list —
-         thành bạn bè rồi mới rủ vào nhóm được. Nhóm: groups/{id}/messages.
+       Mô hình chat hiện tại (KHÔNG còn nhắn riêng giữa người chơi):
+       - Nhóm chung duy nhất "Nhóm Hẻm Cảng": doc cố định
+         groups/nhom-hem-cang trong collection groups. Người chơi mở app
+         Tin nhắn lần đầu là TỰ ĐỘNG được thêm vào nhóm (ensureCommonGroup
+         tự tạo doc nếu chưa có, tự ghi mình vào members) — không mời,
+         không chấp nhận. Admin là người quản lý nhóm; tin nhắn nằm ở
+         groups/nhom-hem-cang/messages như mọi nhóm.
+       - Nhắn riêng CHỈ với admin: threads/{uid}/messages — web admin
+         riêng (chỉ tài khoản Google của admin vào được) đọc mọi thread
+         và trả lời riêng từng người.
+       - ĐÃ BỎ: nhắn riêng 1:1 giữa người chơi (collection dms), kết bạn
+         (friends/{uid}/list), mục Tin nhắn chờ, tạo nhóm riêng. Dữ liệu
+         cũ trong dms/friends không còn được đọc hay ghi nữa.
        - Ảnh/tài liệu: upload thẳng lên Cloudinary bằng preset KHÔNG ký
          (unsigned) rồi gửi link trong tin nhắn — không qua Firebase Storage.
        - Quản trị (đợt 2): adminBlocks/{uid} (khóa chat + lý do + hạn),
          broadcasts (thông báo chung của admin, chấm đỏ khi chưa xem),
-         reports (báo cáo tin nhắn/đoạn chat DM + nhóm từ nút Báo cáo).
-         Đọc/ghi lỗi quyền (rules chưa publish) đều nuốt lỗi, không crash. */
+         reports (báo cáo tin nhắn/đoạn chat trong nhóm từ nút Báo cáo).
+         Đọc/ghi lỗi quyền (rules chưa publish) đều nuốt lỗi, không crash.
+         LƯU Ý RULES: nếu rules Firestore hiện tại không cho người chơi tự
+         tạo doc groups/nhom-hem-cang hoặc tự thêm mình vào members thì
+         việc tự tham gia nhóm sẽ lỗi quyền (đã nuốt lỗi, app không crash)
+         và cần cập nhật rules riêng cho doc nhóm chung này. */
     var CLOUDINARY_CLOUD_NAME = "cslzx8db";    /* tài khoản Cloudinary miễn phí của văn phòng (tạo 16/11) */
     var CLOUDINARY_UPLOAD_PRESET = "tham-tu-chat"; /* preset upload không ký (Unsigned, folder tham-tu-chat) */
     (function () {
@@ -13485,19 +13489,31 @@
       var MEMES = ["( ͡° ͜ʖ ͡°)", "¯\\_(ツ)_/¯", "(╯°□°)╯︵ ┻━┻", "┬─┬ノ( º _ ºノ)", "(¬_¬)", "(≧▽≦)", "( T_T )", "\\(★ω★)/", "( •_•)>⌐■-■", "(⌐■_■)", "ᕦ(ò_óˇ)ᕤ", "(づ｡◕‿‿◕｡)づ"];
 
       var db = null, me = null, started = false, startFailed = false;
-      var friends = {};      /* uid -> {name} */
       var groups = {};       /* groupId -> data */
-      var dmDocs = {};       /* dmId -> data */
       var adminThread = null;
-      var cur = null;        /* {kind:'admin'|'dm'|'group', id, title, sub, otherUid} */
+      var cur = null;        /* {kind:'admin'|'group', id, title, sub} */
       var unsubMsgs = null, bugMode = false;
-      var panelMode = null;  /* 'search' | 'requests' | 'group' | 'broadcasts' */
-      var groupPick = {};    /* uid -> true */
+      var panelMode = null;  /* 'search' | 'broadcasts' */
+
+      /* Nhóm chung duy nhất của cả hẻm: id cố định để admin quản lý được
+         trong collection groups, tên cố định "Nhóm Hẻm Cảng". */
+      var COMMON_GROUP_ID = "nhom-hem-cang";
+      var COMMON_GROUP_NAME = "Nhóm Hẻm Cảng";
+
+      /* Hồ sơ người gửi trong nhóm (từ collection users — avStyle /
+         avColor / avPhoto / rank / pct do syncMyProfile đồng bộ sẵn):
+         mỗi tin nhắn nhóm hiện ảnh đại diện + tên + cấp bậc + % vụ đã
+         phá của người gửi ngay cạnh tin. userCache: uid -> data users;
+         msgDocsCache: các tin của hội thoại đang mở để vẽ lại khi hồ
+         sơ tải xong. */
+      var userCache = {};
+      var userFetching = {};
+      var msgDocsCache = [];
 
       /* ===== Quản trị chat (đợt 2) =====
          - Khóa chat: adminBlocks/{uid} — doc tồn tại và chưa hết hạn
            (blockedUntil null = vĩnh viễn) thì khóa ô soạn tin ở cả 3 nơi
-           gửi (admin / DM / nhóm). Lỗi quyền đọc = coi như không bị chặn.
+           gửi (admin / nhóm). Lỗi quyền đọc = coi như không bị chặn.
          - Thông báo chung: collection broadcasts, mới nhất lên đầu; id
            đã xem lưu ở localStorage BROADCAST_SEEN_KEY (chỉ để không
            hiện lại toast). MỌI thông báo chung đều có một tin trong
@@ -13506,7 +13522,7 @@
            trung tâm thông báo; trong app có nút loa nhỏ "Thông báo" ở
            tiêu đề để xem lại tất cả. Lỗi quyền = ẩn im lặng.
          - Báo cáo: collection reports, tạo từ nút Báo cáo ở từng tin
-           nhắn DM/nhóm hoặc nút Báo cáo đoạn chat ở tiêu đề đoạn chat. */
+           nhắn trong nhóm hoặc nút Báo cáo đoạn chat ở tiêu đề. */
       var BROADCAST_SEEN_KEY = "hem-cang-broadcast-seen-v1";
       var chatBlock = null;    /* {reason, untilMs} | null */
       var blockTimer = null;
@@ -13530,7 +13546,6 @@
                        : d.toLocaleDateString("vi-VN", { day: "2-digit", month: "2-digit" }) + " " + d.toLocaleTimeString("vi-VN", { hour: "2-digit", minute: "2-digit" });
       }
       function msgDate(m) { try { return m.createdAt && m.createdAt.toDate ? m.createdAt.toDate() : null; } catch (e) { return null; } }
-      function dmIdFor(a, b) { return [a, b].sort().join("_"); }
       function fmtDateTime(d) {
         if (!d) return "";
         return d.toLocaleDateString("vi-VN", { day: "2-digit", month: "2-digit", year: "numeric" }) + " " + d.toLocaleTimeString("vi-VN", { hour: "2-digit", minute: "2-digit" });
@@ -13562,9 +13577,9 @@
             b.textContent = txt;
           }
         }
-        /* Khóa/mở ô soạn tin ngay (gồm cả nút gửi) — refreshPendingBar
-           gọi setComposerEnabled, hàm đó tự tính thêm trạng thái khóa. */
-        refreshPendingBar();
+        /* Khóa/mở ô soạn tin ngay (gồm cả nút gửi) — setComposerEnabled
+           tự tính thêm trạng thái khóa chat. */
+        setComposerEnabled(true);
       }
       function watchAdminBlock() {
         if (!db || !me) return;
@@ -13804,54 +13819,14 @@
         }).then(function () { if (sendBtn) sendBtn.disabled = false; });
       }
 
-      /* Các đoạn chat riêng đang ở trạng thái CHỜ phía mình: status
-         "pending" và người nhắn trước (initiator) là người kia — tức tin
-         đầu từ thám tử chưa phải bạn, nằm trong mục Tin nhắn chờ của mình. */
-      function pendingIncoming() {
-        var out = [];
-        if (!me) return out;
-        Object.keys(dmDocs).forEach(function (id) {
-          var d = dmDocs[id];
-          if (!d || d.status !== "pending") return;
-          var parts = d.participants || [];
-          var other = parts[0] === me.uid ? parts[1] : parts[0];
-          if (!other || other === me.uid || d.initiator !== other) return;
-          if (friends[other]) return;
-          out.push({ id: id, otherUid: other, data: d });
-        });
-        out.sort(function (a, b) {
-          var ta = a.data.updatedAt && a.data.updatedAt.toMillis ? a.data.updatedAt.toMillis() : 0;
-          var tb = b.data.updatedAt && b.data.updatedAt.toMillis ? b.data.updatedAt.toMillis() : 0;
-          return tb - ta;
-        });
-        return out;
-      }
-
-      /* Trạng thái của đoạn chat riêng với một thám tử: "accepted" (đã là
-         bạn / đoạn chat cũ từ thời phải kết bạn trước), "pending" (đang
-         chờ chấp nhận), "declined" (đã bị từ chối) hoặc "none" (chưa có). */
-      function dmState(otherUid) {
-        var doc = me ? dmDocs[dmIdFor(me.uid, otherUid)] : null;
-        if (!doc) return { doc: null, status: friends[otherUid] ? "accepted" : "none" };
-        var st = doc.status || "accepted";
-        if (st === "pending" && friends[otherUid]) st = "accepted";
-        return { doc: doc, status: st };
-      }
-      function dmName(otherUid, doc) {
-        if (friends[otherUid] && friends[otherUid].name) return friends[otherUid].name;
-        if (doc && doc.participantNames && doc.participantNames[otherUid]) return doc.participantNames[otherUid];
-        return "Thám tử";
-      }
-
       function updateBadge() {
-        var n = pendingIncoming().length;
+        var n = 0;
         if (adminThread && adminThread.lastMessageSender === "admin") {
           var upd = adminThread.updatedAt && adminThread.updatedAt.toMillis ? adminThread.updatedAt.toMillis() : 0;
           var rd = adminThread.lastReadPlayer && adminThread.lastReadPlayer.toMillis ? adminThread.lastReadPlayer.toMillis() : 0;
           if (upd > rd) n += 1;
         }
         var b = $("msgBadge"); if (b) { b.hidden = n <= 0; b.textContent = n; }
-        var rc = $("msgReqCount"); if (rc) { var pc = pendingIncoming().length; rc.hidden = pc <= 0; rc.textContent = pc; }
       }
 
       /* ---------- Khởi động: đăng nhập ẩn danh + hồ sơ + các listener ---------- */
@@ -14057,29 +14032,12 @@
         }).catch(function () { /* bỏ qua: vẫn chat được */ });
         syncMyProfile();
         startHeartbeat();
-
-        db.collection("friends").doc(me.uid).collection("list").onSnapshot(function (snap) {
-          friends = {};
-          snap.forEach(function (d) { friends[d.id] = d.data() || {}; });
-          updateBadge();
-          renderConvoList();
-          refreshPendingBar();
-          if (panelMode === "group") renderGroupPanel();
-        }, function () { /* listener lỗi: danh sách bạn giữ nguyên */ });
+        ensureCommonGroup();
 
         db.collection("groups").where("members", "array-contains", me.uid).onSnapshot(function (snap) {
           groups = {};
           snap.forEach(function (d) { groups[d.id] = d.data() || {}; });
           renderConvoList();
-        }, function () {});
-
-        db.collection("dms").where("participants", "array-contains", me.uid).onSnapshot(function (snap) {
-          dmDocs = {};
-          snap.forEach(function (d) { dmDocs[d.id] = d.data() || {}; });
-          updateBadge();
-          renderConvoList();
-          refreshPendingBar();
-          if (panelMode === "requests") renderPendingPanel();
         }, function () {});
 
         db.collection("threads").doc(me.uid).onSnapshot(function (snap) {
@@ -14093,6 +14051,38 @@
 
         renderConvoList();
         if (!cur) openAdminConvo();
+      }
+
+      /* ---------- Nhóm chung tự động (Nhóm Hẻm Cảng) ----------
+         Mở app Tin nhắn là tự động tham gia nhóm chung — không mời,
+         không chấp nhận:
+         - Doc groups/nhom-hem-cang chưa có: tạo mới với mình là thành
+           viên đầu tiên (createdBy "system", admin quản lý qua web admin).
+         - Doc đã có mà mình chưa ở trong members: tự ghi thêm mình vào
+           members (arrayUnion, không trùng) + memberNames.
+         Mọi lỗi (mất mạng / rules chưa cho người chơi tự tạo nhóm hoặc
+         tự tham gia) đều nuốt im lặng: nhóm vẫn hiện trong danh sách,
+         mở ra xem được phần đã tải; nếu rules chặn thì cần cập nhật
+         rules Firestore riêng cho doc nhóm chung này. */
+      function ensureCommonGroup() {
+        if (!db || !me) return;
+        var ref = db.collection("groups").doc(COMMON_GROUP_ID);
+        ref.get().then(function (snap) {
+          if (!snap.exists) {
+            var names = {}; names[me.uid] = myName();
+            return ref.set({
+              name: COMMON_GROUP_NAME, members: [me.uid], memberNames: names,
+              createdBy: "system", common: true,
+              createdAt: ts(), updatedAt: ts(), lastMessage: ""
+            });
+          }
+          var d = snap.data() || {};
+          var members = d.members || [];
+          if (members.indexOf(me.uid) >= 0) return null;
+          var upd = { members: firebase.firestore.FieldValue.arrayUnion(me.uid) };
+          upd["memberNames." + me.uid] = myName();
+          return ref.update(upd);
+        }).catch(function () { /* lỗi quyền/mạng: bỏ qua, listener nhóm sẽ tự cập nhật khi được */ });
       }
 
       /* ---------- Danh sách hội thoại ---------- */
@@ -14131,13 +14121,28 @@
           onClick: openAdminConvo
         }));
 
-        var gIds = Object.keys(groups).sort(function (a, b) {
+        /* Nhóm chung luôn hiện ngay trong danh sách — kể cả khi doc
+           nhóm chưa kịp tải về hoặc việc tự tham gia đang chờ rules:
+           dữ liệu lấy từ groups[COMMON_GROUP_ID] nếu đã có, chưa có thì
+           dùng tên/mô tả mặc định. */
+        var cg = groups[COMMON_GROUP_ID] || null;
+        var gt = document.createElement("div"); gt.className = "msg-sec-title"; gt.textContent = "Nhóm chung"; host.appendChild(gt);
+        host.appendChild(convoItem({
+          ava: "N", title: COMMON_GROUP_NAME,
+          preview: cg && cg.lastMessage ? cg.lastMessage : "Nhóm chung của cả hẻm — admin quản lý nhóm",
+          on: cur && cur.kind === "group" && cur.id === COMMON_GROUP_ID,
+          onClick: function () { openGroupConvo(COMMON_GROUP_ID); }
+        }));
+
+        /* Các nhóm khác mà mình là thành viên (nếu còn — người chơi
+           không tự tạo nhóm mới nữa, đây chỉ là dữ liệu cũ/admin tạo). */
+        var gIds = Object.keys(groups).filter(function (gid) { return gid !== COMMON_GROUP_ID; }).sort(function (a, b) {
           var ta = groups[a].updatedAt && groups[a].updatedAt.toMillis ? groups[a].updatedAt.toMillis() : 0;
           var tb = groups[b].updatedAt && groups[b].updatedAt.toMillis ? groups[b].updatedAt.toMillis() : 0;
           return tb - ta;
         });
         if (gIds.length) {
-          var gt = document.createElement("div"); gt.className = "msg-sec-title"; gt.textContent = "Nhóm phá án"; host.appendChild(gt);
+          var gt2 = document.createElement("div"); gt2.className = "msg-sec-title"; gt2.textContent = "Nhóm phá án"; host.appendChild(gt2);
           gIds.forEach(function (gid) {
             var g = groups[gid];
             host.appendChild(convoItem({
@@ -14148,54 +14153,6 @@
             }));
           });
         }
-
-        var fIds = Object.keys(friends).sort(function (a, b) { return esc(friends[a].name || "").localeCompare(esc(friends[b].name || ""), "vi"); });
-        var ft = document.createElement("div"); ft.className = "msg-sec-title"; ft.textContent = "Bạn bè"; host.appendChild(ft);
-        if (!fIds.length) {
-          var e = document.createElement("p"); e.className = "msg-empty";
-          e.textContent = "Chưa có bạn nào. Bấm “Tìm thám tử” rồi bấm “Nhắn tin” để trò chuyện ngay — tin đầu tiên sẽ vào mục Tin nhắn chờ của người kia, họ bấm Chấp nhận là hai bạn thành bạn bè và rủ nhau vào nhóm được.";
-          host.appendChild(e);
-        }
-        fIds.forEach(function (fid) {
-          var f = friends[fid];
-          var dm = dmDocs[dmIdFor(me.uid, fid)];
-          host.appendChild(convoItem({
-            ava: initial(f.name), title: f.name || "Thám tử",
-            preview: dm && dm.lastMessage ? dm.lastMessage : "Bấm để nhắn riêng",
-            on: cur && cur.kind === "dm" && cur.otherUid === fid,
-            onClick: function () { openDmConvo(fid); }
-          }));
-        });
-
-        /* Đoạn chat mình nhắn trước, đang chờ người kia chấp nhận: vẫn
-           hiện trong danh sách của mình (phía người nhận thì nằm trong
-           mục Tin nhắn chờ, không hiện ở danh sách chính). */
-        var pendOut = [];
-        Object.keys(dmDocs).forEach(function (id) {
-          var d = dmDocs[id];
-          if (!d || d.status !== "pending" || d.initiator !== me.uid) return;
-          var parts = d.participants || [];
-          var other = parts[0] === me.uid ? parts[1] : parts[0];
-          if (!other || other === me.uid || friends[other]) return;
-          pendOut.push({ otherUid: other, data: d });
-        });
-        pendOut.sort(function (a, b) {
-          var ta = a.data.updatedAt && a.data.updatedAt.toMillis ? a.data.updatedAt.toMillis() : 0;
-          var tb = b.data.updatedAt && b.data.updatedAt.toMillis ? b.data.updatedAt.toMillis() : 0;
-          return tb - ta;
-        });
-        if (pendOut.length) {
-          var pt = document.createElement("div"); pt.className = "msg-sec-title"; pt.textContent = "Đang chờ chấp nhận"; host.appendChild(pt);
-          pendOut.forEach(function (it) {
-            var nm = dmName(it.otherUid, it.data);
-            host.appendChild(convoItem({
-              ava: initial(nm), title: nm,
-              preview: it.data.lastMessage ? ("Chờ chấp nhận · " + it.data.lastMessage) : "Đang chờ họ chấp nhận tin nhắn",
-              on: cur && cur.kind === "dm" && cur.otherUid === it.otherUid,
-              onClick: function () { openDmConvo(it.otherUid, nm); }
-            }));
-          });
-        }
       }
 
       /* ---------- Mở hội thoại + nghe tin nhắn ---------- */
@@ -14203,23 +14160,54 @@
         $("msgChatTitle").textContent = title;
         $("msgChatSub").textContent = sub || "";
         var rcBtn = $("msgReportConvoBtn");
-        if (rcBtn) rcBtn.hidden = !(cur && (cur.kind === "dm" || cur.kind === "group"));
+        if (rcBtn) rcBtn.hidden = !(cur && cur.kind === "group");
         var bug = $("msgBugBtn");
         if (bug) bug.hidden = !(cur && cur.kind === "admin");
         if (!cur || cur.kind !== "admin") { bugMode = false; if (bug) bug.classList.remove("on"); $("msgInput").placeholder = "Nhập tin nhắn…"; }
       }
+      /* Vẽ lại danh sách tin của hội thoại đang mở từ msgDocsCache. */
+      function renderMsgList() {
+        var host = $("msgMsgs"); if (!host) return;
+        host.innerHTML = "";
+        if (!msgDocsCache.length) {
+          host.innerHTML = '<p class="msg-empty">Chưa có tin nhắn nào — gửi lời chào đầu tiên nhé!</p>';
+          return;
+        }
+        msgDocsCache.forEach(function (it) { host.appendChild(msgRow(it.data, it.id)); });
+        host.scrollTop = host.scrollHeight;
+      }
+
+      /* Tải hồ sơ users của các uid chưa có trong userCache rồi vẽ lại
+         danh sách tin (để tin nhóm hiện đủ avatar/cấp bậc/% vụ đã phá).
+         Lỗi đọc hồ sơ thì bỏ qua — tin vẫn hiện tên người gửi. */
+      function fetchSenderProfiles(uids) {
+        if (!db || !cur || cur.kind !== "group") return;
+        var convoId = cur.id;
+        uids.forEach(function (uid) {
+          if (!uid || uid === me.uid || userCache[uid] || userFetching[uid]) return;
+          userFetching[uid] = true;
+          db.collection("users").doc(uid).get().then(function (snap) {
+            userFetching[uid] = false;
+            if (snap.exists) userCache[uid] = snap.data() || {};
+            if (cur && cur.kind === "group" && cur.id === convoId) renderMsgList();
+          }).catch(function () { userFetching[uid] = false; });
+        });
+      }
+
       function watchMsgs(ref) {
         if (unsubMsgs) { try { unsubMsgs(); } catch (e) {} unsubMsgs = null; }
+        msgDocsCache = [];
         var host = $("msgMsgs");
         host.innerHTML = '<p class="msg-empty">Đang tải tin nhắn…</p>';
         unsubMsgs = ref.orderBy("createdAt", "asc").limitToLast(120).onSnapshot(function (snap) {
-          host.innerHTML = "";
-          if (snap.empty) {
-            host.innerHTML = '<p class="msg-empty">Chưa có tin nhắn nào — gửi lời chào đầu tiên nhé!</p>';
-            return;
+          msgDocsCache = [];
+          snap.forEach(function (d) { msgDocsCache.push({ data: d.data() || {}, id: d.id }); });
+          renderMsgList();
+          if (cur && cur.kind === "group") {
+            var uids = [];
+            msgDocsCache.forEach(function (it) { if (it.data.sender) uids.push(it.data.sender); });
+            fetchSenderProfiles(uids);
           }
-          snap.forEach(function (d) { host.appendChild(msgRow(d.data() || {}, d.id)); });
-          host.scrollTop = host.scrollHeight;
         }, function () {
           host.innerHTML = '<p class="msg-empty">Không tải được tin nhắn. Kiểm tra mạng rồi mở lại hội thoại nhé.</p>';
         });
@@ -14230,43 +14218,13 @@
         setChatHead(cur.title, "Đoạn chat riêng giữa bạn và admin — chỉ admin xem được đoạn này.");
         $("msgWrap").classList.add("show-chat");
         renderConvoList();
-        refreshPendingBar();
+        setComposerEnabled(true);
         watchMsgs(db.collection("threads").doc(me.uid).collection("messages"));
         db.collection("threads").doc(me.uid).set({ playerName: myName(), lastReadPlayer: ts() }, { merge: true })
           .then(function () { updateBadge(); }).catch(function () {});
       }
-      /* Mở đoạn chat riêng với BẤT KỲ thám tử nào (không cần là bạn):
-         chưa có đoạn chat thì tạo mới — đã là bạn thì "accepted", chưa
-         phải bạn thì "pending" với initiator là mình (tin vào mục chờ
-         của người kia). Đoạn từng bị NGƯỜI KIA từ chối thì mở ở trạng
-         thái bị chặn gửi; đoạn từng bị MÌNH từ chối mà nay mình chủ động
-         nhắn lại thì làm mới thành "pending" do mình khởi xướng. */
-      function openDmConvo(fid, nameHint) {
-        if (!me || !fid || fid === me.uid) return;
-        var id = dmIdFor(me.uid, fid);
-        var st = dmState(fid);
-        var name = nameHint || dmName(fid, st.doc);
-        cur = { kind: "dm", id: id, title: name, otherUid: fid };
-        setChatHead(name, "Chat riêng 1:1 giữa hai thám tử");
-        $("msgWrap").classList.add("show-chat");
-        closePanel();
-        renderConvoList();
-        var names = {}; names[me.uid] = myName(); names[fid] = name;
-        var ref = db.collection("dms").doc(id);
-        if (!st.doc) {
-          ref.set({ participants: [me.uid, fid], participantNames: names, status: friends[fid] ? "accepted" : "pending", initiator: me.uid }, { merge: true }).catch(function () {});
-        } else if (st.status === "declined" && st.doc.declinedBy === me.uid) {
-          ref.set({ participants: [me.uid, fid], participantNames: names, status: friends[fid] ? "accepted" : "pending", initiator: me.uid, declinedBy: null, lastMessage: "" }, { merge: true }).catch(function () {});
-        } else {
-          ref.set({ participants: [me.uid, fid], participantNames: names }, { merge: true }).catch(function () {});
-        }
-        watchMsgs(ref.collection("messages"));
-        refreshPendingBar();
-      }
-
-      /* Bật/tắt ô soạn tin: khóa khi đoạn chat đã bị người kia từ chối
-         (họ đã chặn, mình không gửi thêm được nữa) HOẶC khi admin đã
-         khóa chat của mình (adminBlocks) — khóa áp cho cả 3 nơi gửi. */
+      /* Bật/tắt ô soạn tin: khóa khi admin đã khóa chat của mình
+         (adminBlocks) — khóa áp cho cả 2 nơi gửi (admin + nhóm). */
       function setComposerEnabled(on) {
         var banned = isChatBlocked();
         var eff = on && !banned;
@@ -14276,95 +14234,51 @@
         var inp = $("msgInput");
         if (inp) {
           if (banned) inp.placeholder = "Bạn đã bị khóa chat — liên hệ admin";
-          else if (!on) inp.placeholder = "Đã bị từ chối — không gửi thêm được nữa";
+          else if (!on) inp.placeholder = "Chọn một hội thoại để nhắn tin";
           else if (bugMode && cur && cur.kind === "admin") inp.placeholder = "Mô tả lỗi bạn gặp — tin này sẽ gắn nhãn BÁO LỖI gửi cho admin…";
           else inp.placeholder = "Nhập tin nhắn…";
         }
       }
 
-      /* Thanh thông báo phía trên ô soạn tin cho đoạn chat riêng chưa
-         phải bạn bè: phía người nhận có nút Chấp nhận / Từ chối, phía
-         người gửi chỉ hiện lời giải thích, phía bị từ chối thì khóa ô
-         soạn. Bạn bè rồi (hoặc admin/nhóm) thì ẩn hẳn. */
-      function refreshPendingBar() {
-        var bar = $("msgPendingBar"); if (!bar) return;
-        var show = false, text = "", canDecide = false, blocked = false;
-        if (cur && cur.kind === "dm" && me) {
-          var st = dmState(cur.otherUid);
-          if (st.status === "declined" && st.doc && st.doc.declinedBy === cur.otherUid) {
-            show = true; blocked = true;
-            text = cur.title + " đã từ chối tin nhắn chờ — bạn không gửi thêm tin cho họ được nữa.";
-          } else if (st.status === "pending" && st.doc && st.doc.initiator === cur.otherUid) {
-            show = true; canDecide = true;
-            text = cur.title + " chưa phải bạn của bạn. Bấm Chấp nhận để hai bạn thành bạn bè và chat tiếp, hoặc Từ chối để xóa tin chờ — họ sẽ không gửi lại cho bạn được nữa.";
-          } else if (st.status === "pending") {
-            show = true;
-            text = "Tin nhắn của bạn đang nằm trong mục Tin nhắn chờ của " + cur.title + ". Khi họ bấm Chấp nhận, hai bạn sẽ thành bạn bè.";
-          } else if (st.status === "none") {
-            show = true;
-            text = "Bạn và " + cur.title + " chưa phải bạn bè. Tin bạn gửi sẽ vào mục Tin nhắn chờ của họ — họ bấm Chấp nhận là hai bạn thành bạn bè.";
-          }
-        }
-        bar.hidden = !show;
-        if (show) {
-          $("msgPendingText").textContent = text;
-          $("msgPendingBtns").style.display = canDecide ? "inline-flex" : "none";
-        }
-        setComposerEnabled(!blocked);
-      }
-
-      /* Người nhận bấm Chấp nhận tin chờ: đoạn chat thành "accepted" và
-         hai người thành bạn bè (ghi hai chiều) để chat thường + rủ nhóm. */
-      function acceptPending(otherUid, nm) {
-        if (!me || !otherUid) return;
-        var id = dmIdFor(me.uid, otherUid);
-        var name = nm || dmName(otherUid, dmDocs[id]);
-        db.collection("dms").doc(id).set({ status: "accepted" }, { merge: true })
-          .then(function () { return db.collection("friends").doc(me.uid).collection("list").doc(otherUid).set({ name: name, since: ts() }); })
-          .then(function () { return db.collection("friends").doc(otherUid).collection("list").doc(me.uid).set({ name: myName(), since: ts() }); })
-          .then(function () {
-            setStatus("Đã chấp nhận — bạn và " + name + " giờ là bạn bè, chat thoải mái nhé!");
-            refreshPendingBar();
-            if (panelMode === "requests") renderPendingPanel();
-          })
-          .catch(function () { setStatus("Chấp nhận chưa được — thử lại nhé.", true); });
-      }
-
-      /* Người nhận bấm Từ chối: xóa sạch tin trong đoạn chat chờ, đánh
-         dấu "declined" kèm declinedBy là mình — người gửi mở lại đoạn
-         chat sẽ thấy bị chặn và không gửi thêm được nữa. */
-      function declinePending(otherUid) {
-        if (!me || !otherUid) return;
-        var id = dmIdFor(me.uid, otherUid);
-        var ref = db.collection("dms").doc(id);
-        ref.collection("messages").get().then(function (snap) {
-          var batch = db.batch();
-          snap.forEach(function (d) { batch.delete(d.ref); });
-          return batch.commit();
-        }).then(function () {
-          return ref.set({ status: "declined", declinedBy: me.uid, lastMessage: "", lastMessageSender: null }, { merge: true });
-        }).then(function () {
-          setStatus("Đã từ chối và xóa tin nhắn chờ.");
-          if (cur && cur.kind === "dm" && cur.otherUid === otherUid) {
-            if (unsubMsgs) { try { unsubMsgs(); } catch (e) {} unsubMsgs = null; }
-            cur = null;
-            $("msgWrap").classList.remove("show-chat");
-            setChatHead("Chưa chọn hội thoại", "Chọn một hội thoại ở danh sách để bắt đầu nhắn.");
-            $("msgMsgs").innerHTML = '<p class="msg-empty">Nhắn cho admin nếu cần hỗ trợ hoặc báo lỗi, bấm “Tìm thám tử” để nhắn riêng với thám tử khác, hoặc tạo nhóm để cùng nhau phá án.</p>';
-          }
-          refreshPendingBar();
-          if (panelMode === "requests") renderPendingPanel();
-        }).catch(function () { setStatus("Từ chối chưa được — thử lại nhé.", true); });
-      }
+      /* Mở một nhóm: nhóm chung dùng dữ liệu mặc định khi doc chưa kịp
+         tải (vừa tự tham gia xong) — vẫn mở xem/nhắn được ngay; các
+         nhóm khác chỉ mở khi đã có dữ liệu (mình là thành viên). */
       function openGroupConvo(gid) {
         if (!me) return;
-        var g = groups[gid]; if (!g) return;
-        cur = { kind: "group", id: gid, title: g.name || "Nhóm chat" };
-        setChatHead(cur.title, (g.members || []).length + " thành viên — chat chung để cùng phá án");
+        var g = groups[gid];
+        if (!g && gid !== COMMON_GROUP_ID) return;
+        var isCommon = gid === COMMON_GROUP_ID;
+        cur = { kind: "group", id: gid, title: isCommon ? COMMON_GROUP_NAME : (g.name || "Nhóm chat") };
+        var sub = isCommon
+          ? "Nhóm chung của cả hẻm — admin quản lý nhóm" + (g && g.members ? " · " + g.members.length + " thành viên" : "")
+          : (g.members || []).length + " thành viên — chat chung để cùng phá án";
+        setChatHead(cur.title, sub);
         $("msgWrap").classList.add("show-chat");
+        closePanel();
         renderConvoList();
-        refreshPendingBar();
+        setComposerEnabled(true);
         watchMsgs(db.collection("groups").doc(gid).collection("messages"));
+      }
+
+      /* Thông tin người gửi một tin nhắn nhóm: hồ sơ users đã đồng bộ
+         (ảnh đại diện avPhoto/avStyle/avColor, cấp bậc rank, % vụ đã
+         phá pct). Tin của chính mình thì lấy số liệu hiện tại của mình;
+         tin người khác lấy từ userCache (chưa tải xong thì tạm chỉ có
+         tên ghi trong tin, tải xong danh sách tự vẽ lại đầy đủ). */
+      function senderProfile(m, mine) {
+        if (mine) {
+          var st = myStats();
+          return { displayName: myName(), avPhoto: st.photo, avStyle: st.style, avColor: st.color, rank: st.rank, pct: st.pct };
+        }
+        var c = (m.sender && userCache[m.sender]) || null;
+        if (c) return c;
+        return { displayName: m.senderName || "Thám tử" };
+      }
+      function senderPct(prof) {
+        if (!prof) return null;
+        if (typeof prof.pct === "number") return prof.pct;
+        if (prof.totalCases) return Math.round((prof.solvedCount || 0) / prof.totalCases * 100);
+        return null;
       }
 
       function msgRow(m, mid) {
@@ -14372,8 +14286,24 @@
         var rowKind = cur.kind, rowConvoId = cur.id;
         var row = document.createElement("div");
         row.className = "msg-row " + (mine ? "mine" : "theirs");
-        if (!mine && cur.kind === "group" && m.senderName) {
-          var who = document.createElement("div"); who.className = "msg-who"; who.textContent = m.senderName; row.appendChild(who);
+        if (cur.kind === "group") {
+          /* Đầu mỗi tin nhắn nhóm: ảnh đại diện + tên thám tử + cấp bậc
+             + % vụ án đã phá của người gửi, hiện ngay cạnh tin nhắn. */
+          var prof = senderProfile(m, mine);
+          var sName = m.senderName || prof.displayName || "Thám tử";
+          var who = document.createElement("div"); who.className = "msg-who";
+          var wav = document.createElement("span"); wav.className = "msg-ava"; wav.appendChild(avatarNode(prof, sName));
+          var wnm = document.createElement("b"); wnm.textContent = sName;
+          who.appendChild(wav); who.appendChild(wnm);
+          var metaBits = [];
+          if (prof.rank) metaBits.push(prof.rank);
+          var sp = senderPct(prof);
+          if (sp != null) metaBits.push("Đã phá " + sp + "% vụ án");
+          if (metaBits.length) {
+            var wmeta = document.createElement("span"); wmeta.className = "msg-who-meta"; wmeta.textContent = metaBits.join(" · ");
+            who.appendChild(wmeta);
+          }
+          row.appendChild(who);
         }
         var bub = document.createElement("div");
         bub.className = "msg-bubble" + (m.type === "bug" ? " bug" : "");
@@ -14391,9 +14321,9 @@
         row.appendChild(bub);
         var d = msgDate(m);
         if (d) { var tm = document.createElement("div"); tm.className = "msg-time"; tm.textContent = fmtTime(d); row.appendChild(tm); }
-        /* Nút Báo cáo nhỏ dưới bong bóng — chỉ ở chat riêng 1:1 và nhóm
-           (đoạn chat với admin đã có nút Báo lỗi riêng, không cần). */
-        if (rowKind === "dm" || rowKind === "group") {
+        /* Nút Báo cáo nhỏ dưới bong bóng — chỉ ở trong nhóm (đoạn chat
+           với admin đã có nút Báo lỗi riêng, không cần). */
+        if (rowKind === "group") {
           var rb = document.createElement("button");
           rb.type = "button"; rb.className = "msg-report-btn"; rb.textContent = "Báo cáo";
           rb.title = "Báo cáo tin nhắn này cho admin";
@@ -14407,45 +14337,21 @@
       /* ---------- Gửi tin ---------- */
       function sendPayload(payload) {
         if (!cur || !me) { setStatus("Chọn một hội thoại trước đã nhé.", true); return Promise.reject(new Error("no-convo")); }
-        /* Bị admin khóa chat: chặn gửi ở CẢ 3 nơi (admin / DM / nhóm). */
+        /* Bị admin khóa chat: chặn gửi ở CẢ 2 nơi (admin / nhóm). */
         if (isChatBlocked()) {
           msgToast("Bạn đã bị khóa chat", "Bạn không gửi được tin nhắn lúc này — liên hệ admin để được mở khóa.");
           setStatus("Bạn đã bị khóa chat — liên hệ admin để được mở khóa.", true);
           return Promise.reject(new Error("chat-blocked"));
         }
-        var colRef, parentRef, parentData, autoFriend = null;
+        var colRef, parentRef, parentData;
         if (cur.kind === "admin") {
           parentRef = db.collection("threads").doc(me.uid);
           colRef = parentRef.collection("messages");
           payload.sender = "player";
           parentData = { playerName: myName(), updatedAt: ts(), lastMessage: payload.text || (payload.type === "image" ? "[Ảnh]" : payload.type === "file" ? "[Tài liệu]" : ""), lastMessageSender: "player" };
-        } else if (cur.kind === "dm") {
-          var st = dmState(cur.otherUid);
-          if (st.status === "declined" && st.doc && st.doc.declinedBy === cur.otherUid) {
-            setStatus(cur.title + " đã từ chối tin nhắn chờ — bạn không gửi thêm cho họ được nữa.", true);
-            return Promise.reject(new Error("blocked"));
-          }
-          parentRef = db.collection("dms").doc(cur.id);
-          colRef = parentRef.collection("messages");
-          payload.sender = me.uid;
-          parentData = { updatedAt: ts(), lastMessage: payload.text || (payload.type === "image" ? "[Ảnh]" : "[Tài liệu]"), lastMessageSender: me.uid };
-          if (!st.doc) {
-            var names = {}; names[me.uid] = myName(); names[cur.otherUid] = cur.title;
-            parentData.participants = [me.uid, cur.otherUid];
-            parentData.participantNames = names;
-            parentData.status = friends[cur.otherUid] ? "accepted" : "pending";
-            parentData.initiator = me.uid;
-          } else if (st.status === "declined" && st.doc.declinedBy === me.uid) {
-            /* Mình từng từ chối họ, nay mình chủ động nhắn lại: làm mới
-               thành đoạn chờ do mình khởi xướng. */
-            parentData.status = "pending"; parentData.initiator = me.uid; parentData.declinedBy = null;
-          } else if (st.status === "pending" && st.doc.initiator === cur.otherUid) {
-            /* Người nhận trả lời ngay trong tin chờ = coi như chấp nhận:
-               đoạn chat thành bạn bè luôn, khỏi qua mục chờ nữa. */
-            parentData.status = "accepted";
-            autoFriend = cur.otherUid;
-          }
         } else {
+          /* Nhóm (gồm Nhóm Hẻm Cảng chung): chỉ còn đường gửi này và
+             đoạn chat admin — không còn đường gửi tin riêng 1:1 nào. */
           parentRef = db.collection("groups").doc(cur.id);
           colRef = parentRef.collection("messages");
           payload.sender = me.uid;
@@ -14455,12 +14361,6 @@
         payload.createdAt = ts();
         return colRef.add(payload).then(function () {
           return parentRef.set(parentData, { merge: true }).catch(function () {});
-        }).then(function () {
-          if (!autoFriend) return;
-          var otherUid = autoFriend;
-          return db.collection("friends").doc(me.uid).collection("list").doc(otherUid).set({ name: cur.title, since: ts() })
-            .then(function () { return db.collection("friends").doc(otherUid).collection("list").doc(me.uid).set({ name: myName(), since: ts() }); })
-            .catch(function () { /* ghi bạn bè lỗi thì lần chấp nhận sau bù lại */ });
         });
       }
 
@@ -14478,7 +14378,7 @@
         }).catch(function (err) {
           if (err && (err.message === "blocked" || err.message === "no-convo" || err.message === "chat-blocked")) return; /* dòng trạng thái cụ thể đã hiện ở sendPayload */
           setStatus("Gửi chưa được — kiểm tra mạng rồi bấm Gửi lại nhé.", true);
-        }).then(function () { btn.disabled = false; refreshPendingBar(); inp.focus(); });
+        }).then(function () { btn.disabled = false; setComposerEnabled(true); inp.focus(); });
       }
 
       /* ---------- Gửi ảnh / tài liệu qua Cloudinary ---------- */
@@ -14512,14 +14412,12 @@
         });
       }
 
-      /* ---------- Panel: tìm thám tử / lời mời / tạo nhóm ---------- */
+      /* ---------- Panel: tìm thám tử / thông báo chung ---------- */
       function closePanel() { panelMode = null; var p = $("msgPanel"); p.hidden = true; p.innerHTML = ""; }
       function openPanel(mode) {
         if (panelMode === mode) { closePanel(); return; }
         panelMode = mode;
         if (mode === "search") renderSearchPanel();
-        else if (mode === "requests") renderPendingPanel();
-        else if (mode === "group") renderGroupPanel();
         else if (mode === "broadcasts") renderBroadcastPanel();
       }
       function panelShell(title, note) {
@@ -14528,24 +14426,11 @@
         if (note) { var n = document.createElement("p"); n.className = "msg-note"; n.textContent = note; p.appendChild(n); }
         return p;
       }
-      function userRow(uid, name, btnText, btnDisabled, onBtn, pickOn) {
-        var row = document.createElement("div"); row.className = "msg-user-row";
-        var av = document.createElement("div"); av.className = "msg-ava"; av.textContent = initial(name);
-        var b = document.createElement("b"); b.textContent = name;
-        row.appendChild(av); row.appendChild(b);
-        if (btnText != null) {
-          var btn = document.createElement("button");
-          btn.type = "button"; btn.className = "msg-pick" + (pickOn ? " on" : ""); btn.textContent = btnText; btn.disabled = !!btnDisabled;
-          if (onBtn) btn.addEventListener("click", function () { onBtn(btn); });
-          row.appendChild(btn);
-        }
-        return row;
-      }
-
       /* Thẻ một thám tử: ảnh đại diện + tên + cấp bậc + % nhiệm vụ hoàn
-         thành (+ chấm xanh khi đang online). Bấm vào thẻ hoặc nút Nhắn
-         tin đều mở ngay đoạn chat riêng — không cần kết bạn trước; chưa
-         phải bạn thì tin đầu của mình vào mục Tin nhắn chờ của họ. */
+         thành (+ chấm xanh khi đang online). CHỈ để xem thông tin —
+         không còn nút "Nhắn tin", không bấm mở chat riêng được nữa:
+         mọi người trò chuyện chung trong Nhóm Hẻm Cảng, nhắn riêng chỉ
+         với admin. */
       function detectiveRow(uid, data, online) {
         var nm = data.displayName || "Thám tử";
         var row = document.createElement("div"); row.className = "msg-user-row";
@@ -14558,12 +14443,6 @@
         meta.appendChild(document.createTextNode((data.rank ? data.rank + " · " : "") + "Hoàn thành nhiệm vụ " + pct + "%"));
         main.appendChild(b); main.appendChild(meta);
         row.appendChild(av); row.appendChild(main);
-        var btn = document.createElement("button");
-        btn.type = "button"; btn.className = "msg-pick on"; btn.textContent = "Nhắn tin";
-        btn.addEventListener("click", function (e) { e.stopPropagation(); openDmConvo(uid, nm); });
-        row.style.cursor = "pointer";
-        row.addEventListener("click", function () { openDmConvo(uid, nm); });
-        row.appendChild(btn);
         return row;
       }
 
@@ -14585,7 +14464,7 @@
           list.sort(function (a, b) { return b.ms - a.ms; });
           host.innerHTML = "";
           if (!list.length) {
-            host.innerHTML = '<p class="msg-note">Hiện chưa có thám tử nào khác đang online. Khi có người mở app Tin nhắn cùng lúc với bạn, họ sẽ hiện ở đây để nhắn tin ngay.</p>';
+            host.innerHTML = '<p class="msg-note">Hiện chưa có thám tử nào khác đang online. Khi có người mở app Tin nhắn cùng lúc với bạn, họ sẽ hiện ở đây — mọi người trò chuyện chung trong Nhóm Hẻm Cảng nhé.</p>';
             return;
           }
           list.forEach(function (it) { host.appendChild(detectiveRow(it.uid, it.data, true)); });
@@ -14595,7 +14474,7 @@
       }
 
       function renderSearchPanel() {
-        var p = panelShell("Tìm thám tử", "Gõ tên thám tử rồi bấm “Nhắn tin” để trò chuyện ngay — không cần kết bạn trước. Nếu hai bạn chưa phải bạn bè, tin đầu tiên của bạn sẽ vào mục “Tin nhắn chờ” của họ; họ bấm Chấp nhận là hai bạn thành bạn bè và rủ nhau vào nhóm được.");
+        var p = panelShell("Tìm thám tử", "Xem các thám tử trong hẻm và ai đang online. Mọi người trò chuyện chung trong Nhóm Hẻm Cảng ở danh sách hội thoại — nhắn riêng chỉ với admin thôi nhé.");
         var row = document.createElement("div"); row.className = "msg-search-row";
         var inp = document.createElement("input"); inp.type = "search"; inp.placeholder = "Tên thám tử…"; inp.setAttribute("aria-label", "Tìm thám tử theo tên");
         var go = document.createElement("button"); go.type = "button"; go.className = "msg-mini-btn"; go.textContent = "Tìm";
@@ -14626,73 +14505,6 @@
         go.addEventListener("click", run);
         inp.addEventListener("keydown", function (e) { if (e.key === "Enter") { e.preventDefault(); run(); } });
         run();
-      }
-
-      /* Mục Tin nhắn chờ: các đoạn chat riêng mà thám tử chưa phải bạn
-         nhắn cho mình lần đầu. Bấm vào thẻ để mở đọc trước khi quyết;
-         Chấp nhận → thành bạn bè + chat thường; Từ chối → xóa sạch tin
-         chờ và người gửi không gửi lại được nữa. */
-      function renderPendingPanel() {
-        var list = pendingIncoming();
-        var p = panelShell("Tin nhắn chờ", list.length
-          ? "Tin đầu tiên từ thám tử chưa phải bạn của bạn. Chấp nhận để thành bạn bè và chat tiếp; Từ chối sẽ xóa tin chờ và họ không gửi lại cho bạn được nữa."
-          : "Chưa có tin nhắn chờ nào. Khi một thám tử chưa phải bạn nhắn cho bạn lần đầu, tin của họ sẽ hiện ở đây.");
-        list.forEach(function (it) {
-          var nm = dmName(it.otherUid, it.data);
-          var row = document.createElement("div"); row.className = "msg-user-row";
-          var av = document.createElement("div"); av.className = "msg-ava"; av.textContent = initial(nm);
-          var main = document.createElement("div"); main.className = "msg-det-main";
-          var b = document.createElement("b"); b.textContent = nm;
-          var meta = document.createElement("span"); meta.className = "msg-det-meta";
-          meta.textContent = it.data.lastMessage || "Đã gửi tin nhắn cho bạn";
-          main.appendChild(b); main.appendChild(meta);
-          var ok = document.createElement("button"); ok.type = "button"; ok.className = "msg-pick on"; ok.textContent = "Chấp nhận";
-          var no = document.createElement("button"); no.type = "button"; no.className = "msg-pick"; no.textContent = "Từ chối";
-          ok.addEventListener("click", function (e) { e.stopPropagation(); ok.disabled = true; no.disabled = true; acceptPending(it.otherUid, nm); });
-          no.addEventListener("click", function (e) { e.stopPropagation(); no.disabled = true; ok.disabled = true; declinePending(it.otherUid); });
-          row.appendChild(av); row.appendChild(main); row.appendChild(ok); row.appendChild(no);
-          row.style.cursor = "pointer";
-          row.addEventListener("click", function () { openDmConvo(it.otherUid, nm); });
-          p.appendChild(row);
-        });
-      }
-
-      function renderGroupPanel() {
-        var p = panelShell("Tạo nhóm phá án", "Đặt tên nhóm rồi chọn bạn bè để mời vào. Bạn bè là những thám tử đã thành bạn với bạn qua mục Tin nhắn chờ (chấp nhận tin của nhau).");
-        var row = document.createElement("div"); row.className = "msg-search-row";
-        var inp = document.createElement("input"); inp.type = "text"; inp.placeholder = "Tên nhóm, ví dụ: Đội phá án hẻm 5"; inp.setAttribute("aria-label", "Tên nhóm");
-        row.appendChild(inp); p.appendChild(row);
-        var fIds = Object.keys(friends);
-        if (!fIds.length) {
-          var n = document.createElement("p"); n.className = "msg-note"; n.textContent = "Bạn chưa có bạn bè nào — nhắn tin với một thám tử và chờ họ chấp nhận (hoặc chấp nhận tin chờ của họ) để thành bạn bè, rồi quay lại tạo nhóm nhé."; p.appendChild(n);
-        }
-        fIds.forEach(function (fid) {
-          p.appendChild(userRow(fid, friends[fid].name || "Thám tử", groupPick[fid] ? "Đã chọn ✓" : "Chọn", false, function (btn) {
-            groupPick[fid] = !groupPick[fid];
-            btn.textContent = groupPick[fid] ? "Đã chọn ✓" : "Chọn";
-            btn.classList.toggle("on", !!groupPick[fid]);
-          }, groupPick[fid]));
-        });
-        var mk = document.createElement("button"); mk.type = "button"; mk.className = "msg-mini-btn"; mk.textContent = "Tạo nhóm"; mk.style.marginTop = "8px";
-        mk.addEventListener("click", function () {
-          var name = inp.value.trim();
-          var chosen = Object.keys(groupPick).filter(function (k) { return groupPick[k]; });
-          if (!name) { setStatus("Đặt tên cho nhóm trước đã nhé.", true); inp.focus(); return; }
-          if (!chosen.length) { setStatus("Chọn ít nhất 1 bạn để mời vào nhóm nhé.", true); return; }
-          mk.disabled = true;
-          var members = [me.uid].concat(chosen);
-          var names = {}; names[me.uid] = myName();
-          chosen.forEach(function (fid) { names[fid] = friends[fid].name || "Thám tử"; });
-          db.collection("groups").add({
-            name: name, members: members, memberNames: names, createdBy: me.uid,
-            createdAt: ts(), updatedAt: ts(), lastMessage: ""
-          }).then(function (ref) {
-            groupPick = {}; closePanel();
-            setStatus("Đã tạo nhóm “" + name + "”.");
-            setTimeout(function () { openGroupConvo(ref.id); }, 350);
-          }).catch(function () { mk.disabled = false; setStatus("Tạo nhóm chưa được — thử lại nhé.", true); });
-        });
-        p.appendChild(mk);
       }
 
       /* ---------- Bảng icon vui + meme ---------- */
@@ -14727,10 +14539,6 @@
         });
         $("msgBack").addEventListener("click", function () { $("msgWrap").classList.remove("show-chat"); });
         $("msgToolSearch").addEventListener("click", function () { openPanel("search"); });
-        $("msgToolReq").addEventListener("click", function () { openPanel("requests"); });
-        $("msgToolGroup").addEventListener("click", function () { openPanel("group"); });
-        $("msgPendingAccept").addEventListener("click", function () { if (cur && cur.kind === "dm") acceptPending(cur.otherUid, cur.title); });
-        $("msgPendingDecline").addEventListener("click", function () { if (cur && cur.kind === "dm") declinePending(cur.otherUid); });
         $("msgEmojiBtn").addEventListener("click", function () { buildEmoji(); var p = $("msgEmoji"); p.hidden = !p.hidden; });
         $("msgBugBtn").addEventListener("click", function () {
           bugMode = !bugMode;
@@ -14749,9 +14557,9 @@
           $("msgWrap").classList.remove("show-chat");
           if (panelMode !== "broadcasts") openPanel("broadcasts"); else renderBroadcastPanel();
         });
-        /* Báo cáo: nút ở tiêu đề đoạn chat DM/nhóm + hộp chọn lý do. */
+        /* Báo cáo: nút ở tiêu đề đoạn chat nhóm + hộp chọn lý do. */
         $("msgReportConvoBtn").addEventListener("click", function () {
-          if (cur && (cur.kind === "dm" || cur.kind === "group")) openReportDialog(cur.kind, cur.id, "");
+          if (cur && cur.kind === "group") openReportDialog(cur.kind, cur.id, "");
         });
         $("msgReportCancel").addEventListener("click", closeReportDialog);
         $("msgReportSend").addEventListener("click", submitReport);
