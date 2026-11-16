@@ -2362,6 +2362,38 @@
       .msg-det-meta{ display:flex; align-items:center; gap:5px; font-size:12px; color:var(--ink-dim); margin-top:1px; }
       .msg-online-dot{ flex:0 0 auto; width:8px; height:8px; border-radius:50%; background:#3d9e57; }
       .msg-online-head{ margin:12px 0 2px; font-size:11.5px; font-weight:800; letter-spacing:.09em; text-transform:uppercase; color:var(--ink-faint); }
+      /* ===== Quản trị chat: khóa chat (adminBlocks) / thông báo chung (broadcasts) / báo cáo (reports) ===== */
+      .msg-privacy{ margin:0; padding:9px 14px; font-size:12px; line-height:1.55; color:var(--ink-dim); border-bottom:1px solid var(--line); background:rgba(87,176,106,.09); }
+      .msg-blocked{ margin:0 0 10px; padding:11px 14px; border:1px solid var(--red); background:rgba(224,49,49,.13); color:var(--ink); border-radius:12px; font-size:13.5px; font-weight:700; line-height:1.55; }
+      .msg-blocked[hidden]{ display:none; }
+      .msg-bcast{ display:flex; flex-direction:column; gap:2px; width:100%; text-align:left; margin:0 0 10px; padding:11px 14px; border:1px solid rgba(232,163,61,.55); background:rgba(232,163,61,.13); border-radius:12px; color:var(--ink); font-family:inherit; cursor:pointer; }
+      .msg-bcast[hidden]{ display:none; }
+      .msg-bcast:hover{ border-color:var(--accent); }
+      .msg-bcast-tag{ font-size:11px; font-weight:800; letter-spacing:.07em; text-transform:uppercase; color:var(--accent); }
+      .msg-bcast-text{ font-size:13.5px; line-height:1.5; overflow-wrap:break-word; white-space:pre-wrap; }
+      .msg-bcast-time{ font-size:11.5px; color:var(--ink-faint); }
+      .msg-bcast-item{ padding:9px 2px; border-bottom:1px solid var(--line); }
+      .msg-bcast-item b{ font-size:13.5px; display:block; }
+      .msg-bcast-item p{ margin:3px 0; font-size:13px; line-height:1.5; color:var(--ink-dim); overflow-wrap:break-word; white-space:pre-wrap; }
+      .msg-bcast-item .msg-bcast-time{ display:block; }
+      .msg-bcast-dot{ position:absolute; top:3px; right:30px; width:11px; height:11px; border-radius:50%; background:var(--red); box-shadow:0 0 0 2px rgba(0,0,0,.35); z-index:3; }
+      .msg-bcast-dot[hidden]{ display:none; }
+      .tb-app{ position:relative; }
+      .tb-app .msg-bcast-dot{ top:3px; right:3px; width:9px; height:9px; }
+      .msg-report-btn{ background:none; border:none; color:var(--ink-faint); font-size:11px; font-weight:700; padding:2px 5px; min-height:0; cursor:pointer; font-family:inherit; }
+      .msg-row.mine .msg-report-btn{ align-self:flex-end; }
+      .msg-row.theirs .msg-report-btn{ align-self:flex-start; }
+      .msg-report-btn:hover{ color:var(--red); text-decoration:underline; }
+      .msg-report-convo{ flex:0 0 auto; margin-left:auto; background:var(--panel2); border:1px solid var(--line); color:var(--ink-dim); border-radius:9px; padding:6px 10px; font-size:12px; font-weight:700; font-family:inherit; cursor:pointer; }
+      .msg-report-convo:hover{ color:var(--red); border-color:var(--red); }
+      .msg-report-convo[hidden]{ display:none; }
+      .msg-report-modal{ position:fixed; inset:0; z-index:120; background:rgba(0,0,0,.55); display:grid; place-items:center; padding:18px; }
+      .msg-report-modal[hidden]{ display:none; }
+      .msg-report-card{ width:min(420px,100%); max-height:88vh; overflow-y:auto; background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:18px; box-shadow:0 24px 54px rgba(0,0,0,.5); color:var(--ink); }
+      .msg-report-card h4{ margin:0 0 6px; font-size:16px; }
+      .msg-report-card .msg-note{ margin:0; font-size:12.5px; color:var(--ink-dim); line-height:1.5; }
+      .msg-report-reasons{ display:flex; flex-wrap:wrap; gap:7px; margin:13px 0 16px; }
+      .msg-report-actions{ display:flex; gap:8px; justify-content:flex-end; }
       @media (max-width:760px){
         .msg-wrap{ min-height:0; }
         .msg-list{ flex:1 1 auto; max-width:none; border-right:none; }
@@ -2519,7 +2551,7 @@
               <button type="button" class="d-icon" data-app="daily" style="background:none;border:none;font-family:inherit;cursor:pointer;left:14px;top:744px"><span class="d-glyph" style="color:#e8a33d"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/><path d="m9.2 16.2 2 2 3.6-3.8"/></svg></span><span>Vụ án hôm nay</span></button>
               <button type="button" class="d-icon" data-app="minigames" style="background:none;border:none;font-family:inherit;cursor:pointer;left:14px;top:848px"><span class="d-glyph" style="color:#57e6c9"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="7" width="19" height="11" rx="5.5"/><path d="M7.5 11v3M6 12.5h3"/><circle cx="15.8" cy="11.3" r="1.05" fill="currentColor" stroke="none"/><circle cx="18" cy="14" r="1.05" fill="currentColor" stroke="none"/></svg></span><span>Mini game hẻm</span></button>
               <button type="button" class="d-icon" data-app="browser" style="background:none;border:none;font-family:inherit;cursor:pointer;left:14px;top:952px"><span class="d-glyph" style="color:#35c4b5"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v10.5"/><path d="M12 3l5.5 8H12"/><path d="M12 6.2 7.6 13H12"/><path d="M4.5 16.5c1.8 1.5 3.6-1.2 5.4 0 1.4 1 2.4 1 3.8 0 1.8-1.2 3.6 1.5 5.4 0"/><path d="M4.5 20.5c1.8 1.5 3.6-1.2 5.4 0 1.4 1 2.4 1 3.8 0 1.8-1.2 3.6 1.5 5.4 0"/></svg></span><span>Trình duyệt</span></button>
-              <button type="button" class="d-icon" data-app="messages" style="background:none;border:none;font-family:inherit;cursor:pointer;left:110px;top:16px"><span class="d-glyph" style="color:#57b06a"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5c-1.4 0-2.8-.3-4-.9L3 20l1-5.4a8.5 8.5 0 1 1 17-3.1Z"/><path d="M8.5 10.5h7M8.5 13.5h4.5"/></svg></span><span>Tin nhắn</span><span class="d-badge" id="msgBadge" hidden>0</span></button>
+              <button type="button" class="d-icon" data-app="messages" style="background:none;border:none;font-family:inherit;cursor:pointer;left:110px;top:16px"><span class="d-glyph" style="color:#57b06a"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5c-1.4 0-2.8-.3-4-.9L3 20l1-5.4a8.5 8.5 0 1 1 17-3.1Z"/><path d="M8.5 10.5h7M8.5 13.5h4.5"/></svg></span><span>Tin nhắn</span><span class="d-badge" id="msgBadge" hidden>0</span><span class="msg-bcast-dot" id="msgBroadcastDot" hidden></span></button>
             </div>
             <div class="os-bar" aria-hidden="true">
               <span class="os-dots"><i></i><i></i><i></i></span>
@@ -2952,6 +2984,12 @@
           </div>
         </div>
         <section class="pane">
+          <div class="msg-blocked" id="msgBlockBanner" role="alert" hidden></div>
+          <button type="button" class="msg-bcast" id="msgBroadcastBanner" hidden>
+            <span class="msg-bcast-tag">Thông báo từ admin</span>
+            <span class="msg-bcast-text" id="msgBroadcastText"></span>
+            <span class="msg-bcast-time" id="msgBroadcastTime"></span>
+          </button>
           <div class="msg-wrap" id="msgWrap">
             <aside class="msg-list" aria-label="Danh sách hội thoại">
               <div class="msg-me">
@@ -2966,6 +3004,7 @@
                 <button type="button" class="msg-tool" id="msgToolGroup">Tạo nhóm</button>
                 <button type="button" class="msg-tool" id="msgToolReq">Tin nhắn chờ<span class="msg-count" id="msgReqCount" hidden>0</span></button>
               </div>
+              <p class="msg-privacy">Admin chỉ xem tin nhắn riêng/nhóm khi có người báo cáo, để xử lý quấy rối.</p>
               <div class="msg-panel" id="msgPanel" hidden></div>
               <div class="msg-sec-title">Hội thoại</div>
               <div class="msg-convos" id="msgConvoList">
@@ -2979,6 +3018,7 @@
                   <b id="msgChatTitle">Chưa chọn hội thoại</b>
                   <span id="msgChatSub">Chọn một hội thoại ở danh sách để bắt đầu nhắn.</span>
                 </div>
+                <button type="button" class="msg-report-convo" id="msgReportConvoBtn" title="Báo cáo cả đoạn chat này cho admin" hidden>Báo cáo đoạn chat</button>
               </div>
               <div class="msg-msgs" id="msgMsgs">
                 <p class="msg-empty">Nhắn cho admin nếu cần hỗ trợ hoặc báo lỗi, bấm “Tìm thám tử” để nhắn riêng với thám tử khác, hoặc tạo nhóm để cùng nhau phá án.</p>
@@ -3006,6 +3046,17 @@
               </form>
               <p class="msg-status" id="msgStatus" role="status"></p>
             </section>
+          </div>
+          <div class="msg-report-modal" id="msgReportModal" hidden>
+            <div class="msg-report-card" role="dialog" aria-modal="true" aria-label="Báo cáo cho admin">
+              <h4>Báo cáo cho admin</h4>
+              <p class="msg-note" id="msgReportWhat">Báo cáo cho admin xem xét.</p>
+              <div class="msg-report-reasons" id="msgReportReasons"></div>
+              <div class="msg-report-actions">
+                <button type="button" class="msg-mini-btn ghost" id="msgReportCancel">Hủy</button>
+                <button type="button" class="msg-mini-btn" id="msgReportSend">Gửi báo cáo</button>
+              </div>
+            </div>
           </div>
         </section>
       </div>
@@ -13033,7 +13084,11 @@
          nhận tin chờ thì ghi bạn bè hai chiều vào friends/{uid}/list —
          thành bạn bè rồi mới rủ vào nhóm được. Nhóm: groups/{id}/messages.
        - Ảnh/tài liệu: upload thẳng lên Cloudinary bằng preset KHÔNG ký
-         (unsigned) rồi gửi link trong tin nhắn — không qua Firebase Storage. */
+         (unsigned) rồi gửi link trong tin nhắn — không qua Firebase Storage.
+       - Quản trị (đợt 2): adminBlocks/{uid} (khóa chat + lý do + hạn),
+         broadcasts (thông báo chung của admin, chấm đỏ khi chưa xem),
+         reports (báo cáo tin nhắn/đoạn chat DM + nhóm từ nút Báo cáo).
+         Đọc/ghi lỗi quyền (rules chưa publish) đều nuốt lỗi, không crash. */
     var CLOUDINARY_CLOUD_NAME = "cslzx8db";    /* tài khoản Cloudinary miễn phí của văn phòng (tạo 16/11) */
     var CLOUDINARY_UPLOAD_PRESET = "tham-tu-chat"; /* preset upload không ký (Unsigned, folder tham-tu-chat) */
     (function () {
@@ -13055,8 +13110,25 @@
       var adminThread = null;
       var cur = null;        /* {kind:'admin'|'dm'|'group', id, title, sub, otherUid} */
       var unsubMsgs = null, bugMode = false;
-      var panelMode = null;  /* 'search' | 'requests' | 'group' */
+      var panelMode = null;  /* 'search' | 'requests' | 'group' | 'broadcasts' */
       var groupPick = {};    /* uid -> true */
+
+      /* ===== Quản trị chat (đợt 2) =====
+         - Khóa chat: adminBlocks/{uid} — doc tồn tại và chưa hết hạn
+           (blockedUntil null = vĩnh viễn) thì khóa ô soạn tin ở cả 3 nơi
+           gửi (admin / DM / nhóm). Lỗi quyền đọc = coi như không bị chặn.
+         - Thông báo chung: collection broadcasts, mới nhất lên đầu; id
+           đã xem lưu ở localStorage BROADCAST_SEEN_KEY, chấm đỏ trên
+           icon Tin nhắn khi có thông báo chưa xem. Lỗi quyền = ẩn im lặng.
+         - Báo cáo: collection reports, tạo từ nút Báo cáo ở từng tin
+           nhắn DM/nhóm hoặc nút Báo cáo đoạn chat ở tiêu đề đoạn chat. */
+      var BROADCAST_SEEN_KEY = "hem-cang-broadcast-seen-v1";
+      var chatBlock = null;    /* {reason, untilMs} | null */
+      var blockTimer = null;
+      var broadcasts = [];     /* [{id, title, text, date}] mới nhất trước */
+      var REPORT_REASONS = ["Quấy rối", "Spam", "Lừa đảo", "Nội dung không phù hợp", "Khác"];
+      var reportCtx = null;    /* {targetType, targetId, messageId} */
+      var reportReason = "";
 
       function $(id) { return document.getElementById(id); }
       function myName() { try { return (typeof G !== "undefined" && G.profile && G.profile.name) || "Thám tử Hẻm Cảng"; } catch (e) { return "Thám tử Hẻm Cảng"; } }
@@ -13074,6 +13146,187 @@
       }
       function msgDate(m) { try { return m.createdAt && m.createdAt.toDate ? m.createdAt.toDate() : null; } catch (e) { return null; } }
       function dmIdFor(a, b) { return [a, b].sort().join("_"); }
+      function fmtDateTime(d) {
+        if (!d) return "";
+        return d.toLocaleDateString("vi-VN", { day: "2-digit", month: "2-digit", year: "numeric" }) + " " + d.toLocaleTimeString("vi-VN", { hour: "2-digit", minute: "2-digit" });
+      }
+      /* Toast của game (nếu gọi được) — không gọi được thì rơi xuống
+         dòng trạng thái của app Tin nhắn, không bao giờ crash. */
+      function msgToast(main, sub) {
+        try { if (typeof toast === "function") { toast(main, sub || ""); return; } } catch (e) { /* rơi xuống setStatus */ }
+        setStatus(main + (sub ? " — " + sub : ""), true);
+      }
+
+      /* ---------- 1. Kiểm tra bị khóa chat (adminBlocks/{uid}) ---------- */
+      function isChatBlocked() {
+        if (!chatBlock) return false;
+        if (chatBlock.untilMs && chatBlock.untilMs <= Date.now()) return false;
+        return true;
+      }
+      function applyBlockUI() {
+        var blocked = isChatBlocked();
+        var b = $("msgBlockBanner");
+        if (b) {
+          b.hidden = !blocked;
+          if (blocked) {
+            var txt = "Bạn đã bị khóa chat";
+            if (chatBlock && chatBlock.reason) txt += " — Lý do: " + chatBlock.reason;
+            txt += (chatBlock && chatBlock.untilMs)
+              ? ". Khóa đến " + fmtDateTime(new Date(chatBlock.untilMs)) + "."
+              : ". Thời hạn: vĩnh viễn.";
+            b.textContent = txt;
+          }
+        }
+        /* Khóa/mở ô soạn tin ngay (gồm cả nút gửi) — refreshPendingBar
+           gọi setComposerEnabled, hàm đó tự tính thêm trạng thái khóa. */
+        refreshPendingBar();
+      }
+      function watchAdminBlock() {
+        if (!db || !me) return;
+        db.collection("adminBlocks").doc(me.uid).onSnapshot(function (snap) {
+          if (blockTimer) { clearTimeout(blockTimer); blockTimer = null; }
+          if (!snap.exists) { chatBlock = null; applyBlockUI(); return; }
+          var d = snap.data() || {};
+          var untilMs = null;
+          if (d.blockedUntil) {
+            try {
+              untilMs = d.blockedUntil.toMillis ? d.blockedUntil.toMillis() : new Date(d.blockedUntil).getTime();
+              if (isNaN(untilMs)) untilMs = null;
+            } catch (e) { untilMs = null; }
+          }
+          chatBlock = { reason: d.reason || "", untilMs: untilMs };
+          applyBlockUI();
+          /* Hết hạn trong lúc app đang mở thì tự mở khóa, khỏi tải lại. */
+          if (untilMs && untilMs > Date.now()) {
+            blockTimer = setTimeout(function () { applyBlockUI(); }, untilMs - Date.now() + 1000);
+          }
+        }, function () {
+          /* Lỗi quyền (rules chưa publish): coi như không bị chặn. */
+          chatBlock = null;
+          applyBlockUI();
+        });
+      }
+
+      /* ---------- 2. Thông báo chung từ admin (broadcasts) ---------- */
+      function seenBroadcastId() { try { return localStorage.getItem(BROADCAST_SEEN_KEY) || ""; } catch (e) { return ""; } }
+      function hasUnseenBroadcast() { return broadcasts.length > 0 && broadcasts[0].id !== seenBroadcastId(); }
+      function markBroadcastsSeen() {
+        if (!broadcasts.length) return;
+        try { localStorage.setItem(BROADCAST_SEEN_KEY, broadcasts[0].id); } catch (e) { /* lưu không được thì chấm đỏ còn — vô hại */ }
+        updateBroadcastDot();
+      }
+      function updateBroadcastDot() {
+        var unseen = hasUnseenBroadcast();
+        var dot = $("msgBroadcastDot"); if (dot) dot.hidden = !unseen;
+        var tb = document.querySelector('.tb-app[data-app="messages"]');
+        if (tb) {
+          var td = tb.querySelector(".msg-bcast-dot");
+          if (!td) { td = document.createElement("span"); td.className = "msg-bcast-dot"; tb.appendChild(td); }
+          td.hidden = !unseen;
+        }
+      }
+      function renderBroadcastUI() {
+        var bn = $("msgBroadcastBanner");
+        if (bn) {
+          if (!broadcasts.length) { bn.hidden = true; }
+          else {
+            var latest = broadcasts[0];
+            bn.hidden = false;
+            $("msgBroadcastText").textContent = (latest.title ? latest.title + " — " : "") + latest.text;
+            $("msgBroadcastTime").textContent = latest.date ? fmtDateTime(latest.date) : "";
+          }
+        }
+        /* App đang mở sẵn mà thông báo mới về tới thì coi như đã xem. */
+        var v = $("msgView");
+        if (v && v.style.display !== "none" && broadcasts.length) markBroadcastsSeen();
+        updateBroadcastDot();
+        if (panelMode === "broadcasts") renderBroadcastPanel();
+      }
+      function watchBroadcasts() {
+        if (!db || !me) return;
+        db.collection("broadcasts").orderBy("createdAt", "desc").limit(50).onSnapshot(function (snap) {
+          broadcasts = [];
+          snap.forEach(function (d) {
+            var data = d.data() || {};
+            broadcasts.push({
+              id: d.id,
+              title: data.title || "",
+              text: data.text || data.content || data.message || "",
+              date: msgDate(data)
+            });
+          });
+          renderBroadcastUI();
+        }, function () {
+          /* Lỗi quyền (rules chưa publish): ẩn banner im lặng. */
+          broadcasts = [];
+          renderBroadcastUI();
+        });
+      }
+      function renderBroadcastPanel() {
+        var p = panelShell("Thông báo từ admin", broadcasts.length
+          ? "Tất cả thông báo chung admin đã gửi — mới nhất ở trên cùng."
+          : "Chưa có thông báo chung nào.");
+        broadcasts.forEach(function (bc) {
+          var item = document.createElement("div"); item.className = "msg-bcast-item";
+          var t = document.createElement("b"); t.textContent = bc.title || "Thông báo từ admin";
+          var x = document.createElement("p"); x.textContent = bc.text;
+          var tm = document.createElement("span"); tm.className = "msg-bcast-time"; tm.textContent = bc.date ? fmtDateTime(bc.date) : "";
+          item.appendChild(t); item.appendChild(x); item.appendChild(tm);
+          p.appendChild(item);
+        });
+      }
+
+      /* ---------- 3. Báo cáo tin nhắn / đoạn chat (reports) ---------- */
+      function openReportDialog(targetType, targetId, messageId) {
+        if (!me || !targetId) return;
+        reportCtx = { targetType: targetType, targetId: targetId, messageId: messageId || "" };
+        reportReason = "";
+        var modal = $("msgReportModal"); if (!modal) return;
+        $("msgReportWhat").textContent = messageId
+          ? "Báo cáo tin nhắn này cho admin xem xét. Admin chỉ xem đoạn chat khi có báo cáo, để xử lý quấy rối."
+          : "Báo cáo cả đoạn chat này cho admin xem xét. Admin chỉ xem đoạn chat khi có báo cáo, để xử lý quấy rối.";
+        var host = $("msgReportReasons"); host.innerHTML = "";
+        REPORT_REASONS.forEach(function (r) {
+          var b = document.createElement("button");
+          b.type = "button"; b.className = "msg-pick"; b.textContent = r;
+          b.addEventListener("click", function () {
+            reportReason = r;
+            var all = host.querySelectorAll(".msg-pick");
+            for (var i = 0; i < all.length; i++) all[i].classList.toggle("on", all[i] === b);
+          });
+          host.appendChild(b);
+        });
+        modal.hidden = false;
+      }
+      function closeReportDialog() {
+        var m = $("msgReportModal"); if (m) m.hidden = true;
+        reportCtx = null; reportReason = "";
+      }
+      function submitReport() {
+        if (!reportCtx) return;
+        if (!reportReason) { setStatus("Chọn một lý do báo cáo trước đã nhé.", true); return; }
+        if (!db || !me) { msgToast("Chưa gửi được báo cáo", "Chưa kết nối được máy chủ chat — thử lại sau nhé."); return; }
+        var ctx = reportCtx, reason = reportReason;
+        var sendBtn = $("msgReportSend"); if (sendBtn) sendBtn.disabled = true;
+        db.collection("reports").add({
+          reporterUid: me.uid,
+          reporterName: myName(),
+          targetType: ctx.targetType,
+          targetId: ctx.targetId,
+          messageId: ctx.messageId || "",
+          reason: reason,
+          createdAt: ts(),
+          status: "open"
+        }).then(function () {
+          closeReportDialog();
+          msgToast("Đã gửi báo cáo cho admin", "Cảm ơn bạn — admin sẽ xem xét báo cáo này.");
+          setStatus("Đã gửi báo cáo cho admin.");
+        }).catch(function () {
+          /* Lỗi quyền (rules chưa publish) hoặc mất mạng: toast lỗi nhẹ. */
+          msgToast("Chưa gửi được báo cáo", "Gửi báo cáo chưa được — thử lại sau nhé.");
+          setStatus("Chưa gửi được báo cáo — thử lại sau nhé.", true);
+        }).then(function () { if (sendBtn) sendBtn.disabled = false; });
+      }
 
       /* Các đoạn chat riêng đang ở trạng thái CHỜ phía mình: status
          "pending" và người nhắn trước (initiator) là người kia — tức tin
@@ -13359,6 +13612,9 @@
           renderConvoList();
         }, function () {});
 
+        watchAdminBlock();
+        watchBroadcasts();
+
         renderConvoList();
         if (!cur) openAdminConvo();
       }
@@ -13470,6 +13726,8 @@
       function setChatHead(title, sub) {
         $("msgChatTitle").textContent = title;
         $("msgChatSub").textContent = sub || "";
+        var rcBtn = $("msgReportConvoBtn");
+        if (rcBtn) rcBtn.hidden = !(cur && (cur.kind === "dm" || cur.kind === "group"));
         var bug = $("msgBugBtn");
         if (bug) bug.hidden = !(cur && cur.kind === "admin");
         if (!cur || cur.kind !== "admin") { bugMode = false; if (bug) bug.classList.remove("on"); $("msgInput").placeholder = "Nhập tin nhắn…"; }
@@ -13484,7 +13742,7 @@
             host.innerHTML = '<p class="msg-empty">Chưa có tin nhắn nào — gửi lời chào đầu tiên nhé!</p>';
             return;
           }
-          snap.forEach(function (d) { host.appendChild(msgRow(d.data() || {})); });
+          snap.forEach(function (d) { host.appendChild(msgRow(d.data() || {}, d.id)); });
           host.scrollTop = host.scrollHeight;
         }, function () {
           host.innerHTML = '<p class="msg-empty">Không tải được tin nhắn. Kiểm tra mạng rồi mở lại hội thoại nhé.</p>';
@@ -13530,14 +13788,22 @@
         refreshPendingBar();
       }
 
-      /* Bật/tắt ô soạn tin: chỉ khóa khi đoạn chat đã bị người kia từ
-         chối — họ đã chặn, mình không gửi thêm được nữa. */
+      /* Bật/tắt ô soạn tin: khóa khi đoạn chat đã bị người kia từ chối
+         (họ đã chặn, mình không gửi thêm được nữa) HOẶC khi admin đã
+         khóa chat của mình (adminBlocks) — khóa áp cho cả 3 nơi gửi. */
       function setComposerEnabled(on) {
-        ["msgInput", "msgSend", "msgImgBtn", "msgFileBtn", "msgEmojiBtn"].forEach(function (id) {
-          var el = $(id); if (el) el.disabled = !on;
+        var banned = isChatBlocked();
+        var eff = on && !banned;
+        ["msgInput", "msgSend", "msgImgBtn", "msgFileBtn", "msgEmojiBtn", "msgBugBtn"].forEach(function (id) {
+          var el = $(id); if (el) el.disabled = !eff;
         });
         var inp = $("msgInput");
-        if (inp) inp.placeholder = on ? "Nhập tin nhắn…" : "Đã bị từ chối — không gửi thêm được nữa";
+        if (inp) {
+          if (banned) inp.placeholder = "Bạn đã bị khóa chat — liên hệ admin";
+          else if (!on) inp.placeholder = "Đã bị từ chối — không gửi thêm được nữa";
+          else if (bugMode && cur && cur.kind === "admin") inp.placeholder = "Mô tả lỗi bạn gặp — tin này sẽ gắn nhãn BÁO LỖI gửi cho admin…";
+          else inp.placeholder = "Nhập tin nhắn…";
+        }
       }
 
       /* Thanh thông báo phía trên ô soạn tin cho đoạn chat riêng chưa
@@ -13625,8 +13891,9 @@
         watchMsgs(db.collection("groups").doc(gid).collection("messages"));
       }
 
-      function msgRow(m) {
+      function msgRow(m, mid) {
         var mine = cur.kind === "admin" ? (m.sender === "player") : (m.sender === me.uid);
+        var rowKind = cur.kind, rowConvoId = cur.id;
         var row = document.createElement("div");
         row.className = "msg-row " + (mine ? "mine" : "theirs");
         if (!mine && cur.kind === "group" && m.senderName) {
@@ -13648,12 +13915,28 @@
         row.appendChild(bub);
         var d = msgDate(m);
         if (d) { var tm = document.createElement("div"); tm.className = "msg-time"; tm.textContent = fmtTime(d); row.appendChild(tm); }
+        /* Nút Báo cáo nhỏ dưới bong bóng — chỉ ở chat riêng 1:1 và nhóm
+           (đoạn chat với admin đã có nút Báo lỗi riêng, không cần). */
+        if (rowKind === "dm" || rowKind === "group") {
+          var rb = document.createElement("button");
+          rb.type = "button"; rb.className = "msg-report-btn"; rb.textContent = "Báo cáo";
+          rb.title = "Báo cáo tin nhắn này cho admin";
+          rb.setAttribute("aria-label", "Báo cáo tin nhắn này cho admin");
+          rb.addEventListener("click", function () { openReportDialog(rowKind, rowConvoId, mid || ""); });
+          row.appendChild(rb);
+        }
         return row;
       }
 
       /* ---------- Gửi tin ---------- */
       function sendPayload(payload) {
         if (!cur || !me) { setStatus("Chọn một hội thoại trước đã nhé.", true); return Promise.reject(new Error("no-convo")); }
+        /* Bị admin khóa chat: chặn gửi ở CẢ 3 nơi (admin / DM / nhóm). */
+        if (isChatBlocked()) {
+          msgToast("Bạn đã bị khóa chat", "Bạn không gửi được tin nhắn lúc này — liên hệ admin để được mở khóa.");
+          setStatus("Bạn đã bị khóa chat — liên hệ admin để được mở khóa.", true);
+          return Promise.reject(new Error("chat-blocked"));
+        }
         var colRef, parentRef, parentData, autoFriend = null;
         if (cur.kind === "admin") {
           parentRef = db.collection("threads").doc(me.uid);
@@ -13709,6 +13992,7 @@
         var inp = $("msgInput");
         var text = inp.value.trim();
         if (!cur) { setStatus("Chọn một hội thoại trước đã nhé.", true); return; }
+        if (isChatBlocked()) { msgToast("Bạn đã bị khóa chat", "Bạn không gửi được tin nhắn lúc này — liên hệ admin để được mở khóa."); return; }
         if (!text) return;
         var type = (bugMode && cur.kind === "admin") ? "bug" : "text";
         var btn = $("msgSend"); btn.disabled = true;
@@ -13716,7 +14000,7 @@
           inp.value = ""; inp.style.height = "auto"; setStatus("");
           if (type === "bug") setStatus("Đã gửi báo lỗi cho admin. Admin sẽ xem và trả lời ngay trong đoạn chat này.");
         }).catch(function (err) {
-          if (err && (err.message === "blocked" || err.message === "no-convo")) return; /* dòng trạng thái cụ thể đã hiện ở sendPayload */
+          if (err && (err.message === "blocked" || err.message === "no-convo" || err.message === "chat-blocked")) return; /* dòng trạng thái cụ thể đã hiện ở sendPayload */
           setStatus("Gửi chưa được — kiểm tra mạng rồi bấm Gửi lại nhé.", true);
         }).then(function () { btn.disabled = false; refreshPendingBar(); inp.focus(); });
       }
@@ -13737,6 +14021,7 @@
       function handleFile(file, isImage) {
         if (!file) return;
         if (!cur) { setStatus("Chọn một hội thoại trước rồi mới gửi file được nhé.", true); return; }
+        if (isChatBlocked()) { msgToast("Bạn đã bị khóa chat", "Bạn không gửi được tin nhắn lúc này — liên hệ admin để được mở khóa."); return; }
         if (!CLOUDINARY_CLOUD_NAME || !CLOUDINARY_UPLOAD_PRESET) {
           setStatus("Tính năng gửi file chưa bật, thử lại sau", true);
           return;
@@ -13759,6 +14044,7 @@
         if (mode === "search") renderSearchPanel();
         else if (mode === "requests") renderPendingPanel();
         else if (mode === "group") renderGroupPanel();
+        else if (mode === "broadcasts") renderBroadcastPanel();
       }
       function panelShell(title, note) {
         var p = $("msgPanel"); p.hidden = false; p.innerHTML = "";
@@ -13980,9 +14266,23 @@
         $("msgFileBtn").addEventListener("click", function () { $("msgFileInput").click(); });
         $("msgImgInput").addEventListener("change", function () { handleFile(this.files && this.files[0], true); this.value = ""; });
         $("msgFileInput").addEventListener("change", function () { handleFile(this.files && this.files[0], false); this.value = ""; });
+        /* Banner thông báo chung: bấm vào mở panel liệt kê tất cả thông
+           báo + đánh dấu đã xem (chấm đỏ biến mất). */
+        $("msgBroadcastBanner").addEventListener("click", function () {
+          markBroadcastsSeen();
+          $("msgWrap").classList.remove("show-chat");
+          if (panelMode !== "broadcasts") openPanel("broadcasts"); else renderBroadcastPanel();
+        });
+        /* Báo cáo: nút ở tiêu đề đoạn chat DM/nhóm + hộp chọn lý do. */
+        $("msgReportConvoBtn").addEventListener("click", function () {
+          if (cur && (cur.kind === "dm" || cur.kind === "group")) openReportDialog(cur.kind, cur.id, "");
+        });
+        $("msgReportCancel").addEventListener("click", closeReportDialog);
+        $("msgReportSend").addEventListener("click", submitReport);
+        $("msgReportModal").addEventListener("click", function (e) { if (e.target === this) closeReportDialog(); });
       }
 
-      window.__msgOnOpen = function () { wire(); start(); };
+      window.__msgOnOpen = function () { wire(); start(); markBroadcastsSeen(); };
     })();
     </script>
   </body>
