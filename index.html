@@ -2356,6 +2356,9 @@
       .msg-who .msg-ava{ width:22px; height:22px; font-size:11px; border-width:1px; }
       .msg-who b{ color:var(--ink); font-size:12px; }
       .msg-who-meta{ font-size:11px; color:var(--ink-faint); }
+      .msg-admin-badge{ display:inline-block; background:#b8860b; color:#fff; border-radius:999px; padding:1px 8px; font-size:10.5px; font-weight:800; }
+      .msg-ava-admin{ border-color:#b8860b !important; background:#fdf3d7 !important; }
+      .msg-row.admin-msg .msg-bubble{ border-color:#b8860b; box-shadow:inset 0 0 0 1px rgba(184,134,11,.35); }
       .msg-row.mine .msg-who{ justify-content:flex-end; }
       .msg-bubble{ background:var(--panel2); border:1px solid var(--line); border-radius:14px; border-bottom-left-radius:5px; padding:9px 12px; font-size:14.5px; line-height:1.5; overflow-wrap:break-word; white-space:pre-wrap; }
       .msg-row.mine .msg-bubble{ background:rgba(232,163,61,.17); border-color:rgba(232,163,61,.45); border-radius:14px; border-bottom-right-radius:5px; }
@@ -13982,6 +13985,21 @@
         return holder;
       }
 
+      /* Ảnh đại diện của admin trong nhóm chung: ảnh Google của admin
+         nếu có, không thì icon khiên vàng. */
+      function adminAvatarNode(m) {
+        var url = (m && (m.senderPhoto || m.photoURL || m.photo)) || "";
+        if (url) {
+          var img = document.createElement("img");
+          img.src = url; img.alt = "";
+          return img;
+        }
+        var holder = document.createElement("span");
+        holder.style.display = "block"; holder.style.width = "100%"; holder.style.height = "100%";
+        holder.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="#b8860b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:100%;height:100%"><path d="M12 2l8 3v6c0 5-3.5 9-8 11-4.5-2-8-6-8-11V5l8-3z"/><path d="M8.5 12l2.5 2.5 4.5-4.5"/></svg>';
+        return holder;
+      }
+
       function syncMyProfile() {
         if (!db || !me) return;
         var st = myStats();
@@ -14269,7 +14287,7 @@
           renderMsgList();
           if (cur && cur.kind === "group") {
             var uids = [];
-            msgDocsCache.forEach(function (it) { if (it.data.sender) uids.push(it.data.sender); });
+            msgDocsCache.forEach(function (it) { if (it.data.sender && it.data.isAdmin !== true) uids.push(it.data.sender); });
             fetchSenderProfiles(uids);
           }
         }, function (err) {
@@ -14371,25 +14389,33 @@
 
       function msgRow(m, mid) {
         var mine = cur.kind === "admin" ? (m.sender === "player") : (m.sender === me.uid);
+        var isAdminMsg = cur.kind === "group" && m.isAdmin === true;
         var rowKind = cur.kind, rowConvoId = cur.id;
         var row = document.createElement("div");
-        row.className = "msg-row " + (mine ? "mine" : "theirs");
+        row.className = "msg-row " + (mine ? "mine" : "theirs") + (isAdminMsg ? " admin-msg" : "");
         if (cur.kind === "group") {
           /* Đầu mỗi tin nhắn nhóm: ảnh đại diện + tên thám tử + cấp bậc
-             + % vụ án đã phá của người gửi, hiện ngay cạnh tin nhắn. */
-          var prof = senderProfile(m, mine);
-          var sName = m.senderName || prof.displayName || "Thám tử";
+             + % vụ án đã phá của người gửi, hiện ngay cạnh tin nhắn.
+             Tin của admin (isAdmin) hiện huy hiệu Quản trị viên, không
+             cấp bậc/% vì admin không phải người chơi. */
+          var prof = isAdminMsg ? null : senderProfile(m, mine);
+          var sName = isAdminMsg ? (m.senderName || "Admin") : (m.senderName || (prof && prof.displayName) || "Thám tử");
           var who = document.createElement("div"); who.className = "msg-who";
-          var wav = document.createElement("span"); wav.className = "msg-ava"; wav.appendChild(avatarNode(prof, sName));
+          var wav = document.createElement("span"); wav.className = "msg-ava" + (isAdminMsg ? " msg-ava-admin" : ""); wav.appendChild(isAdminMsg ? adminAvatarNode(m) : avatarNode(prof, sName));
           var wnm = document.createElement("b"); wnm.textContent = sName;
           who.appendChild(wav); who.appendChild(wnm);
-          var metaBits = [];
-          if (prof.rank) metaBits.push(prof.rank);
-          var sp = senderPct(prof);
-          if (sp != null) metaBits.push("Đã phá " + sp + "% vụ án");
-          if (metaBits.length) {
-            var wmeta = document.createElement("span"); wmeta.className = "msg-who-meta"; wmeta.textContent = metaBits.join(" · ");
-            who.appendChild(wmeta);
+          if (isAdminMsg) {
+            var badge = document.createElement("span"); badge.className = "msg-admin-badge"; badge.textContent = "Quản trị viên";
+            who.appendChild(badge);
+          } else {
+            var metaBits = [];
+            if (prof.rank) metaBits.push(prof.rank);
+            var sp = senderPct(prof);
+            if (sp != null) metaBits.push("Đã phá " + sp + "% vụ án");
+            if (metaBits.length) {
+              var wmeta = document.createElement("span"); wmeta.className = "msg-who-meta"; wmeta.textContent = metaBits.join(" · ");
+              who.appendChild(wmeta);
+            }
           }
           row.appendChild(who);
         }
@@ -14411,7 +14437,7 @@
         if (d) { var tm = document.createElement("div"); tm.className = "msg-time"; tm.textContent = fmtTime(d); row.appendChild(tm); }
         /* Nút Báo cáo nhỏ dưới bong bóng — chỉ ở trong nhóm (đoạn chat
            với admin đã có nút Báo lỗi riêng, không cần). */
-        if (rowKind === "group") {
+        if (rowKind === "group" && !isAdminMsg) {
           var rb = document.createElement("button");
           rb.type = "button"; rb.className = "msg-report-btn"; rb.textContent = "Báo cáo";
           rb.title = "Báo cáo tin nhắn này cho admin";
