@@ -8089,7 +8089,7 @@
        "Markdown Content:" hoặc đoạn chữ dài không phải JSON lỗi, vì Jina có
        kiểu từ chối mà HTTP vẫn 200 kèm phong bì JSON báo bị chặn */
     /* Tab proxy: gọi PROXY_BASE dậy trước (Render Free ngủ sau 15 phút,
-       mở lại mất ~1 phút). Chờ tối đa ~20 giây: trả lời được thì TỰ mở
+       mở lại mất ~1 phút). Chờ tối đa ~75 giây: trả lời được thì TỰ mở
        trang đích qua proxy (brProxyAutoOpen); quá giờ hoặc lỗi thì hiện
        trạng thái "đang ngủ" tử tế kèm nút Thử lại + đường dự phòng,
        không khung trắng */
@@ -8120,7 +8120,7 @@
       brPaintProxyChecking(target);
       var ctrl = null, timer = null;
       try { ctrl = new AbortController(); } catch (e) { ctrl = null; }
-      if (ctrl) timer = setTimeout(function () { try { ctrl.abort(); } catch (e) {} }, 20000);
+      if (ctrl) timer = setTimeout(function () { try { ctrl.abort(); } catch (e) {} }, 75000);
       fetch(PROXY_BASE + "/", { mode: "no-cors", cache: "no-store", signal: ctrl ? ctrl.signal : undefined })
         .then(function () { return true; })
         .catch(function () { return false; })
@@ -8239,7 +8239,7 @@
       fr.hidden = true;
       st.hidden = false;
       st.innerHTML = "<h4>Đang gọi proxy dậy…</h4>"
-        + "<p>Cảng Lướt đang kiểm tra máy chủ proxy Scramjet (" + brEsc(PROXY_BASE.replace(/^https?:\/\//, "")) + ") — chờ tối đa khoảng 20 giây. Trang đích: " + brEsc(target) + "</p>";
+        + "<p>Cảng Lướt đang kiểm tra máy chủ proxy Scramjet (" + brEsc(PROXY_BASE.replace(/^https?:\/\//, "")) + ") — chờ tối đa khoảng 75 giây. Lần mở đầu sau khi proxy ngủ mất khoảng 1 phút, đang chờ… Trang đích: " + brEsc(target) + "</p>";
     }
     function brPaintProxySleeping(target) {
       var st = $("brProxyStatus"), fr = $("brProxyFrame");
