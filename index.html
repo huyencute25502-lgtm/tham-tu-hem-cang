@@ -1572,6 +1572,10 @@
       .br-res-imgs img{ width:100%; height:96px; object-fit:cover; display:block; background:var(--panel2); }
       .br-res-imgs span{ display:block; font-size:11px; color:var(--ink-dim); padding:6px 8px; text-align:left; line-height:1.35; max-height:2.75em; overflow:hidden; }
       .br-res-empty{ font-size:13.5px; color:var(--ink-dim); background:var(--panel); border:1px dashed var(--line); border-radius:12px; padding:14px 16px; line-height:1.6; }
+      .br-res-note{ font-size:12.5px; color:var(--ink-faint); line-height:1.55; margin:0 0 16px; }
+      .br-res-item .br-res-url{ display:block; font-size:12px; color:#2aa79a; font-weight:600; line-height:1.45; margin-bottom:3px; overflow-wrap:anywhere; }
+      html[data-theme="dark"] .br-res-item .br-res-url{ color:#5fd8ca; }
+      @media (prefers-color-scheme: dark){ .br-res-item .br-res-url{ color:#5fd8ca; } }
       .br-reader{ flex:1 1 auto; min-height:0; overflow-y:auto; padding:22px 18px 36px; }
       .br-reader[hidden]{ display:none; }
       .br-reader-wrap{ max-width:760px; margin:0 auto; }
@@ -7835,9 +7839,82 @@
     function brNorm(s) {
       return (s || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/đ/g, "d");
     }
+    /* ================= KẾT QUẢ WEB (API /api/web-search cùng origin) =================
+       Gọi bất đồng bộ, chạy song song và độc lập với các nguồn cũ: trang kết
+       quả hiện ngay các mục cũ, mục Kết quả web hiện khung chờ rồi tự thay
+       bằng kết quả khi tải xong. Cache localStorage riêng giữ 5 phút cho
+       mỗi từ khóa để không gọi lại liên tục. */
+    var brWebCache = {};
+    var BR_WEB_LS_KEY = "hem-cang-websearch-v1", BR_WEB_TTL = 5 * 60 * 1000;
+    function brWebLsRead(q) {
+      try {
+        var all = JSON.parse(localStorage.getItem(BR_WEB_LS_KEY) || "null");
+        var e = all && all[q];
+        if (!e || !e.t || (Date.now() - e.t) > BR_WEB_TTL) return null;
+        return e.j;
+      } catch (err) { return null; }
+    }
+    function brWebLsWrite(q, j) {
+      try {
+        var all = {};
+        try { all = JSON.parse(localStorage.getItem(BR_WEB_LS_KEY) || "{}") || {}; } catch (e) { all = {}; }
+        Object.keys(all).forEach(function (k) { if (!all[k] || !all[k].t || (Date.now() - all[k].t) > BR_WEB_TTL) delete all[k]; });
+        all[q] = { t: Date.now(), j: j };
+        localStorage.setItem(BR_WEB_LS_KEY, JSON.stringify(all));
+      } catch (err) {}
+    }
+    function brWebStateFromPayload(j) {
+      if (j && j.quota_exhausted) return { state: "quota", results: [] };
+      if (j && j.ok && Array.isArray(j.results) && j.results.length) {
+        var rs = j.results.filter(function (r) { return r && r.url; }).slice(0, 10).map(function (r) {
+          return { title: r.title || "", url: r.url || "", snippet: r.snippet || "", domain: r.domain || "" };
+        });
+        if (rs.length) return { state: "done", results: rs };
+      }
+      return { state: "error", results: [] };
+    }
+    function brWebSlotHtml(entry) {
+      var st = brWebCache[entry];
+      if (!st || st.state === "loading") {
+        return "<div class='br-res-sec'><h5>KẾT QUẢ WEB</h5><p class='br-res-status'>Đang tải kết quả web…</p></div>";
+      }
+      if (st.state === "quota") return "<p class='br-res-note'>Đã hết lượt tìm miễn phí tháng này, thử lại vào mùng 1</p>";
+      if (st.state !== "done" || !st.results || !st.results.length) return "<p class='br-res-note'>Không tải được kết quả web</p>";
+      var h = "<div class='br-res-sec'><h5>KẾT QUẢ WEB</h5>";
+      st.results.slice(0, 10).forEach(function (r, i) {
+        h += "<button type='button' class='br-res-item' data-act='web' data-i='" + i + "'><span class='br-res-main'><b>" + brEsc(r.title || r.domain || r.url) + "</b>"
+          + "<span class='br-res-url'>" + brEsc(r.url) + "</span>"
+          + (r.snippet ? "<p>" + brEsc(r.snippet) + "</p>" : "") + "</span></button>";
+      });
+      return h + "</div>";
+    }
+    function brRefreshWeb(entry, q) {
+      var t = brCur(); if (!t || t.hist[t.hi] !== entry) return;
+      var data = brSearchCache[entry];
+      if (data && data.done) { brPaintSearch(q, data); return; }
+      var slot = $("brWebSlot"); if (slot) slot.innerHTML = brWebSlotHtml(entry);
+    }
+    function brStartWebSearch(entry, q) {
+      if (brWebCache[entry]) return;
+      var ls = brWebLsRead(q);
+      if (ls) { brWebCache[entry] = brWebStateFromPayload(ls); return; }
+      brWebCache[entry] = { state: "loading", results: [] };
+      fetch("/api/web-search?q=" + encodeURIComponent(q))
+        .then(function (r) { if (!r.ok) throw new Error("http " + r.status); return r.json(); })
+        .then(function (j) {
+          brWebCache[entry] = brWebStateFromPayload(j);
+          if (j && (j.ok || j.quota_exhausted)) brWebLsWrite(q, j);
+          brRefreshWeb(entry, q);
+        })
+        .catch(function () {
+          brWebCache[entry] = { state: "error", results: [] };
+          brRefreshWeb(entry, q);
+        });
+    }
     function brRunSearch(entry, q) {
       brLastQuery = q;
       var wrap = $("brResWrap"); if (!wrap) return;
+      brStartWebSearch(entry, q);
       var cached = brSearchCache[entry];
       if (cached && cached.done) { brPaintSearch(q, cached); return; }
       if (cached && cached.loading) return;
@@ -7847,6 +7924,8 @@
       var st = document.createElement("p"); st.className = "br-res-status";
       st.textContent = "Đang hỏi cùng lúc Wikipedia tiếng Việt + tiếng Anh, đáp án nhanh DuckDuckGo, ảnh Openverse và tin RSS VnExpress / Tuổi Trẻ…";
       wrap.append(h, st);
+      var wslot = document.createElement("div"); wslot.id = "brWebSlot"; wslot.innerHTML = brWebSlotHtml(entry);
+      wrap.appendChild(wslot);
       var enc = encodeURIComponent(q);
       function wikiApi(lang, limit) {
         return "https://" + lang + ".wikipedia.org/w/api.php?action=query&generator=search&gsrsearch=" + enc + "&gsrnamespace=0&gsrlimit=" + limit + "&prop=extracts%7Cpageimages%7Cinfo&inprop=url&exintro&explaintext&exsentences=2&exlimit=max&piprop=thumbnail&pithumbsize=240&format=json&origin=*";
@@ -7913,8 +7992,13 @@
       brLastSearch = data; brLastQuery = q;
       var wrap = $("brResWrap"); if (!wrap) return;
       var ddg = data.ddg || {};
+      var entry = "search:" + encodeURIComponent(q);
+      var webSt = brWebCache[entry];
+      data.webResults = (webSt && webSt.state === "done" && webSt.results) ? webSt.results : [];
       var html = "<h4>Kết quả cho “" + brEsc(q) + "”</h4>";
       html += "<p class='br-res-status'>Kết quả do Cảng Lướt tự tổng hợp và vẽ ngay trong game — bấm vào từng kết quả để mở tiếp tại đây. Nguồn: Wikipedia, DuckDuckGo, Openverse, RSS báo Việt.</p>";
+      /* Mục Kết quả web luôn ở đầu trang kết quả, trước mọi mục cũ */
+      html += "<div id='brWebSlot'>" + brWebSlotHtml(entry) + "</div>";
       /* Đáp án nhanh: ưu tiên DuckDuckGo, không có thì trích bài Wikipedia đầu tiên */
       var ansText = ddg.AbstractText || ddg.Answer || ddg.Definition || "";
       if (ansText) {
@@ -7971,7 +8055,7 @@
         });
         html += "</div></div>";
       }
-      if (!data.wikiVi.length && !data.wikiEn.length && !ansText && !(data.topics && data.topics.length) && !(data.imgs && data.imgs.length) && !(data.news && data.news.length)) {
+      if (!data.wikiVi.length && !data.wikiEn.length && !ansText && !(data.topics && data.topics.length) && !(data.imgs && data.imgs.length) && !(data.news && data.news.length) && !(data.webResults && data.webResults.length)) {
         html += "<div class='br-res-empty'>Chưa thấy kết quả nào vẽ được ngay trong game cho từ khóa này (có thể do mất mạng, hoặc các nguồn miễn phí chưa có dữ liệu). Thử mở toàn web bằng Bing / Cốc Cốc ở trên, hoặc gõ lại từ khóa khác nhé.</div>";
       }
       wrap.innerHTML = html;
@@ -8356,6 +8440,7 @@
         else if (act === "topic") { var tp = (d.topics || [])[i]; if (tp) brOpenResult(tp.url, { title: tp.text, snippet: tp.text }); }
         else if (act === "img") { var im = (d.imgs || [])[i]; if (im) brOpenResult(im.foreign_landing_url || im.url, { title: im.title || "Hình ảnh", snippet: "Ảnh từ Openverse" + (im.creator ? " — tác giả " + im.creator : "") + (im.license ? " · giấy phép " + String(im.license).toUpperCase() : ""), thumb: im.thumbnail || im.url }); }
         else if (act === "news") { var n = (d.news || [])[i]; if (n) brOpenResult(n.url, { title: n.title, snippet: n.text }); }
+        else if (act === "web") { var wr = (d.webResults || [])[i]; if (wr && wr.url) brNewTab(wr.url, wr.title || ""); }
       });
       /* Chế độ đọc chữ: liên kết trong bài đi tiếp ngay trong Cảng Lướt;
          hai nút ở màn hình lỗi đọc (data-ract) xử lý tại đây luôn */
