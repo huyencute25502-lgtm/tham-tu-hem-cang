@@ -1499,6 +1499,31 @@
       .br-blocked-actions{ display:flex; gap:9px; justify-content:center; flex-wrap:wrap; margin-top:16px; }
       .br-blocked-actions .br-open-out{ background:#35c4b5; color:#062a26; border:none; font-weight:800; font-size:14.5px; font-family:inherit; border-radius:10px; padding:11px 20px; min-height:0; cursor:pointer; }
       .br-blocked-actions .br-go-home{ background:var(--panel2); border:1px solid var(--line); color:var(--ink); font-weight:700; font-size:14.5px; font-family:inherit; border-radius:10px; padding:11px 20px; min-height:0; cursor:pointer; }
+      .br-blocked .br-block-alt{ margin:14px auto 0; max-width:560px; font-size:13.5px; line-height:1.6; background:rgba(53,196,181,.1); border:1px solid rgba(53,196,181,.35); border-radius:10px; padding:11px 14px; text-align:left; }
+      .br-blocked .br-block-alt b{ color:var(--ink); }
+      /* Bảng tra từng trang chặn nhúng — cột co gọn, điện thoại thì xếp chồng từng dòng thành thẻ */
+      .br-table-wrap{ overflow-x:hidden; border:1px solid var(--line); border-radius:12px; background:var(--panel); }
+      table.br-table{ width:100%; border-collapse:collapse; font-size:13.5px; line-height:1.55; }
+      .br-table th{ text-align:left; background:var(--panel2); color:var(--ink); font-size:12.5px; letter-spacing:.02em; padding:10px 12px; border-bottom:1px solid var(--line); vertical-align:top; }
+      .br-table td{ padding:11px 12px; border-bottom:1px solid var(--line); color:var(--ink-dim); vertical-align:top; overflow-wrap:anywhere; }
+      .br-table tr:last-child td{ border-bottom:none; }
+      .br-table td b, .br-table td strong{ color:var(--ink); }
+      .br-table code{ background:var(--panel2); border:1px solid var(--line); border-radius:6px; padding:1px 6px; font-size:12px; overflow-wrap:anywhere; }
+      .br-table .br-verdict{ font-weight:800; color:var(--ink); white-space:normal; }
+      .br-table .br-verdict.ok{ color:#2aa79a; }
+      html[data-theme="dark"] .br-table .br-verdict.ok{ color:#5fd8ca; }
+      .br-table .br-verdict.no{ color:#c94a33; }
+      html[data-theme="dark"] .br-table .br-verdict.no{ color:#ff9a86; }
+      @media (max-width:760px){
+        .br-table thead{ display:none; }
+        .br-table, .br-table tbody, .br-table tr, .br-table td{ display:block; width:auto; }
+        .br-table tr{ padding:12px 14px; border-bottom:1px solid var(--line); }
+        .br-table tr:last-child{ border-bottom:none; }
+        .br-table td{ border-bottom:none; padding:3px 0; }
+        .br-table td::before{ content:attr(data-l); display:block; font-size:11px; font-weight:800; letter-spacing:.04em; color:var(--ink-faint); margin-bottom:2px; }
+        .br-table td.br-site-cell{ font-size:15px; padding-bottom:5px; }
+        .br-table td.br-site-cell::before{ display:none; }
+      }
       @media (max-width:560px){ .br-hero h3{ font-size:21px; } .br-content, .br-content iframe{ min-height:360px; } .br-out-btn span{ display:none; } }
 
       /* File Explorer kiểu Win 11 cho Máy tính này */
@@ -2547,7 +2572,7 @@
               <h4>Hộp nhúng — video &amp; bản đồ</h4>
               <p class="br-sec-note">Trang xem YouTube thường bị chặn nhúng, nhưng bản <b>nhúng</b> của chính YouTube / Vimeo / Google Maps thì được sinh ra để mở trong trang khác. Dán link vào đây, Cảng Lướt tự đổi sang bản nhúng.</p>
               <div class="br-embed-box">
-                <p>Dán link video YouTube (youtube.com/watch hoặc youtu.be), link Vimeo, link nhúng Google Maps (trong Google Maps: Chia sẻ → Nhúng bản đồ), hoặc link bài Instagram dạng nhúng — rồi bấm Mở trong game.</p>
+                <p>Dán link video YouTube (youtube.com/watch hoặc youtu.be), link Vimeo, link nhúng Google Maps (trong Google Maps: Chia sẻ → Nhúng bản đồ), link 1 bài Reddit, hoặc link bài Instagram — rồi bấm Mở trong game. Lưu ý với Instagram: link dạng /embed/ do iframe-viewer ghi nhận là mở được, nhưng cách Meta tài liệu hóa chính thức là mã nhúng blockquote + embed.js chèn vào trang web, không phải dán link vào khung — nếu khung Instagram trắng thì mở bài đó ở tab mới.</p>
                 <div class="br-embed-row">
                   <input id="brEmbedInput" type="text" placeholder="Dán link vào đây…" autocomplete="off" spellcheck="false" aria-label="Link cần đổi sang bản nhúng" />
                   <button type="button" id="brEmbedGo">Mở trong game</button>
@@ -2558,30 +2583,92 @@
 
             <section class="br-sec">
               <h4>Chỉ mở được ở tab mới</h4>
-              <p class="br-sec-note">Các trang dưới đây tự gửi lệnh cấm nhúng (ghi trên từng ô) — mở trong game sẽ chỉ thấy khung trắng báo “refused to connect”. Bấm ô là mở tab mới ngoài game, đăng nhập và dùng bình thường.</p>
+              <p class="br-sec-note">Các trang dưới đây tự gửi lệnh cấm nhúng (ghi trên từng ô, tra kĩ từng trang ở bảng ngay dưới) — mở trong game sẽ chỉ thấy khung trắng báo “refused to connect”. Bấm ô là mở tab mới ngoài game, đăng nhập và dùng bình thường.</p>
               <div class="br-tiles">
-                <button type="button" class="br-tile" data-br-out="https://www.google.com" data-br-title="Google Tìm kiếm"><span class="br-tag out">TAB MỚI · SAMEORIGIN</span><b>Google Tìm kiếm</b><span>Google cấm nhúng trang tìm kiếm của mình.</span></button>
-                <button type="button" class="br-tile" data-br-out="https://www.facebook.com" data-br-title="Facebook"><span class="br-tag out">TAB MỚI · DENY</span><b>Facebook</b><span>Chỉ cho nhúng bài viết qua tiện ích riêng, không nhúng cả trang.</span></button>
-                <button type="button" class="br-tile" data-br-out="https://www.instagram.com" data-br-title="Instagram"><span class="br-tag out">TAB MỚI · SAMEORIGIN</span><b>Instagram</b><span>Chỉ bài công khai mới có bản nhúng riêng.</span></button>
-                <button type="button" class="br-tile" data-br-out="https://www.youtube.com" data-br-title="YouTube"><span class="br-tag out">TAB MỚI · SAMEORIGIN</span><b>YouTube (trang xem)</b><span>Muốn xem trong game thì dán link video vào Hộp nhúng ở trên.</span></button>
-                <button type="button" class="br-tile" data-br-out="https://x.com" data-br-title="X (Twitter)"><span class="br-tag out">TAB MỚI · DENY</span><b>X (Twitter)</b><span>Cấm nhúng toàn trang.</span></button>
-                <button type="button" class="br-tile" data-br-out="https://github.com" data-br-title="GitHub"><span class="br-tag out">TAB MỚI · DENY</span><b>GitHub</b><span>Cấm nhúng toàn trang.</span></button>
-                <button type="button" class="br-tile" data-br-out="https://www.reddit.com" data-br-title="Reddit"><span class="br-tag out">TAB MỚI · CSP ’SELF’</span><b>Reddit</b><span>Chỉ cho tự nhúng chính mình; từng bài có bản nhúng riêng ở embed.reddit.com.</span></button>
-                <button type="button" class="br-tile" data-br-out="https://www.netflix.com" data-br-title="Netflix"><span class="br-tag out">TAB MỚI · DENY</span><b>Netflix</b><span>Cấm nhúng — xem phim vẫn phải ra tab mới.</span></button>
+                <button type="button" class="br-tile" data-br-out="https://www.google.com" data-br-title="Google Tìm kiếm"><span class="br-tag out">TAB MỚI · SAMEORIGIN</span><b>Google Tìm kiếm</b><span>Chặn bằng X-Frame-Options: SAMEORIGIN. Không có bản nhúng nào cho trang tìm kiếm.</span></button>
+                <button type="button" class="br-tile" data-br-out="https://www.facebook.com" data-br-title="Facebook"><span class="br-tag out">TAB MỚI · DENY</span><b>Facebook</b><span>Chặn bằng X-Frame-Options: DENY. Chỉ nhúng được 1 Trang / bài / video công khai qua tiện ích chính thức.</span></button>
+                <button type="button" class="br-tile" data-br-out="https://www.instagram.com" data-br-title="Instagram"><span class="br-tag out">TAB MỚI · DENY / SAMEORIGIN</span><b>Instagram</b><span>Các nguồn ghi lệnh khác nhau (xem bảng dưới) nhưng đều chặn. Chỉ nhúng được 1 bài công khai.</span></button>
+                <button type="button" class="br-tile" data-br-out="https://www.youtube.com" data-br-title="YouTube"><span class="br-tag out">TAB MỚI · SAMEORIGIN</span><b>YouTube (trang xem)</b><span>Trang xem chặn bằng SAMEORIGIN, nhưng bản /embed/ thì không chặn — dán link video vào Hộp nhúng ở trên để xem trong game.</span></button>
+                <button type="button" class="br-tile" data-br-out="https://x.com" data-br-title="X (Twitter)"><span class="br-tag out">TAB MỚI · CSP FRAME-ANCESTORS</span><b>X (Twitter)</b><span>Trang bài viết chặn bằng CSP frame-ancestors chỉ cho x.com / twitter.com tự nhúng. Chỉ nhúng được 1 bài hoặc 1 dòng thời gian.</span></button>
+                <button type="button" class="br-tile" data-br-out="https://github.com" data-br-title="GitHub"><span class="br-tag out">TAB MỚI · DENY</span><b>GitHub</b><span>Chặn bằng X-Frame-Options: DENY. Chỉ nhúng được đoạn code Gist, bằng thẻ script chứ không phải khung.</span></button>
+                <button type="button" class="br-tile" data-br-out="https://www.reddit.com" data-br-title="Reddit"><span class="br-tag out">TAB MỚI · SAMEORIGIN + CSP</span><b>Reddit</b><span>Chặn bằng cả X-Frame-Options: SAMEORIGIN lẫn CSP frame-ancestors ’self’. Chỉ nhúng được 1 bài qua Chia sẻ → Nhúng.</span></button>
+                <button type="button" class="br-tile" data-br-out="https://www.netflix.com" data-br-title="Netflix"><span class="br-tag out">TAB MỚI · DENY</span><b>Netflix</b><span>Chặn bằng X-Frame-Options: DENY và không có bất kỳ cách nhúng chính thức nào — xem phim vẫn phải ra tab mới.</span></button>
               </div>
+            </section>
+
+            <section class="br-sec">
+              <h4>Bảng tra từng trang — chặn bằng lệnh gì, có cách nào khác không?</h4>
+              <p class="br-sec-note">Nghiên cứu kĩ từng trang ngày 16/11/2026. Cách đo: trang bài viết của Instagram và X được đo trực tiếp bằng công cụ kiểm tra header trực tuyến lúc 06:05 UTC ngày 16/11/2026; các trang còn lại đối chiếu từ bảng của iframe-viewer (cập nhật 07/11/2026), bản quét urlscan.io (Reddit) và bản đo FleetOpus ngày 10/11/2026 (Netflix). Đợt nghiên cứu không chạy được lệnh curl trực tiếp, và lệnh chặn có thể khác nhau theo từng đường dẫn trong cùng một trang — chỗ nào các nguồn nói khác nhau, bảng ghi rõ cả hai; nhưng kết luận “có chặn hay không” thì mọi nguồn đều thống nhất.</p>
+              <div class="br-table-wrap">
+                <table class="br-table">
+                  <thead><tr><th>Trang</th><th>Lệnh chặn chính xác</th><th>Cách nhúng chính thức cho từng món lẻ</th><th>Kết luận</th></tr></thead>
+                  <tbody>
+                    <tr>
+                      <td class="br-site-cell" data-l="Trang"><b>Google Tìm kiếm</b><br>google.com</td>
+                      <td data-l="Lệnh chặn chính xác"><code>X-Frame-Options: SAMEORIGIN</code>. Một số nguồn phụ còn ghi thêm <code>CSP frame-ancestors ’self’</code> — phần CSP này <b>chưa xác nhận được độc lập</b>, nhưng riêng lệnh SAMEORIGIN đã đủ chặn.</td>
+                      <td data-l="Cách nhúng chính thức">Không có khung nhúng cho trang tìm kiếm. Chỉ có ô tìm kiếm Programmable Search của Google — một tiện ích JavaScript tự vẽ kết quả, <b>không phải trang google.com</b>. (Google Maps là sản phẩm khác, có bản nhúng riêng.)</td>
+                      <td class="br-verdict no" data-l="Kết luận">Chỉ mở tab mới</td>
+                    </tr>
+                    <tr>
+                      <td class="br-site-cell" data-l="Trang"><b>Facebook</b><br>facebook.com</td>
+                      <td data-l="Lệnh chặn chính xác"><code>X-Frame-Options: DENY</code> — cấm hẳn mọi trang khác nhúng. Không ghi nhận thêm lệnh CSP frame-ancestors.</td>
+                      <td data-l="Cách nhúng chính thức">Có, từng món lẻ và chỉ nội dung công khai: tiện ích Trang (Page Plugin, tải từ <code>facebook.com/plugins/page.php</code>), bài viết nhúng, trình phát video nhúng — đều qua bộ công cụ JS SDK của Facebook. Nút Thích và Bình luận dạng plugin đã bị ngừng từ 10/02/2026.</td>
+                      <td class="br-verdict no" data-l="Kết luận">Không mở cả trang; nhúng được 1 Trang / bài / video công khai</td>
+                    </tr>
+                    <tr>
+                      <td class="br-site-cell" data-l="Trang"><b>Instagram</b><br>instagram.com</td>
+                      <td data-l="Lệnh chặn chính xác"><b>Các nguồn nói khác nhau:</b> đo trực tiếp trang bài viết ngày 16/11/2026 cho <code>X-Frame-Options: DENY</code> (CSP: không gửi); bảng của iframe-viewer và vài hướng dẫn khác lại ghi <code>X-Frame-Options: SAMEORIGIN</code>. DENY hay SAMEORIGIN thì với trang khác nhúng vào, kết quả đều là chặn hoàn toàn.</td>
+                      <td data-l="Cách nhúng chính thức">Có, từng món lẻ: mã nhúng chính thức (đoạn blockquote + file <code>embed.js</code> của Instagram) cho 1 bài / Reel / hồ sơ <b>công khai</b>. Tài khoản riêng tư, bị giới hạn tuổi, tài khoản đã tắt tính năng nhúng thì không nhúng được; Story không bao giờ nhúng được. Lưu ý: đường link dạng <code>/p/{mã}/embed/</code> do iframe-viewer ghi nhận, còn Meta không tài liệu hóa link khung trần như vậy — cách Meta hướng dẫn chính thức là mã blockquote + embed.js.</td>
+                      <td class="br-verdict no" data-l="Kết luận">Không mở cả trang; nhúng được 1 bài công khai</td>
+                    </tr>
+                    <tr>
+                      <td class="br-site-cell" data-l="Trang"><b>YouTube</b><br>youtube.com</td>
+                      <td data-l="Lệnh chặn chính xác">Trang xem <code>youtube.com/watch?v=…</code>: <code>X-Frame-Options: SAMEORIGIN</code> — chặn. Nhưng đường nhúng <code>youtube.com/embed/{mã video}</code> thì <b>không có lệnh chặn nào</b>, sinh ra để nhúng. (Máy đo tự động từng bị YouTube trả lỗi 429 “quá nhiều yêu cầu” nên số đo trực tiếp của riêng YouTube không đáng tin; cách chia trang xem / bản nhúng này được nhiều nguồn độc lập xác nhận.)</td>
+                      <td data-l="Cách nhúng chính thức">Có — trường hợp nhúng được hẳn hoi duy nhất trong 8 trang: <code>https://www.youtube.com/embed/{mã video}</code> hoặc bản không cookie <code>youtube-nocookie.com/embed/{mã video}</code>; danh sách phát: <code>youtube.com/embed?listType=playlist&amp;list={mã danh sách}</code>. Khung phát cần tối thiểu 200×200px. Chủ video tắt nhúng thì vẫn không phát được (lỗi 101/150), video giới hạn tuổi thường cũng không phát trong bản nhúng.</td>
+                      <td class="br-verdict ok" data-l="Kết luận">Nhúng được 1 video / 1 danh sách phát ngay trong game; trang chủ, trang tìm kiếm, trang kênh thì không</td>
+                    </tr>
+                    <tr>
+                      <td class="br-site-cell" data-l="Trang"><b>X (Twitter)</b><br>x.com · twitter.com</td>
+                      <td data-l="Lệnh chặn chính xác">Đo trực tiếp trang bài viết ngày 16/11/2026: <code>X-Frame-Options: SAMEORIGIN</code> — nhưng lệnh này <b>bị bỏ qua</b> vì trình duyệt hiện nay nghe theo CSP khi cả hai cùng có mặt: <code>Content-Security-Policy: frame-ancestors ’self’ https://x.com https://x.com:443 https://twitter.com https://twitter.com:443</code>. Trang chủ thì các nguồn khác ghi <code>X-Frame-Options: DENY</code> — đường dẫn khác nhau, kết luận vẫn là chặn.</td>
+                      <td data-l="Cách nhúng chính thức">Có, từng món lẻ: 1 bài viết công khai, hoặc dòng thời gian của 1 hồ sơ / 1 danh sách (tối đa 20 bài) qua <code>publish.x.com</code> + file <code>platform.x.com/widgets.js</code>. Tài khoản được bảo vệ thì không có mã nhúng; dòng thời gian nhúng thỉnh thoảng bị giới hạn tốc độ (lỗi 429) hiện khung trống.</td>
+                      <td class="br-verdict no" data-l="Kết luận">Không mở cả trang; nhúng được 1 bài / 1 dòng thời gian công khai</td>
+                    </tr>
+                    <tr>
+                      <td class="br-site-cell" data-l="Trang"><b>GitHub</b><br>github.com</td>
+                      <td data-l="Lệnh chặn chính xác"><code>X-Frame-Options: DENY</code> — cấm hẳn. Giá trị CSP frame-ancestors của github.com <b>chưa xác nhận được</b> trong các nguồn đã tra; riêng lệnh DENY đã đủ kết luận.</td>
+                      <td data-l="Cách nhúng chính thức">Không có khung nhúng cho bất kỳ trang nào của github.com. Ngoại lệ duy nhất: đoạn code <b>Gist</b>, nhúng bằng thẻ script <code>gist.github.com/{người dùng}/{mã Gist}.js</code> — là script tự viết code ra trang, không phải khung. Muốn hiện kho code thì tự lấy dữ liệu qua API công khai của GitHub rồi tự vẽ giao diện — đó là giao diện của mình, không phải trang github.com.</td>
+                      <td class="br-verdict no" data-l="Kết luận">Không mở cả trang; chỉ hiện được đoạn code Gist</td>
+                    </tr>
+                    <tr>
+                      <td class="br-site-cell" data-l="Trang"><b>Reddit</b><br>reddit.com</td>
+                      <td data-l="Lệnh chặn chính xác">Cả hai lệnh cùng lúc (theo bản quét urlscan.io): <code>X-Frame-Options: SAMEORIGIN</code> và <code>Content-Security-Policy: frame-ancestors ’self’ *.reddit.com *.snooguts.net</code>. Trình duyệt hiện nay nghe theo CSP, tức chỉ reddit.com và các tên miền con của chính Reddit mới được nhúng.</td>
+                      <td data-l="Cách nhúng chính thức">Có, từng món lẻ: trong 1 bài viết, bấm Chia sẻ → Nhúng sẽ được 1 khung của riêng bài đó (qua <code>embed.reddit.com</code>). Không nhúng được trang chủ, chuyên mục hay trang tìm kiếm; đường oEmbed xưa nay được ghi nhận là chỉ dùng được cho bình luận, phần bài viết chưa kiểm chứng được.</td>
+                      <td class="br-verdict no" data-l="Kết luận">Không mở cả trang; nhúng được 1 bài qua Chia sẻ → Nhúng</td>
+                    </tr>
+                    <tr>
+                      <td class="br-site-cell" data-l="Trang"><b>Netflix</b><br>netflix.com</td>
+                      <td data-l="Lệnh chặn chính xác"><code>X-Frame-Options: DENY</code> (đo ngày 10/11/2026). CSP dạng bắt buộc thì không có — Netflix chỉ gửi bản <code>Content-Security-Policy-Report-Only</code> chuyên để quan sát, không chặn gì; riêng lệnh DENY đã đủ chặn hoàn toàn.</td>
+                      <td data-l="Cách nhúng chính thức">Không có gì cả: không bản nhúng, không API phát công khai, không bộ công cụ xem chung. Nội dung còn được khóa bản quyền số Widevine/FairPlay và điều khoản Netflix cấm phát lại qua bên thứ ba.</td>
+                      <td class="br-verdict no" data-l="Kết luận">Chỉ mở tab mới — không nhúng được dù chỉ 1 phim</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <p class="br-sec-note" style="margin-top:10px">Nguồn của bảng: <a href="https://iframecheck.com/sites/instagram" target="_blank" rel="noopener">iframecheck.com/sites/instagram</a> và <a href="https://iframecheck.com/sites/x-twitter" target="_blank" rel="noopener">iframecheck.com/sites/x-twitter</a> (đo trực tiếp 16/11/2026) · <a href="https://www.iframe-viewer.com/learn/" target="_blank" rel="noopener">iframe-viewer.com/learn</a> (bảng đối chiếu, cập nhật 07/11/2026) · <a href="https://urlscan.io/result/019dc392-b172-75bd-b4cd-5a5c5e17afbd/" target="_blank" rel="noopener">urlscan.io — bản quét reddit.com</a> · <a href="https://www.fleetopus.com/samples/netflix.com" target="_blank" rel="noopener">fleetopus.com/samples/netflix.com</a> (đo 10/11/2026).</p>
             </section>
 
             <section class="br-sec">
               <h4>Vì sao có trang mở được, có trang không?</h4>
               <div class="br-facts">
                 <ul>
-                  <li><b>Trang đích tự quyết, không phải trình duyệt quyết.</b> Mỗi trang web tự gửi lệnh <code>X-Frame-Options</code> hoặc <code>CSP frame-ancestors</code>: <b>DENY</b> là cấm hẳn, <b>SAMEORIGIN</b> là chỉ trang cùng nhà mới được nhúng. Mọi trình duyệt — Chrome, Cốc Cốc hay trình duyệt khác — đều phải nghe theo, nên <b>không có trình duyệt nào mở được mọi trang ngay trong game</b>. Mục đích của lệnh cấm là chống “clickjacking”: giấu trang thật dưới nút giả để lừa người dùng bấm nhầm.</li>
-                  <li><b>Khi bị chặn, bạn thấy gì?</b> Khung trắng hoặc trang lỗi “refused to connect” của trình duyệt. Ngay cả sự kiện tải xong của khung cũng có thể vẫn chạy khi bị chặn, nên <b>trang web không phát hiện chắc chắn được</b> là trang đích đã chặn hay chưa — vì vậy Cảng Lướt luôn có sẵn nút “Mở tab mới” ở thanh địa chỉ.</li>
+                  <li><b>Trang đích tự quyết, không phải trình duyệt quyết.</b> Mỗi trang web tự gửi lệnh <code>X-Frame-Options</code> hoặc <code>CSP frame-ancestors</code>: <b>DENY</b> là cấm hẳn, <b>SAMEORIGIN</b> là chỉ trang cùng nhà mới được nhúng. Khi cả hai lệnh cùng có mặt, trình duyệt hiện nay nghe theo CSP và bỏ qua X-Frame-Options (như trường hợp của X ở bảng trên). Mọi trình duyệt — Chrome, Cốc Cốc (vốn cũng dùng nhân Chromium như Chrome) hay trình duyệt khác — đều phải nghe theo, và <b>không trình duyệt nào, không cài đặt hay API nào cho phép một trang web thường bỏ qua lệnh cấm của trang đích</b>. Mục đích của lệnh cấm là chống “clickjacking”: giấu trang thật dưới nút giả để lừa người dùng bấm nhầm. Luật này giống hệt nhau trên máy tính và điện thoại; trên iPhone/iPad thì mọi trình duyệt đều dùng nhân WebKit của Safari nên cách xử lý cũng như Safari.</li>
+                  <li><b>Khi bị chặn, bạn thấy gì?</b> Chrome/Edge (và Cốc Cốc) hiện trang xám “{trang} refused to connect”, Firefox hiện trang “Không mở được trang này”, còn Safari thì khung cứ trắng trơn không báo gì. Khung bị chặn <b>không hề báo lỗi cho trang web biết</b>: sự kiện tải xong vẫn chạy như thường, nên JavaScript <b>không phát hiện chắc chắn được</b> là trang đích đã chặn hay chưa — vì vậy Cảng Lướt tra sẵn bảng lệnh chặn ở trên và hiện thẻ giải thích ngay, thay vì cố tải khung trắng rồi đoán.</li>
                   <li><b>Trang tin tức thì sao?</b> Chưa có luật chung: mỗi tòa soạn (thậm chí từng loại trang của cùng một báo) đặt lệnh riêng, và lệnh có thể đổi bất cứ lúc nào. Nghiên cứu chưa kiểm chứng được từng báo cụ thể — cứ gõ địa chỉ vào thanh địa chỉ để thử; trang nào trắng thì bấm “Mở tab mới”.</li>
-                  <li><b>Cách duy nhất mở được mọi trang trong game</b> là chạy một trình duyệt thật trên máy chủ rồi truyền hình ảnh về như video (dịch vụ Hyperbeam): miễn phí 10.000 phút mỗi tháng, sau đó tính $0,007 mỗi phút thêm cho mỗi người — ví dụ 1.000 người xem 30 phút thì khoảng $140/tháng ngoài phần miễn phí — và phải có máy chủ giữ khóa bí mật. Game tĩnh miễn phí này không dùng cách đó; đi đường vòng bằng máy chủ trung gian gỡ lệnh cấm thì đăng nhập hay hỏng và dễ vi phạm điều khoản của trang đích, nên cũng không làm.</li>
+                  <li><b>Đi đường vòng bằng máy chủ trung gian gỡ lệnh cấm thì sao?</b> Về kỹ thuật, một máy chủ có thể tải trang đích về, xóa lệnh X-Frame-Options / CSP rồi phát lại — nhưng đăng nhập và cookie sẽ hỏng (trang đăng nhập của Google, Facebook, GitHub tự chúng cũng chặn nhúng, vòng lặp đăng nhập không qua được), các trang lớn nhận diện IP máy chủ và trả CAPTCHA hoặc lỗi 429, phim Netflix có khóa bản quyền số nên trung gian cũng vô ích, và việc gỡ lệnh chống clickjacking của trang khác để trình bày lại dịch vụ của họ là vi phạm điều khoản của Google, Meta, X, Reddit, Netflix. Game này là trang tĩnh, không có máy chủ để làm vậy, và cũng không nên làm.</li>
+                  <li><b>Cách duy nhất mở được mọi trang trong game</b> là chạy một trình duyệt thật trên máy chủ rồi truyền hình ảnh về như video (dịch vụ Hyperbeam): miễn phí 10.000 phút mỗi tháng, sau đó tính $0,007 mỗi phút cho mỗi người xem (con số ước tính theo nguồn thứ cấp, chưa đối chiếu trang giá chính thức của hãng) — ví dụ 1.000 người xem 30 phút thì khoảng $140/tháng ngoài phần miễn phí — và phải có máy chủ giữ khóa bí mật, người chơi còn phải gõ mật khẩu của mình vào một trình duyệt do bên khác điều khiển. Tự dựng kiểu này bằng phần mềm mã nguồn mở n.eko thì tốn máy chủ riêng khoảng 1–1,25 GB RAM và băng thông cho từng người xem. Tiện ích mở rộng trình duyệt gỡ được lệnh cấm, nhưng chỉ cho người nào tự cài tiện ích đó — không giúp được người chơi thường. Game tĩnh miễn phí này không dùng các cách đó.</li>
                   <li><b>Các bản giả lập Windows trên web cũng vậy:</b> bản Win11 nổi tiếng win11React cũng chỉ dùng khung nhúng và ghi thẳng là nếu hiện “Refused to connect” thì đó là do trang đích không cho, họ không sửa được.</li>
                 </ul>
-                <p style="margin:0">Nguồn dữ kiện: <a href="https://www.iframe-viewer.com/learn/" target="_blank" rel="noopener">iframe-viewer.com/learn</a> (bảng trang cho/chặn nhúng, cập nhật 07/11/2026) · <a href="https://hyperbeam.com" target="_blank" rel="noopener">hyperbeam.com</a> (giá &amp; phút miễn phí) · <a href="https://github.com/blueedgetechno/win11React/issues/867" target="_blank" rel="noopener">win11React issue #867</a>.</p>
+                <p style="margin:0">Nguồn dữ kiện: <a href="https://www.iframe-viewer.com/learn/" target="_blank" rel="noopener">iframe-viewer.com/learn</a> (bảng trang cho/chặn nhúng, cập nhật 07/11/2026) · <a href="https://iframecheck.com/sites/instagram" target="_blank" rel="noopener">iframecheck.com</a> (đo trực tiếp Instagram &amp; X, 16/11/2026) · <a href="https://urlscan.io/result/019dc392-b172-75bd-b4cd-5a5c5e17afbd/" target="_blank" rel="noopener">urlscan.io</a> (bản quét Reddit) · <a href="https://hyperbeam.com" target="_blank" rel="noopener">hyperbeam.com</a> (giá &amp; phút miễn phí) · <a href="https://github.com/blueedgetechno/win11React/issues/867" target="_blank" rel="noopener">win11React issue #867</a>.</p>
               </div>
             </section>
           </div>
@@ -2590,6 +2677,7 @@
             <div class="br-block-ic"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M6 6l12 12"/></svg></div>
             <h4 id="brBlockedTitle">Trang này chặn mở trong game</h4>
             <p id="brBlockedText"></p>
+            <p class="br-block-alt" id="brBlockedAlt" hidden></p>
             <div class="br-blocked-actions">
               <button type="button" class="br-open-out" id="brBlockedOut">Mở ở tab mới</button>
               <button type="button" class="br-go-home" id="brBlockedHome">Về trang bắt đầu</button>
@@ -7035,22 +7123,25 @@
     /* ==================== APP TRÌNH DUYỆT "CẢNG LƯỚT" ====================
        Trình duyệt riêng của game: tên + logo con thuyền + giao diện teal tự
        thiết kế, chỉ lấy DỮ KIỆN từ nghiên cứu — danh sách trang cho nhúng /
-       chặn nhúng dưới đây chép đúng bảng của iframe-viewer.com (cập nhật
-       07/11/2026, tra lại 16/11/2026): trang đích tự gửi X-Frame-Options /
-       CSP frame-ancestors, không trình duyệt nào (kể cả Cốc Cốc, vốn cũng là
-       Chromium) đổi được. Trang cho nhúng -> hiện trong iframe; trang chặn ->
-       hiện thẻ giải thích + nút mở tab mới (không tốn thời gian tải khung
-       trắng); trang chưa rõ -> cứ tải iframe kèm thanh nhắc "trang trắng thì
-       mở tab mới", vì bị chặn thì sự kiện load vẫn có thể chạy nên JS không
-       phát hiện chắc chắn được. Tab + lịch sử chỉ giữ trong phiên đang mở. */
+       chặn nhúng dưới đây theo nghiên cứu kĩ từng trang 16/11/2026 (đo trực
+       tiếp Instagram + X qua iframecheck lúc 06:05 UTC 16/11/2026; đối chiếu
+       iframe-viewer cập nhật 07/11/2026, urlscan.io cho Reddit, FleetOpus
+       10/11/2026 cho Netflix): trang đích tự gửi X-Frame-Options / CSP
+       frame-ancestors, không trình duyệt nào (kể cả Cốc Cốc, vốn cũng là
+       Chromium) đổi được. Khi cả XFO lẫn CSP cùng có mặt, trình duyệt nghe
+       theo CSP. Trang cho nhúng -> hiện trong iframe; trang chặn -> hiện thẻ
+       giải thích + nút mở tab mới (không tốn thời gian tải khung trắng);
+       trang chưa rõ -> cứ tải iframe kèm thanh nhắc "trang trắng thì mở tab
+       mới", vì bị chặn thì sự kiện load vẫn có thể chạy nên JS không phát
+       hiện chắc chắn được. Tab + lịch sử chỉ giữ trong phiên đang mở. */
     var BR_BLOCKED = {
       "google.com": "X-Frame-Options: SAMEORIGIN",
       "facebook.com": "X-Frame-Options: DENY",
-      "instagram.com": "X-Frame-Options: SAMEORIGIN",
-      "x.com": "X-Frame-Options: DENY",
-      "twitter.com": "X-Frame-Options: DENY",
+      "instagram.com": "X-Frame-Options: DENY (trang bài viết, đo trực tiếp 16/11/2026; nguồn khác ghi SAMEORIGIN — cả hai đều chặn)",
+      "x.com": "CSP frame-ancestors 'self' https://x.com https://twitter.com (X-Frame-Options: SAMEORIGIN bị lệnh CSP này ghi đè)",
+      "twitter.com": "CSP frame-ancestors 'self' https://x.com https://twitter.com (X-Frame-Options: SAMEORIGIN bị lệnh CSP này ghi đè)",
       "github.com": "X-Frame-Options: DENY",
-      "reddit.com": "CSP frame-ancestors 'self'",
+      "reddit.com": "X-Frame-Options: SAMEORIGIN + CSP frame-ancestors 'self' *.reddit.com *.snooguts.net",
       "linkedin.com": "X-Frame-Options: SAMEORIGIN",
       "amazon.com": "X-Frame-Options: SAMEORIGIN",
       "stackoverflow.com": "X-Frame-Options: SAMEORIGIN",
@@ -7064,6 +7155,19 @@
       "open.spotify.com": "X-Frame-Options: SAMEORIGIN",
       "youtube.com": "X-Frame-Options: SAMEORIGIN"
     };
+    /* Cách nhúng chính thức cho TỪNG MÓN LẺ của các trang chặn cả trang —
+       hiện kèm trên thẻ chặn để người chơi biết còn đường nào xem trong game */
+    var BR_EMBED_ALT = {
+      "google.com": "Không có bản nhúng cho trang tìm kiếm — chỉ có ô tìm kiếm Programmable Search dạng tiện ích JavaScript, không phải trang Google thật.",
+      "facebook.com": "Nhúng được từng món lẻ công khai qua tiện ích chính thức của Facebook: 1 Trang (Page Plugin), 1 bài viết hoặc 1 video — không nhúng được cả trang.",
+      "instagram.com": "Nhúng được 1 bài / Reel / hồ sơ công khai bằng mã nhúng chính thức của Instagram (blockquote + embed.js). Story và tài khoản riêng tư thì không.",
+      "x.com": "Nhúng được 1 bài viết công khai hoặc dòng thời gian của 1 hồ sơ / danh sách qua publish.x.com + widgets.js — không nhúng được cả trang.",
+      "twitter.com": "Nhúng được 1 bài viết công khai hoặc dòng thời gian của 1 hồ sơ / danh sách qua publish.x.com + widgets.js — không nhúng được cả trang.",
+      "github.com": "Không nhúng được trang nào của GitHub; chỉ hiện được đoạn code Gist bằng thẻ script riêng của Gist.",
+      "reddit.com": "Nhúng được 1 bài qua mục Chia sẻ → Nhúng trong bài viết đó (hoặc dán link bài vào Hộp nhúng ở trang bắt đầu).",
+      "netflix.com": "Netflix không có bất kỳ cách nhúng chính thức nào — không nhúng được dù chỉ 1 phim.",
+      "youtube.com": "Trang xem bị chặn, nhưng bản nhúng youtube.com/embed/{mã video} thì mở được — dán link video vào Hộp nhúng ở trang bắt đầu."
+    };
     function brClassify(url) {
       var u; try { u = new URL(url); } catch (e) { return { mode: "unknown" }; }
       var host = u.hostname.replace(/^www\./, "").toLowerCase();
@@ -7074,6 +7178,8 @@
       if (host === "google.com" && path.indexOf("/maps/embed") === 0) return { mode: "ok" };
       if (host === "player.vimeo.com") return { mode: "ok" };
       if (host === "embed.reddit.com") return { mode: "ok" };
+      if (host === "reddit.com" && /[?&]embed=true/.test(u.search)) return { mode: "ok" };
+      if (host === "facebook.com" && path.indexOf("/plugins/") === 0) return { mode: "ok" };
       if (host === "instagram.com" && /\/embed\/?$/.test(path)) return { mode: "ok" };
       if (host === "wikipedia.org" || /\.wikipedia\.org$/.test(host)) return { mode: "ok" };
       if (host === "example.com") return { mode: "ok" };
@@ -7149,6 +7255,17 @@
         var p2 = document.createElement("span");
         p2.textContent = " nên mọi trình duyệt (Chrome, Cốc Cốc…) đều phải từ chối hiện nó trong khung của game — cố mở cũng chỉ thấy khung trắng “refused to connect”. Bấm nút dưới để mở trang thật ở tab mới, đăng nhập và dùng bình thường.";
         $("brBlockedText").append(p1, cd, p2);
+        var alt = $("brBlockedAlt");
+        if (alt) {
+          var altText = BR_EMBED_ALT[cls.host];
+          if (altText) {
+            alt.hidden = false;
+            alt.innerHTML = "";
+            var ab = document.createElement("b"); ab.textContent = "Vẫn xem được từng món lẻ trong game: ";
+            var as = document.createElement("span"); as.textContent = altText;
+            alt.append(ab, as);
+          } else alt.hidden = true;
+        }
         return;
       }
       home.style.display = "none"; blocked.hidden = true; frame.hidden = false;
@@ -7188,6 +7305,8 @@
       if (/google\.com\/maps\/embed/i.test(raw)) return raw;
       var ig = raw.match(/instagram\.com\/p\/([\w-]+)/i);
       if (ig) return "https://www.instagram.com/p/" + ig[1] + "/embed/";
+      var rd = raw.match(/reddit\.com\/(r\/[\w-]+\/comments\/[\w]+(?:\/[^?#]*)?)/i);
+      if (rd) return "https://www.reddit.com/" + rd[1] + "?ref_source=embed&ref=share&embed=true";
       return null;
     }
     function brInit() {
@@ -7230,7 +7349,7 @@
       $("brEmbedGo").addEventListener("click", function () {
         var msg = $("brEmbedMsg");
         var url = brToEmbed($("brEmbedInput").value);
-        if (!url) { msg.textContent = "Chưa nhận ra link này — hãy dán link video YouTube/Vimeo, link nhúng Google Maps hoặc link bài Instagram nhé."; return; }
+        if (!url) { msg.textContent = "Chưa nhận ra link này — hãy dán link video YouTube/Vimeo, link nhúng Google Maps, link 1 bài Reddit hoặc link bài Instagram nhé."; return; }
         msg.textContent = "";
         brGo(url, "Bản nhúng");
       });
