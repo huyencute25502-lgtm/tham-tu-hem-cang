@@ -378,7 +378,7 @@
       .notif-list{ overflow-y:auto; overflow-x:hidden; padding:2px 12px 12px; display:flex; flex-direction:column; gap:9px; overscroll-behavior:contain; }
       /* Mỗi thông báo một khung riêng, xếp dọc: tiêu đề + nội dung đầy đủ + giờ + chấm chưa đọc */
       .notif-item{
-        display:flex; gap:10px; align-items:flex-start; width:100%; text-align:left;
+        display:flex; gap:10px; align-items:flex-start; width:100%; text-align:left; height:auto; overflow:visible;
         background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.1); border-radius:10px;
         padding:12px 14px; color:inherit; font-family:inherit; cursor:pointer;
       }
@@ -390,9 +390,9 @@
       .notif-item.unread{ border-color:rgba(232,163,61,.55); }
       .notif-item.unread .notif-dot{ background:var(--accent); box-shadow:0 0 6px rgba(232,163,61,.8); }
       .notif-item.read{ opacity:.68; }
-      .notif-item-main{ flex:1 1 auto; min-width:0; }
-      .notif-item-main b{ display:block; font-size:14px; line-height:1.4; white-space:normal; overflow-wrap:break-word; }
-      .notif-item-main p{ margin:2px 0 0; font-size:13px; line-height:1.5; opacity:.85; white-space:normal; overflow-wrap:break-word; }
+      .notif-item-main{ flex:1 1 auto; min-width:0; overflow:visible; }
+      .notif-item-main b{ display:block; font-size:14px; line-height:1.45; white-space:normal; overflow-wrap:break-word; }
+      .notif-item-main p, .notif-item-sub{ display:block; margin:2px 0 0; font-size:13px; line-height:1.6; padding-bottom:1px; opacity:.85; white-space:normal; overflow-wrap:break-word; }
       .notif-item-time{ display:block; font-size:11.5px; opacity:.55; margin-top:5px; font-variant-numeric:tabular-nums; }
       .notif-empty{ margin:0; padding:6px 18px 20px; font-size:13.5px; opacity:.65; }
       .notif-empty[hidden]{ display:none; }
@@ -1453,8 +1453,8 @@
         box-shadow:0 2px 8px rgba(232,163,61,.45);
       }
       .pane .pane-sub{ font-size:14px; margin-bottom:18px; }
-      .pane > *{ animation:paneIn .3s ease both; }
-      @keyframes paneIn{ from{ opacity:0; } to{ opacity:1; } }
+      /* Nội dung pane hiện ngay, không fade: pane vẽ lại sau mỗi câu hỏi mà
+         chạy hiệu ứng mờ dần sẽ thành khung trắng/mờ thoáng qua liên tục */
 
       /* Thẻ hồ sơ: bo tròn lớn, bóng mềm, mép gold khi hover */
       .case-card, .active-case, .howto .step, .badge, .post, .pc-file, .pc-detail, .trash-item, .set-card{
@@ -2622,12 +2622,12 @@
         tram: [
           { q: "Buổi sáng hôm đó nhà xe do ai trông?", a: "Ca trực của em ạ. Em ngồi ngay cửa nhà xe ghi sổ, ai vào gửi thêm đồ hay lấy xe em đều ghi lại hết." },
           { q: "Giờ ra chơi có ai vào nhà xe không?", a: "Có Phúc ạ. 9 giờ 40 Phúc nói để quên cặp trong nhà xe, xin em mở cửa. Phúc vào một lúc rồi ra, lúc đó em đang cúi xuống ghi sổ nên không để ý Phúc có dắt gì theo không." },
-          { q: "Quan hệ của Phúc với Khoa dạo này thế nào?", a: "Tuần trước Phúc hỏi mượn chiếc xe mới của Khoa, Khoa không cho, hai đứa cãi nhau ngay trong lớp. Em tưởng chúng nó còn giận nhau đến giờ.", clue: "c5" }
+          { q: "Quan hệ của Phúc với Khoa dạo này thế nào?", a: "Tuần trước Phúc hỏi mượn chiếc xe mới của Khoa, Khoa không cho, hai đứa cãi nhau ngay trong lớp. Khoa còn buông lời trêu Phúc trước cả lớp, Phúc đỏ mặt tía tai bỏ ra ngoài. Em tưởng chúng nó còn giận nhau đến giờ.", clue: "c5" }
         ],
         dung: [
           { q: "Sáng thứ Hai anh có rời cổng trường lúc nào không?", a: "Có, 9 giờ 45 tôi chạy ra quán phở đầu đường ăn sáng, 10 giờ kém 5 đã về. Hóa đơn còn nguyên trong túi áo đây này." },
           { q: "Camera cổng trường có ghi lại gì không?", a: "Camera hỏng từ tuần trước, nhà trường gọi thợ hai lần chưa ai tới sửa. Chán lắm thám tử ạ." },
-          { q: "Anh có thấy học sinh nào dắt xe ra cổng chính không?", a: "Không. Cổng chính tôi ngồi đó suốt, ai dắt xe ra là tôi thấy ngay. Chắc chắn không có chiếc xe cam nào đi qua cổng chính buổi sáng hôm đó." }
+          { q: "Anh có thấy học sinh nào dắt xe ra cổng chính không?", a: "Không thấy. Tôi nói rõ luôn: từ 9 giờ 45 đến 9 giờ 55 tôi có rời cổng đi ăn phở như đã kể — khoảng đó cổng chính không có người trông. Còn trước và sau lúc đó, tôi ngồi ở cổng suốt, ai dắt xe ra là tôi thấy ngay. Chắc chắn không có chiếc xe cam nào đi qua cổng chính lúc tôi có mặt." }
         ],
         phuc: [
           { q: "Giờ ra chơi dài hôm đó em ở đâu?", a: "Em ở sân bóng suốt, cả lớp thấy mà. Anh cứ hỏi bọn nó thì biết." },
@@ -2656,7 +2656,7 @@
         c2: { title: "Ảnh sân nhà Phúc có xe cam", desc: "Bức ảnh chụp vu vơ ở nhà Phúc: chiếc xe đạp địa hình màu cam dựng ngay cạnh kho nhà cậu ta.", src: "Mạng hẻm" },
         c3: { title: "Cô Liên thấy người dắt xe cam", desc: "Khoảng 10 giờ kém, một học trò đội mũ lưỡi trai ngược dắt chiếc xe cam đi về phía ngõ Chùa, còn né mặt khi qua quán nước.", src: "Hỏi chuyện · Cô Liên" },
         c4: { title: "Hóa đơn phở 9:47 của anh Dũng", desc: "Anh Dũng rời cổng trường đi ăn sáng và quay lại ngay — hóa đơn và chủ quán phở đều xác nhận. Anh không có thời gian dắt xe đi đâu.", src: "Tra cứu · Hóa đơn" },
-        c5: { title: "Phúc từng bị từ chối cho mượn xe", desc: "Tuần trước Phúc mượn xe Khoa không được, hai bạn cãi nhau. Một động cơ trẻ con — nhưng động cơ chưa phải bằng chứng.", src: "Hỏi chuyện · Bạn Trâm" }
+        c5: { title: "Phúc từng bị từ chối cho mượn xe", desc: "Tuần trước Phúc mượn xe Khoa không được, hai bạn cãi nhau, Khoa còn trêu Phúc trước cả lớp. Một động cơ trẻ con — nhưng động cơ chưa phải bằng chứng.", src: "Hỏi chuyện · Bạn Trâm" }
       },
       culprit: "phuc", evidence: ["c1", "c2", "c3"],
       truth: "Phúc nhận hết: bị Khoa từ chối cho mượn xe, lại còn bị trêu trước lớp, Phúc giận quá nên giờ ra chơi lẻn vào nhà xe, dắt xe Khoa ra lối ngõ Chùa, giấu trong kho nhà mình 'cho Khoa một phen hoảng hồn', định bụng cuối tuần mới trả. Sổ trực nhà xe, lời kể của cô Liên và bức ảnh chụp ở sân nhà Phúc đã nối đủ câu chuyện. Chiếc xe nguyên vẹn trở về với Khoa, Phúc xin lỗi bạn trước lớp và bị phạt trực nhà xe một tháng.",
@@ -2725,12 +2725,12 @@
         c1: { title: "Nhật ký két: mã KT-02 lúc 21:14", desc: "Két tự ghi lại: 21:14 tối thứ Hai, két được mở bằng mã cá nhân của kế toán. Không cạy phá, không nhập sai mã.", src: "Tra cứu · Nhật ký két" },
         c2: { title: "Cuộc gọi lo lắng tối thứ Hai", desc: "Chú Tám nghe chị Ngọc gọi điện: 'Tối nay nhất định phải có, người ta đang đợi' — giọng lo lắng, cúp máy vội khi bị bắt gặp.", src: "Hỏi chuyện · Chú Tám" },
         c3: { title: "Chuyển khoản 45 triệu sáng thứ Ba", desc: "7:05 sáng thứ Ba, chị Ngọc chuyển 45 triệu cho chủ tiệm cầm đồ với nội dung 'trả nợ thay em' — ngay sau đêm két bị mở.", src: "Tra cứu · Sao kê" },
-        c4: { title: "Bóng người áo khoác lúc 21:02", desc: "Camera cổng bến ghi một người trùm kín đầu vào khu văn phòng lúc 21:02. Không rõ là ai — chỉ chứng minh có người quay lại văn phòng trong đêm.", src: "Tra cứu · Camera" },
+        c4: { title: "Bóng người áo khoác lúc 21:02", desc: "Camera cổng bến ghi một người trùm kín đầu đi vào khu văn phòng lúc 21:02 — chỉ 12 phút trước khi két được mở bằng mã cá nhân của kế toán lúc 21:14. Khung giờ khớp nhau quá chặt để là trùng hợp.", src: "Tra cứu · Camera" },
         c5: { title: "Sơn từng mở két hồi nhỏ", desc: "Chuyện cũ từ nhiều năm trước, khi két còn dùng mã chung của chú Tám. Nay két dùng mã cá nhân, Sơn không biết mã của ai.", src: "Hỏi chuyện · Anh Sơn" },
         c6: { title: "Khoản chênh 2 triệu khi đối chiếu", desc: "Chị Ngọc ghi nhầm cột khiến sổ sách chênh 2 triệu, sửa lại là khớp. Một lỗi do rối trí — không phải tiền bị lấy.", src: "Hỏi chuyện · Bà Hồng" }
       },
       culprit: "ngoc", evidence: ["c1", "c2", "c3"],
-      truth: "Chị Ngọc thú nhận trong nước mắt: em trai chị nợ tiệm cầm đồ đến hạn, bị người ta dọa, chị đành 'mượn tạm' 48 triệu trong két vào tối thứ Hai — két mở bằng chính mã KT-02 của chị lúc 21:14 — sáng hôm sau chuyển 45 triệu trả nợ thay em, bụng định bụng đợt cá tới sẽ bù dần vào. Nhật ký két sắt, cuộc gọi lo lắng và dòng chuyển khoản đã khép chặt vụ việc. Chị Ngọc cam kết bồi hoàn đầy đủ trong hai tháng và bị đình chỉ công tác kế toán; bà con bến cá thương tình, cho chị cơ hội làm lại từ đầu.",
+      truth: "Chị Ngọc thú nhận trong nước mắt: em trai chị nợ tiệm cầm đồ đến hạn, bị người ta dọa, chị đành 'mượn tạm' 48 triệu trong két vào tối thứ Hai. Tối đó, chị quay lại văn phòng lúc 21 giờ 02 — chính là bóng người mặc áo khoác trùm kín đầu mà camera cổng bến cá ghi lại — rồi mở két bằng chính mã KT-02 của chị lúc 21:14. Sáng hôm sau, chị chuyển 45 triệu trả nợ thay em; 3 triệu còn lại chị giữ bằng tiền mặt trong ngăn kéo bàn làm việc, bụng định đợt cá tới sẽ bù dần cả vào — số tiền mặt này đã được thu hồi nguyên vẹn. Bài đăng bán gấp chiếc xe Vision lúc 6 giờ 40 sáng thứ Ba cũng là của chị: chị tính bán xe của mình để gom thêm tiền bù vào két. Nhật ký két sắt, cuộc gọi lo lắng và dòng chuyển khoản đã khép chặt vụ việc. Chị Ngọc cam kết bồi hoàn đầy đủ trong hai tháng và bị đình chỉ công tác kế toán; bà con bến cá thương tình, cho chị cơ hội làm lại từ đầu.",
       hints: [
         "Két không bị cạy — người mở biết mã. Và két đời mới nhớ rất rõ mã của ai đã mở nó.",
         "Ai là người ở lại văn phòng muộn nhất tối thứ Hai? Người đó đang lo lắng về chuyện gì?",
@@ -2833,6 +2833,7 @@
         hanh: [
           { q: "Chiều hôm đó thư viện có gì khác thường?", a: "Đông hơn mọi ngày vì lớp cô Quyên đến tham quan. Nhưng tủ kính trưng bày chỉ mở ra đúng một lần lúc giới thiệu, có tôi đứng cạnh suốt." },
           { q: "Ai ở lại thư viện muộn nhất hôm đó?", a: "Em Duy, học sinh lớp 9. Cháu nó mê sách cũ lắm. Lúc xem tủ kính, nó còn hỏi tôi: 'Cô ơi, con tem trên phong bì kia có đắt không ạ?' Tôi cười bảo tem quý đấy, đừng có mơ.", clue: "c2" },
+          { q: "Tủ kính trưng bày hôm đó khóa có chắc không?", a: "Nói ra thì xấu hổ: cuối buổi tham quan, tôi mới phát hiện chốt khóa của tủ kính bị kẹt — cánh tủ trông như đã đóng kín nhưng thật ra chỉ khép hờ, kéo nhẹ là hé mở, chẳng cần chìa khóa nào cả. Tôi định bụng sáng hôm sau gọi thợ sửa ngay, ai ngờ ngay chiều hôm đó đã xảy ra chuyện.", clue: "c6" },
           { q: "Chìa khóa tủ kính do những ai giữ?", a: "Một chìa tôi giữ. Một chìa dự phòng để ở phòng hiệu bộ — hôm tham quan cô Quyên có mượn để mở tủ phụ, trả lại ngay trong ngày, có ghi biên bản đàng hoàng." }
         ],
         duy: [
@@ -2867,7 +2868,8 @@
         c2: { title: "Duy hỏi giá con tem ngay hôm đó", desc: "Ngay trong buổi chiều xảy ra vụ việc, Duy hỏi thủ thư: 'Con tem trên phong bì kia có đắt không ạ?'", src: "Hỏi chuyện · Cô Hạnh" },
         c3: { title: "Ảnh con tem Duy đăng rồi xóa vội", desc: "Duy đăng ảnh con tem giống hệt tem trên phong bì vào nhóm lớp rồi xóa sau 10 phút — một bạn cùng lớp đã kịp chụp lại màn hình.", src: "Mạng hẻm" },
         c4: { title: "Bác Phong từng hỏi mua phong bì", desc: "Bác Phong hỏi mua công khai hai lần và bị từ chối. Chiều hôm xảy ra vụ việc, ông ở nhà tiếp khách, có người làm chứng.", src: "Hỏi chuyện · Bác Phong" },
-        c5: { title: "Chìa dự phòng đã trả, có biên bản", desc: "Chìa dự phòng được trả lúc 16:30 cùng ngày, chữ ký đầy đủ, sau đó nằm trong phòng hiệu bộ khóa kín. Cô Quyên không thể dùng chìa sau thời điểm đó.", src: "Tra cứu · Biên bản" }
+        c5: { title: "Chìa dự phòng đã trả, có biên bản", desc: "Chìa dự phòng được trả lúc 16:30 cùng ngày, chữ ký đầy đủ, sau đó nằm trong phòng hiệu bộ khóa kín. Cô Quyên không thể dùng chìa sau thời điểm đó.", src: "Tra cứu · Biên bản" },
+        c6: { title: "Chốt tủ kính bị kẹt, cánh tủ chỉ khép hờ", desc: "Cô Hạnh xác nhận: sau buổi tham quan, chốt khóa tủ kính trưng bày bị kẹt — cánh tủ chỉ khép hờ, kéo nhẹ là hé mở, không cần chìa khóa. Người ở lại thư viện muộn nhất hôm đó là Duy, ngồi ngay cạnh tủ.", src: "Hỏi chuyện · Cô Hạnh" }
       },
       culprit: "duy", evidence: ["c1", "c2", "c3"],
       truth: "Duy thú nhận trong nước mắt: chiều hôm đó, nhân lúc tủ kính hé mở sau buổi tham quan, em lấy chiếc phong bì ra để ngắm kỹ con tem, rồi giấu vào cuốn 'Truyện Kiều' bìa đỏ mượn về — bụng định sáng hôm sau mang trả ngay. Ai ngờ thư viện nghỉ lễ hai ngày, em sợ quá hóa ra giấu luôn. Phong bì được tìm thấy nguyên vẹn trong cuốn Truyện Kiều trên kệ sách vừa trả. Duy viết kiểm điểm, xin lỗi gia đình cụ Đồ và bị phạt trực thư viện hai tuần. Cô Hạnh bảo: 'Mê tem là tốt — mê đến mức này thì không được.'",
@@ -3065,7 +3067,7 @@
         { pid: "bao", name: "Bảo · Bảo vệ VSIP", time: "23:55 · Hôm qua", text: "Ca đêm cổng chính yên tĩnh lạ thường. Chúc anh em ca đêm trong xưởng ngủ ngon, ngoài này đã có tôi canh." }
       ],
       lookups: [
-        { keys: ["log quet the", "log quẹt thẻ", "quet the", "quẹt thẻ", "log the", "log thẻ"], title: "Log quẹt thẻ lúc 23 giờ 40", body: "Bản ghi hệ thống: mã thẻ của anh Nam được quẹt tại cổng chính đường Đông Tây lúc 23:40:02 và tại cổng phụ khu kho lúc 23:40:31 cùng đêm. Hai đầu đọc cách nhau hơn 800 mét — không một người nào di chuyển kịp. Kết luận kỹ thuật: tồn tại một thẻ sao chép mang cùng mã với thẻ của Nam.", clue: "c1" },
+        { keys: ["log quet the", "log quẹt thẻ", "quet the", "quẹt thẻ", "log the", "log thẻ"], title: "Log quẹt thẻ lúc 23 giờ 40", body: "Bản ghi hệ thống: mã thẻ của anh Nam được quẹt tại cổng chính đường Đông Tây lúc 23:40:02 và tại cổng phụ khu kho lúc 23:40:31 cùng đêm. Hai đầu đọc cách nhau hơn 800 mét — không một người nào di chuyển kịp. Kỹ thuật viên còn ghi chú: lần quẹt ở cổng phụ khu kho mang quyền mở khu kho — quyền mà thẻ gốc của Nam không hề có. Tức là khi tạo bản sao, kẻ sao chép đã ghi thêm quyền khu kho lên phôi thẻ. Kết luận kỹ thuật: tồn tại một thẻ sao chép mang cùng mã với thẻ của Nam.", clue: "c1" },
         { keys: ["so cap the", "sổ cấp thẻ", "cap the", "cấp thẻ", "phoi the", "phôi thẻ"], title: "Sổ cấp phát thẻ và phôi thẻ", body: "Sổ cấp phát do chị Dung ghi: tháng này phòng hành chính nhận 200 phôi thẻ trắng, đã cấp 187 thẻ có đăng ký. 13 phôi chênh lệch không có biên bản hủy — và sổ ghi tay có một trang bị tẩy xóa số lượng." },
         { keys: ["nha tro", "nhà trọ", "thuy duong", "thủy đường"], title: "Xác minh tại nhà trọ công nhân Thủy Đường", body: "Chủ nhà trọ và ba bạn cùng phòng xác nhận: anh Nam về phòng lúc 21 giờ, ở trong phòng suốt đêm, camera hành lang nhà trọ ghi hình Nam đi lấy nước lúc 23 giờ 15 rồi vào phòng, không ra nữa." }
       ],
@@ -3079,7 +3081,7 @@
         c6: { title: "Thẻ của Nam không có quyền vào khu kho", desc: "Nam mới vào hai tuần, thẻ chỉ mở cổng chính và xưởng 2. Người quẹt cổng phụ khu kho bằng mã thẻ của Nam phải là người có thể sao chép cả quyền ra vào — không phải chính Nam.", src: "Hỏi chuyện · Anh Quân" }
       },
       culprit: "dung", evidence: ["c1", "c2", "c3"],
-      truth: "Chị Dung nhận hết: lợi dụng vị trí cấp thẻ, chị ta giữ lại chiếc thẻ Nam để quên ở quán cơm đủ lâu để sao chép bằng máy đọc ghi giấu trong ngăn bàn, dùng phôi thẻ trắng chưa đăng ký. Thẻ sao chép được bán cho người ngoài để ra vào khu kho ban đêm — và cũng chính Dung là người đã bán lịch ca trực cho Tuấn ở vụ kho số 3. Log hai cổng cùng lúc, chiếc máy sao chép trong ngăn bàn và tin nhắn hẹn bán ở quán nước cổng VSIP đã khép chặt mọi đường chối. Dung bị sa thải và bàn giao hồ sơ cho cơ quan chức năng.",
+      truth: "Chị Dung nhận hết: lợi dụng vị trí cấp thẻ, chị ta giữ lại chiếc thẻ Nam để quên ở quán cơm đủ lâu để sao chép bằng máy đọc ghi giấu trong ngăn bàn, dùng phôi thẻ trắng chưa đăng ký, và còn ghi thêm quyền vào khu kho lên bản sao — vì thế bản sao mới mở được cổng phụ khu kho lúc 23 giờ 40 phút 31 giây, dù thẻ gốc của Nam không hề có quyền đó. Thẻ sao chép được bán cho người ngoài để ra vào khu kho ban đêm — và cũng chính Dung là người đã bán lịch ca trực cho Tuấn ở vụ kho số 3. Log hai cổng cùng lúc, chiếc máy sao chép trong ngăn bàn và tin nhắn hẹn bán ở quán nước cổng VSIP đã khép chặt mọi đường chối. Dung bị sa thải và bàn giao hồ sơ cho cơ quan chức năng.",
       hints: [
         "Một người không thể quẹt thẻ ở hai cổng cách nhau 800 mét trong cùng một phút. Hãy tra cứu log quẹt thẻ để chốt điều đó.",
         "Sao chép thẻ cần máy đọc ghi và phôi thẻ trắng. Ai là người duy nhất giữ cả hai thứ đó?",
@@ -3183,7 +3185,7 @@
           { q: "Buổi chiều hôm đó ai trực thư viện?", a: "Theo lịch là em khác, nhưng Kiên xin trực thay, nói là muốn ở lại thư viện ôn bài. Tôi thấy em nó siêng nên đồng ý, không ngờ...", clue: "c6" }
         ],
         minh: [
-          { q: "Em là người nộp tập bài vào thư viện à?", a: "Vâng, em thu bài của cả lớp, đếm đủ 42 bài, ký sổ nộp lúc 15 giờ 30 rồi mới về. Có chữ ký của em trong sổ nộp bài của thư viện." },
+          { q: "Em là người nộp tập bài vào thư viện à?", a: "Vâng, em thu bài của cả lớp, đếm đủ 42 bài, ký sổ nộp lúc 15 giờ 40 rồi mới về. Có chữ ký của em trong sổ nộp bài của thư viện." },
           { q: "Có thật là em suýt quên nộp bài không?", a: "Em thú thật: đầu giờ chiều em mải ôn bài nên suýt quên, 15 giờ 40 mới chạy đi nộp — muộn hơn hẹn 10 phút. Nhưng em nộp đủ 42 bài thật, cô Thu nhận và cất vào tủ T4 trước mặt em.", clue: "c4" },
           { q: "Tin nhắn đòi tiền là thế nào?", a: "Tối nay có số lạ nhắn: 'Muốn lấy lại bài thi của lớp thì chuẩn bị 2 triệu'. Em tưởng lừa đảo nên xóa mất, may mà có bạn trong lớp chụp lại được màn hình." }
         ],
@@ -3218,7 +3220,7 @@
         c6: { title: "Kiên xin trực thay đúng buổi chiều hôm đó", desc: "Không phải ca của mình, nhưng Kiên chủ động xin trực thay buổi chiều xảy ra vụ việc — buổi chiều duy nhất tập bài thi nằm chờ ở tủ T4.", src: "Hỏi chuyện · Cô Thu" }
       },
       culprit: "kien", evidence: ["c1", "c2", "c3"],
-      truth: "Bạn Kiên nhận hết: biết tập bài thi của lớp K45 nằm ở tủ T4, Kiên xin trực thay, tự ghi sổ mượn cho mình lúc 16 giờ 20 để có cớ vào khu tủ, ôm tập bài ra cửa sau lúc 16 giờ 35, giấu đi rồi nhắn tin đòi lớp trưởng Minh 2 triệu để 'tìm lại'. Sổ mượn, ảnh camera cửa sau và tin nhắn đòi tiền đã khép chặt vụ việc. Tập bài thi được thu hồi nguyên vẹn, niêm phong chưa hề bị bóc; Kiên bị đình chỉ học một học kỳ và phải công khai xin lỗi cả lớp.",
+      truth: "Bạn Kiên nhận hết: biết tập bài thi của lớp K45 nằm ở tủ T4, Kiên xin trực thay, tự ghi sổ mượn cho mình lúc 16 giờ 20 để có cớ vào khu tủ, ôm tập bài ra cửa sau lúc 16 giờ 35, giấu đi rồi giả vờ đi đổ rác cho có cớ ra vào cửa sau, đoạn nhắn tin đòi lớp trưởng Minh 2 triệu để 'tìm lại'. Sổ mượn, ảnh camera cửa sau và tin nhắn đòi tiền đã khép chặt vụ việc. Tập bài thi được thu hồi nguyên vẹn, niêm phong chưa hề bị bóc; Kiên bị đình chỉ học một học kỳ và phải công khai xin lỗi cả lớp.",
       hints: [
         "Ai có mặt ở đúng dãy tủ cất bài thi, đúng khung giờ bài biến mất? Sổ mượn sách ở quầy trực ghi lại hết.",
         "Camera cửa chính hỏng, nhưng thư viện còn một camera khác. Hỏi thủ thư về nó.",
@@ -3465,7 +3467,7 @@
           { q: "Anh vẫn muốn mua lại ao của ông Sáu?", a: "Tôi hỏi mua đàng hoàng, giá thị trường. Ông ấy không bán thì thôi, tôi đâu có ép." }
         ],
         thao: [
-          { q: "Cháu phát hiện được gì quanh ao?", a: "Sáng nay cháu đi vòng ra sau vườn nhà anh Bình thì thấy một chai thuốc diệt cỏ rỗng vứt trong bụi chuối, nhãn còn nguyên. Cháu chụp ảnh lại đây — nhãn chai ghi đúng hoạt chất mà kết quả xét nghiệm nước ao vừa báo.", clue: "c1" },
+          { q: "Cháu phát hiện được gì quanh ao?", a: "Sáng nay cháu đi vòng ra sau vườn nhà anh Bình thì thấy một chai thuốc diệt cỏ rỗng giấu trong bụi chuối, nhãn còn nguyên. Cháu chụp ảnh lại đây — nhãn chai ghi đúng hoạt chất mà kết quả xét nghiệm nước ao vừa báo. Đặc biệt, trên nhãn còn dán tem của cửa hàng vật tư đầu xã ghi rõ số lô: đúng lô chai thuốc anh Bình mới mua tuần trước — chủ cửa hàng bảo cả tháng này xã mình chỉ bán ra hai chai thuộc lô đó, và đều bán cho nhà anh Bình.", clue: "c1" },
           { q: "Nhãn chai thuốc ghi gì?", a: "Chai thuốc diệt cỏ loại mạnh, hoạt chất trùng với chất tìm thấy trong mẫu nước ao nhà cháu. Cả xã Lại Xuân ít nhà dùng đúng loại này, vì nó đắt và độc." },
           { q: "Bờ ao phía nhà anh Bình có gì lạ không?", a: "Bùn ở bờ ao phía tây còn ướt và nhão hơn mọi chỗ, như có người lội qua lúc nửa đêm. Bố cháu bảo thám tử nên tra cứu dấu chân ở đó." }
         ],
@@ -3487,7 +3489,7 @@
       ],
       kwHints: ["dấu chân", "xét nghiệm nước ao", "nước thải xưởng mộc"],
       clues: {
-        c1: { title: "Chai thuốc diệt cỏ rỗng sau vườn nhà Bình", desc: "Ảnh chị Thảo chụp: chai thuốc diệt cỏ rỗng vứt trong bụi chuối sau vườn nhà Bình, nhãn ghi đúng hoạt chất tìm thấy trong mẫu nước ao nhà ông Sáu.", src: "Hỏi chuyện · Chị Thảo" },
+        c1: { title: "Chai thuốc diệt cỏ rỗng sau vườn nhà Bình", desc: "Ảnh chị Thảo chụp: chai thuốc diệt cỏ rỗng giấu trong bụi chuối sau vườn nhà Bình. Tem cửa hàng trên nhãn ghi số lô trùng đúng lô hai chai Bình mới mua tuần trước — cả xã tháng này chỉ bán lô đó cho nhà Bình; hoạt chất trên nhãn cũng trùng với chất tìm thấy trong mẫu nước ao.", src: "Hỏi chuyện · Chị Thảo" },
         c2: { title: "Dấu ủng vá từ bờ ao sang vườn Bình", desc: "Vệt dấu chân ủng lội bùn lúc nửa đêm đi từ bờ ao phía tây thẳng sang vườn nhà Bình; đế ủng trái có miếng vá hình tròn trùng với đôi ủng phơi sau nhà Bình.", src: "Tra cứu · Dấu chân" },
         c3: { title: "Bình hỏi mua ao giá rẻ ngay sáng cá chết", desc: "7 giờ 10 sáng — khi tin cá chết chưa lan ra cả xã — Bình đã đăng tin hỏi mua lại ao của ông Sáu với 'giá mềm', đúng điều anh ta mong từ lâu.", src: "Mạng hẻm" },
         c4: { title: "Anh Vinh từng ép giá cá", desc: "Vinh thú nhận tuần trước ép giá cá của ông Sáu. Nhưng đêm cá chết, anh ta ở Phù Ninh cân cá cho mối khác, có hóa đơn và người làm chứng.", src: "Hỏi chuyện · Anh Vinh" },
@@ -3510,7 +3512,7 @@
       mail: {
         from: "Cụ Hòa", role: "Trưởng họ, xã Thiên Hương", time: "8:00 · Hôm nay",
         paras: [
-          "Thám tử ơi, tối qua có kẻ dán một bức thư nặc danh lên bảng tin đình làng Thiên Hương, viết rằng tôi ăn chặn 30 triệu tiền công đức trùng tu đình. Cả làng xôn xao. Tôi già rồi, giữ sổ công đức bao năm nay, đối chiếu ngân hàng khớp từng đồng — tôi chỉ xin được minh oan trước bàn dân thiên hạ.",
+          "Thám tử ơi, tối qua có kẻ dán một bức thư nặc danh lên bảng tin đình làng Thiên Hương, viết rằng tôi ăn chặn 30 triệu tiền công đức trùng tu đình. Cả làng xôn xao. Tôi già rồi, giữ sổ công đức bao năm nay, đối chiếu ngân hàng khớp từng đồng — tôi chỉ xin được minh oan trước bàn dân thiên hạ. Nói cho rõ để thám tử khỏi hiểu lầm: không có đồng tiền nào bị mất cả — số '30 triệu ăn chặn' trong thư là bịa đặt hoàn toàn; việc tôi nhờ là tìm kẻ vu khống, bôi nhọ tôi, chứ không phải tìm kẻ trộm tiền.",
           "Những người liên quan: tôi là trưởng họ; anh Dũng thủ từ đình, người giữ chìa khóa hòm công đức; cô Nga giáo viên làng, người rành chữ nghĩa và giấy mực nhất làng; và cháu Phúc, thanh niên hay chụp ảnh đình làng đăng lên mạng. Nhờ thám tử tìm ra người viết bức thư đó."
         ],
         tasks: ["Xác định ai đã viết và dán bức thư nặc danh", "Hỏi chuyện 4 người liên quan", "Chứng minh bằng đúng 3 bằng chứng"]
@@ -3563,7 +3565,7 @@
         c6: { title: "Thư xuất hiện ở bảng tin lúc 19 giờ 45", desc: "Anh Dũng xác nhận: 19 giờ bảng tin chưa có gì, 19 giờ 45 thư đã dán xong. Khung giờ dán thư khớp hoàn toàn với thời điểm bức ảnh chụp lén được đăng.", src: "Hỏi chuyện · Anh Dũng" }
       },
       culprit: "phuc", evidence: ["c1", "c2", "c3"],
-      truth: "Anh Phúc nhận hết: muốn ép cụ Hòa nhường ghế trưởng họ sớm cho chi họ nhà mình, Phúc viết bức thư nặc danh bằng tập giấy mới mua, đăng ảnh chụp lén cụ Hòa đếm tiền để dọn dư luận, rồi dán thư lên bảng tin đình lúc 19 giờ 45. Nét chữ trong sổ ghi chép, loại giấy bìa xanh và bức ảnh đăng trước giờ dán thư đúng 5 phút đã khép lại vụ việc. Cụ Hòa được minh oan trước cả làng; Phúc phải xin lỗi công khai tại sân đình và bị rút khỏi danh sách ứng cử trưởng họ khóa tới.",
+      truth: "Anh Phúc nhận hết: muốn ép cụ Hòa nhường ghế trưởng họ sớm cho chi họ nhà mình, Phúc viết bức thư nặc danh bằng tập giấy mới mua, đăng ảnh chụp lén cụ Hòa đếm tiền để dọn dư luận, rồi dán thư lên bảng tin đình lúc 19 giờ 45. Nét chữ trong sổ ghi chép, loại giấy bìa xanh và bức ảnh đăng trước giờ dán thư đúng 5 phút đã khép lại vụ việc. Cũng cần nói rõ cho cả làng hiểu: không một đồng tiền công đức nào bị mất — sổ công đức đối chiếu ngân hàng khớp từng đồng; việc Phúc làm là bịa chuyện vu khống, bôi nhọ cụ Hòa để ép cụ nhường ghế, chứ cụ Hòa không hề động vào tiền của đình. Cụ Hòa được minh oan trước cả làng; Phúc phải xin lỗi công khai tại sân đình và bị rút khỏi danh sách ứng cử trưởng họ khóa tới.",
       hints: [
         "Thư nặc danh giấu tên nhưng không giấu được nét chữ. Hãy tra cứu đối chiếu nét chữ với sổ ghi chép của dân làng.",
         "Giấy và mực của bức thư là loại ít người trong làng dùng. Hỏi cô giáo làng — người rành giấy mực nhất.",
@@ -3620,7 +3622,7 @@
         { pid: "x", name: "Nhà văn hóa xã Quảng Thanh", time: "Hôm qua", text: "Thông báo: nhà văn hóa cho thuê tổ chức cưới hỏi, tiệc tùng. Bà con đăng ký lịch sớm để giữ ngày đẹp nhé." }
       ],
       lookups: [
-        { keys: ["so mung", "sổ mừng", "phong bi", "phong bì", "so seri", "seri"], title: "Đối chiếu sổ mừng cưới", body: "Sổ mừng của vợ chồng Cường ghi rõ từng phong bì kèm số seri của tờ tiền mệnh giá lớn nhất trong phong bì. Hộp bánh cưới được tìm thấy bỏ lại ở nhà Ly sáng nay: trong hộp còn một tờ 500 nghìn — số seri của tờ tiền này trùng khớp hoàn toàn với số seri ghi trong sổ mừng cho phong bì của bác Hai bên họ nhà gái, một trong những phong bì bị mất.", clue: "c2" },
+        { keys: ["so mung", "sổ mừng", "phong bi", "phong bì", "so seri", "seri"], title: "Đối chiếu sổ mừng cưới", body: "Sổ mừng của vợ chồng Cường ghi rõ từng phong bì kèm số seri của tờ tiền mệnh giá lớn nhất trong phong bì. Hộp bánh cưới được tìm thấy ở nhà Ly sáng nay — chị Hiền ghé nhà Ly lấy lại đồ trang điểm đã cho mượn hôm cưới thì thấy hộp bánh đặt ở góc bếp nhà Ly, mở ra xem: trong hộp còn một tờ 500 nghìn — số seri của tờ tiền này trùng khớp hoàn toàn với số seri ghi trong sổ mừng cho phong bì của bác Hai bên họ nhà gái, một trong những phong bì bị mất.", clue: "c2" },
         { keys: ["thung tien", "thùng tiền", "khoa thung", "khóa thùng"], title: "Kiểm tra thùng tiền mừng", body: "Thùng tiền mừng bằng gỗ, khóa còn nguyên vẹn, không dấu cạy. Chìa khóa thùng chỉ có một chiếc, do phù dâu Ly giữ suốt buổi tiệc theo phân công của cô dâu." },
         { keys: ["cua sau", "cửa sau", "nha van hoa", "nhà văn hóa"], title: "Khu vực cửa sau nhà văn hóa", body: "Cửa sau nhà văn hóa mở ra ngõ nhỏ vắng người. Tối qua cửa này không được khóa. Trên nền ngõ còn vương vài mẩu ruy-băng gói bánh cưới và dấu giày cao gót mới in trên đất ẩm." }
       ],
@@ -3633,7 +3635,7 @@
         c5: { title: "Hiền đếm tiền mừng nhầm một lần đầu tiệc", desc: "Cô dâu thừa nhận đầu tiệc có đếm nhầm một lượt vì vội, nhưng đã đếm lại kỹ hai lượt và ghi con số đúng vào sổ mừng. Số phong bì thiếu là so với sổ đã đếm kỹ, không phải do đếm nhầm.", src: "Hỏi chuyện · Chị Hiền" }
       },
       culprit: "ly", evidence: ["c1", "c2", "c3"],
-      truth: "Chị Ly nhận hết: được tin tưởng giao giữ thùng tiền mừng và cầm chìa khóa thùng, Ly mở thùng lấy một xấp phong bì của họ nhà gái, giấu vào hộp bánh cưới, rồi lúc 21 giờ 10 ôm hộp bánh ra cửa sau nhà văn hóa mang về nhà — cửa sau hôm đó bác Tư quên khóa nên càng thuận tiện. Sáng hôm sau, Ly lấy tiền mua ngay chiếc túi xách mới và khoe lên Mạng hẻm. Camera sân sau, tờ tiền trùng số seri trong sổ mừng và chiếc túi mới khoe quá sớm đã khép lại vụ việc. Ly trả lại toàn bộ số tiền còn thiếu, xin lỗi vợ chồng Cường trước hai họ; bác Tư cũng bị nhắc nhở vì quên khóa cửa sau.",
+      truth: "Chị Ly nhận hết: được tin tưởng giao giữ thùng tiền mừng và cầm chìa khóa thùng, Ly mở thùng lấy một xấp phong bì của họ nhà gái, giấu vào hộp bánh cưới, rồi lúc 21 giờ 10 ôm hộp bánh ra cửa sau nhà văn hóa mang về nhà — cửa sau hôm đó bác Tư quên khóa nên càng thuận tiện. Sáng hôm sau, Hiền sang nhà Ly lấy lại đồ trang điểm đã cho mượn hôm cưới, thấy hộp bánh cưới đặt ở góc bếp nhà Ly, mở ra thì trong hộp còn sót một tờ 500 nghìn trùng số seri ghi trong sổ mừng. Cũng sáng hôm đó, Ly lấy tiền mua ngay chiếc túi xách mới và khoe lên Mạng hẻm. Camera sân sau, tờ tiền trùng số seri trong sổ mừng và chiếc túi mới khoe quá sớm đã khép lại vụ việc. Ly trả lại toàn bộ số tiền còn thiếu, xin lỗi vợ chồng Cường trước hai họ; bác Tư cũng bị nhắc nhở vì quên khóa cửa sau.",
       hints: [
         "Thùng tiền khóa nguyên, chìa chỉ một người giữ. Nhưng hãy hỏi người giữ đầu ghi camera của nhà văn hóa xem sân sau tối đó có gì.",
         "Sổ mừng cưới ghi cả số seri tờ tiền lớn trong từng phong bì. Hãy tra cứu sổ mừng để đối chiếu.",
@@ -3801,6 +3803,7 @@
       solved: {},          // caseId -> {firstTry:boolean}
       badges: {},
       run: null,           // phiên chơi vụ hiện tại
+      progress: {},        // caseId -> tiến độ điều tra đã cất của vụ chưa phá (nhận lại vụ không mất manh mối)
       currentApp: null,    // null = desktop | missions | investigate | howto | badges | youtube | settings | thispc | trash
       openApps: {},        // app đang chạy (đang mở hoặc đang thu nhỏ) -> icon còn trên taskbar; chỉ nút ✕ mới gỡ
       trash: [],           // mục đã xóa: {tid, kind:"case"|"clue", caseId, clueId, title, caseTitle, at}
@@ -3904,6 +3907,36 @@
       };
     }
 
+    /* Cất tiến độ điều tra của vụ đang làm dở (chưa phá) để khi nhận vụ
+       khác rồi quay lại — hoặc bấm nhận lại chính vụ đó — manh mối đã tìm,
+       câu hỏi đã hỏi, lần thử và gợi ý đã dùng đều còn nguyên. */
+    function saveRunProgress() {
+      const r = G.run;
+      if (!r || r.solvedHere || G.solved[r.caseId]) return;
+      G.progress[r.caseId] = {
+        tab: r.tab, person: r.person,
+        found: [...r.found], asked: r.asked, readFeed: [...r.readFeed], looked: r.looked.slice(),
+        selSuspect: r.selSuspect, selEvidence: [...r.selEvidence],
+        attempts: r.attempts, hintsUsed: r.hintsUsed
+      };
+    }
+    function restoreRunProgress(c) {
+      const p = G.progress[c.id];
+      if (!p) return null;
+      const r = newRun(c);
+      if (p.tab) r.tab = p.tab;
+      if (p.person && c.suspects.some(s => s.id === p.person)) r.person = p.person;
+      (p.found || []).forEach(id => { if (c.clues[id]) r.found.add(id); });
+      r.asked = p.asked || {};
+      (p.readFeed || []).forEach(i => r.readFeed.add(i));
+      r.looked = p.looked || [];
+      r.selSuspect = p.selSuspect || null;
+      (p.selEvidence || []).forEach(id => { if (c.clues[id]) r.selEvidence.add(id); });
+      r.attempts = p.attempts || 0;
+      r.hintsUsed = p.hintsUsed || 0;
+      return r;
+    }
+
     const $ = (id) => document.getElementById(id);
     const caseById = (id) => CASES.find((c) => c.id === id);
     const suspectById = (c, id) => c.suspects.find((s) => s.id === id);
@@ -3963,7 +3996,7 @@
         main.className = "notif-item-main";
         const b = document.createElement("b"); b.textContent = n.main;
         main.appendChild(b);
-        if (n.sub) { const p = document.createElement("p"); p.textContent = n.sub; main.appendChild(p); }
+        if (n.sub) { const p = document.createElement("span"); p.className = "notif-item-sub"; p.textContent = n.sub; main.appendChild(p); }
         const time = document.createElement("span");
         time.className = "notif-item-time"; time.textContent = notifTimeStr(n.time);
         main.appendChild(time);
@@ -3982,7 +4015,7 @@
     function updateNotifBadge() {
       const badge = $("notifBadge"), bell = $("notifBell");
       const u = notifUnread();
-      if (badge) { badge.hidden = u === 0; badge.textContent = u > 99 ? "99+" : String(u); }
+      if (badge) { badge.hidden = u === 0; badge.textContent = String(u); }
       if (bell) bell.setAttribute("aria-label", u > 0 ? "Thông báo — " + u + " chưa đọc" : "Thông báo");
     }
 
@@ -4032,7 +4065,7 @@
     function toast(main, sub) {
       const n = { id: ++notifSeq, main: String(main), sub: sub ? String(sub) : "", time: new Date(), read: false };
       notifs.unshift(n);
-      if (notifs.length > 40) notifs.length = 40;
+      if (notifs.length > 100) notifs.length = 100;
       renderNotifs();
       updateNotifBadge();
       let dndOn = false;
@@ -4268,7 +4301,7 @@
       hideAllViews();
       $("youtubeView").style.display = "block";
       document.body.classList.remove("on-desktop");
-      document.body.classList.remove("in-case");
+      document.body.classList.add("in-case");
       setWinTitle("Xem video");
       syncTaskbar();
       window.scrollTo({ top: 0 });
@@ -4280,7 +4313,7 @@
       hideAllViews();
       $("settingsView").style.display = "block";
       document.body.classList.remove("on-desktop");
-      document.body.classList.remove("in-case");
+      document.body.classList.add("in-case");
       setWinTitle(pane === "profile" ? "Hồ sơ thám tử" : "Cài đặt");
       if (typeof window.__renderSettings === "function") window.__renderSettings(pane || "profile");
       syncTaskbar();
@@ -4317,7 +4350,7 @@
       hideAllViews();
       $("homeView").style.display = "block";
       document.body.classList.remove("on-desktop");
-      document.body.classList.remove("in-case");
+      document.body.classList.add("in-case");
       setWinTitle("Nhận nhiệm vụ");
       renderHome();
       syncTaskbar();
@@ -4329,7 +4362,7 @@
       hideAllViews();
       $("howtoView").style.display = "block";
       document.body.classList.remove("on-desktop");
-      document.body.classList.remove("in-case");
+      document.body.classList.add("in-case");
       setWinTitle("Cách phá án");
       var hr = $("howtoRep"); if (hr) hr.textContent = G.rep;
       syncTaskbar();
@@ -4341,7 +4374,7 @@
       hideAllViews();
       $("badgesView").style.display = "block";
       document.body.classList.remove("on-desktop");
-      document.body.classList.remove("in-case");
+      document.body.classList.add("in-case");
       setWinTitle("Huy hiệu");
       renderHome();
       var br = $("badgesRep"); if (br) br.textContent = G.rep;
@@ -4393,6 +4426,7 @@
       if (!c || G.deletedCases[caseId] || G.goneCases[caseId]) return;
       G.deletedCases[caseId] = true;
       if (G.run && G.run.caseId === caseId) G.run = null;
+      delete G.progress[caseId];
       G.trash.unshift({ tid: ++trashSeq, kind: "case", caseId: caseId, clueId: null, title: c.title, caseTitle: c.title, at: Date.now() });
       updateTrashBadge();
       toast("Đã chuyển vụ án vào Thùng rác", c.title + " — mở app Thùng rác để khôi phục khi cần.");
@@ -4444,6 +4478,7 @@
         delete G.deletedCases[it.caseId];
         G.goneCases[it.caseId] = true;
         if (G.run && G.run.caseId === it.caseId) G.run = null;
+        delete G.progress[it.caseId];
         renderHome();
         toast("Đã xóa vĩnh viễn vụ án", it.title + " — vụ này không còn hiện trong game nữa.");
       } else {
@@ -4463,6 +4498,7 @@
           delete G.deletedCases[it.caseId];
           G.goneCases[it.caseId] = true;
           if (G.run && G.run.caseId === it.caseId) G.run = null;
+          delete G.progress[it.caseId];
         } else {
           if (G.deletedClues[it.caseId]) delete G.deletedClues[it.caseId][it.clueId];
           if (!G.goneClues[it.caseId]) G.goneClues[it.caseId] = {};
@@ -4481,7 +4517,7 @@
       hideAllViews();
       $("pcView").style.display = "block";
       document.body.classList.remove("on-desktop");
-      document.body.classList.remove("in-case");
+      document.body.classList.add("in-case");
       setWinTitle("Máy tính này");
       renderThisPC();
       syncTaskbar();
@@ -4492,7 +4528,7 @@
       hideAllViews();
       $("trashView").style.display = "block";
       document.body.classList.remove("on-desktop");
-      document.body.classList.remove("in-case");
+      document.body.classList.add("in-case");
       setWinTitle("Thùng rác");
       renderTrash();
       syncTaskbar();
@@ -4543,14 +4579,14 @@
       });
       /* 2 — Tiến trình phá án */
       const solvedTitles = Object.keys(G.solved).map(id => { const cc = caseById(id); return cc ? cc.title : id; });
-      const progData = { diemDanhTieng: G.rep, capBacHienTai: rankOf(G.rep).cur.name, lanBuocToiSai: G.wrongTotal, vuDaPha: Object.keys(G.solved).map(id => ({ tieuDe: caseById(id) ? caseById(id).title : id, dungNgayLanDau: !!G.solved[id].firstTry })), vuDangLam: G.run ? ((caseById(G.run.caseId) || {}).title || null) : null };
+      const progData = { diemDanhTieng: G.rep, capBacHienTai: rankOf(G.rep).cur.name, lanBuocToiSai: G.wrongTotal, vuDaPha: Object.keys(G.solved).map(id => ({ tieuDe: caseById(id) ? caseById(id).title : id, dungNgayLanDau: !!G.solved[id].firstTry })), vuDangLam: (G.run && !G.run.solvedHere) ? ((caseById(G.run.caseId) || {}).title || null) : null };
       files.push({
         id: "progress", name: "tien-trinh-pha-an.json", kind: "File lưu tiến trình",
         desc: "Điểm danh tiếng · vụ đã phá · lần buộc tội sai", icon: IC.progress, size: jsonSize(progData),
-        rows: [["Điểm danh tiếng", String(G.rep)], ["Cấp bậc hiện tại", rankOf(G.rep).cur.name], ["Vụ đã phá", Object.keys(G.solved).length + "/" + CASES.length], ["Danh sách vụ đã phá", solvedTitles.length ? solvedTitles.join(" · ") : "Chưa phá vụ nào"], ["Lần buộc tội sai", String(G.wrongTotal)], ["Vụ đang làm", G.run ? ((caseById(G.run.caseId) || {}).title || "—") : "Không có"]],
+        rows: [["Điểm danh tiếng", String(G.rep)], ["Cấp bậc hiện tại", rankOf(G.rep).cur.name], ["Vụ đã phá", Object.keys(G.solved).length + "/" + CASES.length], ["Danh sách vụ đã phá", solvedTitles.length ? solvedTitles.join(" · ") : "Chưa phá vụ nào"], ["Lần buộc tội sai", String(G.wrongTotal)], ["Vụ đang làm", (G.run && !G.run.solvedHere) ? ((caseById(G.run.caseId) || {}).title || "—") : "Không có"]],
         note: "Xóa file này sẽ đặt lại điểm danh tiếng, vụ đã phá và phiên làm vụ hiện tại — huy hiệu và nhân vật được giữ nguyên.",
         exportFn: function () { downloadGenerated("tien-trinh-pha-an.json", JSON.stringify(progData, null, 2)); toast("Đã xuất file tiến trình", "tien-trinh-pha-an.json đã tải xuống máy của bạn."); },
-        deleteFn: function () { G.rep = 0; G.wrongTotal = 0; G.solved = {}; G.run = null; renderHome(); toast("Đã xóa file tiến trình", "Điểm và vụ đã phá đã về 0 — bắt đầu lại từ thám tử tập sự."); }
+        deleteFn: function () { G.rep = 0; G.wrongTotal = 0; G.solved = {}; G.run = null; G.progress = {}; renderHome(); toast("Đã xóa file tiến trình", "Điểm và vụ đã phá đã về 0 — bắt đầu lại từ thám tử tập sự."); }
       });
       /* 3 — Huy hiệu */
       const badgeData = BADGES.map(b => ({ ten: b.name, moTa: b.desc, daDat: !!G.badges[b.id] }));
@@ -4587,7 +4623,7 @@
           id: "wallpaper", name: "hinh-nen-cua-ban.jpg", kind: "Hình nền đã tải",
           desc: "Ảnh bạn tải lên làm nền desktop", icon: IC.image, size: data ? Math.round(data.length * 0.75) : 0, thumb: data || null,
           rows: [["Tên file", "hinh-nen-cua-ban.jpg"], ["Nguồn", "Ảnh bạn tải từ máy lên"], ["Trạng thái", snap.wallpaperId === "custom" ? "Đang dùng làm nền desktop" : "Đã lưu, chưa dùng"]],
-          note: "Xóa file này sẽ gỡ ảnh nền bạn đã tải; desktop quay về hình nền Hẻm Cảng về đêm.",
+          note: "Xóa file này sẽ gỡ ảnh nền bạn đã tải; desktop quay về hình nền Hoa Bloom xanh.",
           exportFn: function () {
             if (!data) { toast("Chưa đọc được ảnh nền đã lưu.", "Thử tải lại ảnh ở Cài đặt → Hình nền nhé."); return; }
             const a = document.createElement("a"); a.href = data; a.download = "hinh-nen-cua-ban.jpg";
@@ -4610,8 +4646,9 @@
           deleteFn: null
         });
       }
-      /* 6 — Tiến độ vụ đang làm (chỉ có khi đang làm dở một vụ) */
-      if (G.run) {
+      /* 6 — Tiến độ vụ đang làm (chỉ có khi đang làm dở một vụ chưa phá;
+         vụ vừa phá xong thì không còn là "vụ đang làm" nữa) */
+      if (G.run && !G.run.solvedHere) {
         const c = caseById(G.run.caseId), r = G.run;
         if (c) {
           const clueTitles = [...r.found].map(id => c.clues[id] ? c.clues[id].title : id);
@@ -4623,7 +4660,7 @@
             rows: [["Vụ án", c.title], ["Manh mối đã ghim", r.found.size + "/" + Object.keys(c.clues).length], ["Danh sách manh mối", clueTitles.length ? clueTitles.join(" · ") : "Chưa ghim manh mối nào"], ["Câu hỏi đã hỏi", String(askedCount)], ["Bài Mạng hẻm đã đọc", r.readFeed.size + "/" + c.feed.length], ["Lần thử buộc tội", String(r.attempts)], ["Gợi ý đã dùng", String(r.hintsUsed)]],
             note: "Xóa file này sẽ hủy phiên làm vụ hiện tại — vụ không còn ở mục “Vụ đang làm” nữa, muốn chơi tiếp phải nhận lại từ đầu.",
             exportFn: function () { downloadGenerated("tien-do-vu-dang-lam.json", JSON.stringify(runData, null, 2)); toast("Đã xuất file tiến độ vụ đang làm", "tien-do-vu-dang-lam.json đã tải xuống máy của bạn."); },
-            deleteFn: function () { G.run = null; renderHome(); toast("Đã xóa file tiến độ vụ đang làm", "Phiên làm vụ đã hủy — nhận lại vụ ở app Nhận nhiệm vụ khi muốn chơi tiếp."); }
+            deleteFn: function () { if (G.run) delete G.progress[G.run.caseId]; G.run = null; renderHome(); toast("Đã xóa file tiến độ vụ đang làm", "Phiên làm vụ đã hủy — nhận lại vụ ở app Nhận nhiệm vụ khi muốn chơi tiếp."); }
           });
         }
       }
@@ -4769,7 +4806,19 @@
        rồi tự chuyển sang app Làm nhiệm vụ, mở sẵn đúng vụ vừa nhận. */
     function acceptCase(id) {
       const c = caseById(id);
-      G.run = newRun(c);
+      /* Nhận vụ khác: cất tiến độ vụ đang làm dở lại trước khi chuyển vụ */
+      if (G.run && G.run.caseId !== id) saveRunProgress();
+      let resumed = 0;
+      if (G.run && G.run.caseId === id && !G.solved[id]) {
+        /* Đang làm đúng vụ này: giữ nguyên phiên hiện tại — manh mối không bị reset */
+        resumed = G.run.found.size;
+      } else if (!G.solved[id] && G.progress[id]) {
+        const restoredRun = restoreRunProgress(c);
+        if (restoredRun) { G.run = restoredRun; resumed = restoredRun.found.size; }
+        else G.run = newRun(c);
+      } else {
+        G.run = newRun(c);
+      }
       if (G.solved[id]) G.run.solvedHere = true;
       /* Manh mối từng bị xóa rồi được khôi phục ở Thùng rác sẽ chờ sẵn trên Bảng ghim */
       let restoredCount = 0;
@@ -4781,6 +4830,7 @@
       $("caseTitle").textContent = c.title;
       toast("Bạn đã nhận nhiệm vụ: " + c.title, "Sang app Làm nhiệm vụ để làm nhiệm vụ đó.");
       openInvestigate();
+      if (resumed) toast("Tiến độ điều tra được giữ nguyên", resumed + " manh mối đã tìm của vụ này vẫn còn trên Bảng ghim — cứ tiếp tục điều tra nhé.");
       if (restoredCount) toast("Manh mối đã khôi phục đang chờ trên Bảng ghim", restoredCount + " manh mối khôi phục từ Thùng rác đã ghim sẵn cho vụ này.");
     }
 
@@ -4794,6 +4844,7 @@
       hideAllViews();
       $("caseView").style.display = "block";
       document.body.classList.remove("on-desktop");
+      document.body.classList.add("in-case");
       setWinTitle("Làm nhiệm vụ · " + caseById(G.run.caseId).title);
       renderCase();
       syncTaskbar();
@@ -5126,10 +5177,15 @@
           return;
         }
         const firstTry = r.attempts === 0;
-        let pts = c.reward + (firstTry ? 50 : 0);
-        G.rep += pts;
+        /* Điểm chỉ cộng đúng một lần, ngay lúc nộp kết quả phá án — không
+           cộng gì lúc nhận vụ. Số hiện trong hộp thoại "ĐÃ PHÁ ÁN" lấy từ
+           mức tăng thật của G.rep nên luôn khớp với thanh Danh tiếng. */
+        const repBefore = G.rep;
+        G.rep += c.reward + (firstTry ? 50 : 0);
+        const pts = G.rep - repBefore;
         r.solvedHere = true;
         G.solved[c.id] = { firstTry };
+        delete G.progress[c.id]; /* vụ đã phá: dọn tiến độ đang làm dở đã cất */
         sndSolve();
         awardBadge("b1");
         if (firstTry) awardBadge("b2");
@@ -5271,7 +5327,7 @@
       }
       clearTimeout(resetTimer);
       G.rep = 0; G.wrongTotal = 0; G.solved = {}; G.badges = {};
-      G.trash = []; G.deletedCases = {}; G.goneCases = {}; G.deletedClues = {}; G.goneClues = {}; G.pendingClues = {};
+      G.trash = []; G.deletedCases = {}; G.goneCases = {}; G.deletedClues = {}; G.goneClues = {}; G.pendingClues = {}; G.progress = {};
       updateTrashBadge();
       resetArmed = false;
       $("resetBtn").textContent = "Chơi lại từ đầu";
@@ -6819,7 +6875,7 @@
       function saveSettings() { try { localStorage.setItem(SET_KEY, JSON.stringify(S)); } catch (e) {} }
 
       var WALLPAPERS = [
-        { id: "cang",    name: "Hẻm Cảng về đêm", bg: 'url("assets/img-e83ee530ff38.jpeg") center / cover no-repeat' },
+        { id: "cang",    name: "Hoa Bloom xanh", bg: 'url("assets/img-e83ee530ff38.jpeg") center / cover no-repeat' },
         { id: "cang-sang", name: "Bến cảng buổi sớm", bg: 'url("assets/img-3dc82d0314bf.jpeg") center / cover no-repeat' },
         { id: "ho-so",   name: "Ảnh hồ sơ", bg: 'url("assets/img-1622d5e21de0.webp") center 30% / cover no-repeat' },
         { id: "bloom",   name: "Bloom xanh", bg: "radial-gradient(ellipse 62% 46% at 68% 30%, rgba(96,165,250,.85), transparent 62%), radial-gradient(ellipse 48% 58% at 30% 68%, rgba(29,78,216,.75), transparent 65%), radial-gradient(ellipse 70% 46% at 52% 108%, rgba(109,40,217,.38), transparent 62%), linear-gradient(155deg, #04163f 0%, #0a2f7a 42%, #0b4ea8 68%, #051233 100%)" },
@@ -7242,7 +7298,7 @@
             return;
           }
           clearTimeout(timer);
-          G.rep = 0; G.wrongTotal = 0; G.solved = {}; G.badges = {}; G.run = null;
+          G.rep = 0; G.wrongTotal = 0; G.solved = {}; G.badges = {}; G.run = null; G.progress = {};
           G.trash = []; G.deletedCases = {}; G.goneCases = {}; G.deletedClues = {}; G.goneClues = {}; G.pendingClues = {};
           if (typeof updateTrashBadge === "function") updateTrashBadge();
           renderHome();
