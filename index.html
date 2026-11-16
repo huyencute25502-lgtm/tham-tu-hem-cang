@@ -1601,6 +1601,25 @@
       .br-cardview .br-card-host{ font-size:12.5px; color:#2aa79a; font-weight:700; }
       html[data-theme="dark"] .br-cardview .br-card-host{ color:#5fd8ca; }
       @media (prefers-color-scheme: dark){ .br-cardview .br-card-host{ color:#5fd8ca; } }
+      .br-block-note{ margin:12px auto 0; max-width:560px; font-size:13px; line-height:1.6; color:var(--ink-dim); background:rgba(232,163,61,.1); border:1px solid rgba(232,163,61,.4); border-radius:10px; padding:10px 14px; text-align:left; }
+      .br-block-note[hidden]{ display:none; }
+      .br-cardview .br-block-note{ text-align:left; }
+      /* Tab proxy Scramjet: thanh đưa địa chỉ đích + khung nhúng chính app proxy */
+      .br-proxy{ flex:1 1 auto; min-height:0; display:flex; flex-direction:column; }
+      .br-proxy[hidden]{ display:none; }
+      .br-proxy-bar{ background:var(--panel); border-bottom:1px solid var(--line); padding:12px 16px; }
+      .br-proxy-bar p{ margin:0 auto 7px; max-width:880px; font-size:13.5px; line-height:1.6; color:var(--ink-dim); overflow-wrap:anywhere; }
+      .br-proxy-bar p b{ color:var(--ink); }
+      .br-proxy-bar .br-block-note{ margin:9px auto 2px; }
+      .br-proxy-btns{ display:flex; gap:9px; flex-wrap:wrap; max-width:880px; margin:2px auto 0; }
+      .br-proxy-btns .br-open-out{ background:#35c4b5; color:#062a26; border:none; font-weight:800; font-size:13.5px; font-family:inherit; border-radius:10px; padding:9px 16px; min-height:0; cursor:pointer; }
+      .br-proxy-btns .br-go-home{ background:var(--panel2); border:1px solid var(--line); color:var(--ink); font-weight:700; font-size:13.5px; font-family:inherit; border-radius:10px; padding:9px 16px; min-height:0; cursor:pointer; }
+      .br-proxy-status{ padding:38px 20px; text-align:center; color:var(--ink-dim); overflow-y:auto; }
+      .br-proxy-status[hidden]{ display:none; }
+      .br-proxy-status h4{ margin:0 0 8px; font-size:19px; color:var(--ink); }
+      .br-proxy-status p{ margin:0 auto 10px; max-width:560px; font-size:14.5px; line-height:1.6; }
+      .br-proxy iframe{ flex:1 1 auto; width:100%; min-height:380px; border:0; display:block; background:#fff; }
+      .br-proxy iframe[hidden]{ display:none; }
 
       /* File Explorer kiểu Win 11 cho Máy tính này */
       .pc-crumb{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:9px 14px; font-size:13.5px; color:var(--ink-dim); margin-bottom:14px; }
@@ -2638,8 +2657,10 @@
             <h4 id="brBlockedTitle">Trang này chặn mở trong game</h4>
             <p id="brBlockedText"></p>
             <p class="br-block-alt" id="brBlockedAlt" hidden></p>
+            <p class="br-block-note" id="brBlockedNote" hidden></p>
             <div class="br-blocked-actions">
               <button type="button" class="br-open-out" id="brBlockedRead">Đọc chữ trong game</button>
+              <button type="button" class="br-go-home" id="brBlockedProxy">Mở qua proxy trong game</button>
               <button type="button" class="br-go-home" id="brBlockedOut">Mở ở tab mới</button>
               <button type="button" class="br-go-home" id="brBlockedHome">Về trang bắt đầu</button>
             </div>
@@ -2656,12 +2677,30 @@
             <h4 id="brCardTitle"></h4>
             <p id="brCardText"></p>
             <p id="brCardReason" hidden></p>
+            <p class="br-block-note" id="brCardNote" hidden></p>
             <div class="br-blocked-actions">
               <button type="button" class="br-open-out" id="brCardRead">Đọc chữ trong game</button>
+              <button type="button" class="br-go-home" id="brCardProxy">Mở qua proxy trong game</button>
               <button type="button" class="br-go-home" id="brCardTry" hidden>Thử mở trang trong game</button>
               <button type="button" class="br-go-home" id="brCardOut">Mở ở tab mới</button>
               <button type="button" class="br-go-home" id="brCardHome">Về trang bắt đầu</button>
             </div>
+          </div>
+          <div class="br-proxy" id="brProxy" hidden>
+            <div class="br-proxy-bar">
+              <p>Trang đích: <b id="brProxyTarget"></b></p>
+              <div id="brProxyManual" hidden>
+                <p>Cảng Lướt đã thử tự mở trang đích qua proxy mấy lần mà khung vẫn chưa tới nơi. Cách dự phòng: bấm <b>Tải lại Scramjet</b> để mở app Scramjet trong khung dưới, bấm <b>Chép địa chỉ trang đích</b>, dán vào ô “Search the web freely” của Scramjet rồi bấm Enter — trang đích sẽ hiện qua proxy ngay tại đây. Nút <b>Mở thẳng trang đích</b> cũng thử lại đường qua proxy ngay trong khung.</p>
+                <div class="br-proxy-btns">
+                  <button type="button" class="br-open-out" id="brProxyCopy">Chép địa chỉ trang đích</button>
+                  <button type="button" class="br-go-home" id="brProxyDirect">Mở thẳng trang đích</button>
+                  <button type="button" class="br-go-home" id="brProxyReloadFrame">Tải lại Scramjet</button>
+                </div>
+              </div>
+              <p class="br-block-note" id="brProxyNote" hidden></p>
+            </div>
+            <div class="br-proxy-status" id="brProxyStatus" hidden></div>
+            <iframe id="brProxyFrame" title="Trang đích mở qua proxy Scramjet" hidden></iframe>
           </div>
         </div>
       </div>
@@ -7149,8 +7188,9 @@
        còn chạy hay đã bị chặn 401, nên lớp này có thể lúc được lúc không —
        kiểm tra dấu "Markdown Content:" trước khi nhận kết quả) + nút mở tab
        mới. Các mục lịch sử đặc biệt trong tab: "search:<từ khóa>",
-       "reader:<url>", "card:<json>" — vẫn dùng chung cơ chế quay lại / tiến
-       tới / tải lại như trang thường. */
+       "reader:<url>", "card:<json>", "proxy:<url>" (tab mở trang đích qua
+       proxy Scramjet tự host — xem khối PROXY SCRAMJET ở dưới) — vẫn dùng
+       chung cơ chế quay lại / tiến tới / tải lại như trang thường. */
     var BR_BLOCKED = {
       "google.com": "X-Frame-Options: SAMEORIGIN",
       "facebook.com": "X-Frame-Options: DENY",
@@ -7195,6 +7235,44 @@
       "ecosia.org": "Ecosia không có API tìm kiếm công khai và trang kết quả chặn nhúng.",
       "youtube.com": "Trang xem bị chặn, nhưng bản nhúng youtube.com/embed/{mã video} thì mở được. Muốn xem video này trong game, hãy dùng ô tìm chính ở trang bắt đầu để tìm lại nội dung đó, hoặc bấm nút “Đọc chữ trong game” trên thẻ này."
     };
+    /* ================= PROXY SCRAMJET (tích hợp 16/11/2026) =================
+       Đã đọc kỹ client THẬT của app mẫu đang chạy tại PROXY_BASE trước khi
+       viết: index.html nạp /scram/scramjet.all.js + /baremux/index.js +
+       register-sw.js + search.js + index.js. Cách app mẫu hỗ trợ mở 1 URL
+       đích (index.js): người dùng gửi form -> registerSW() đăng ký sw.js
+       TRÊN CHÍNH TÊN MIỀN PROXY -> search() chuẩn hóa địa chỉ ->
+       ScramjetController (tiền tố "/scramjet/", codec mặc định trong
+       scramjet.all.js là encodeURIComponent) -> BareMux nối Wisp
+       (wss://<proxy>/wisp/, transport libcurl) -> scramjet.createFrame()
+       rồi frame.go(url), tức gán src của khung = PROXY_BASE + "/scramjet/"
+       + encodeURIComponent(url đích) và để service worker của proxy chặn
+       đường đó mà phục vụ nội dung đã qua proxy. App KHÔNG có tham số URL /
+       hash nào để trang ngoài nhờ mở hộ, và gọi thẳng đường /scramjet/...
+       bằng HTTP thường thì máy chủ trả 404 "could not route" (đã kiểm
+       chứng trực tiếp) vì chưa có service worker nào chặn. Máy chủ cũng
+       không gửi X-Frame-Options nên nhúng được nguyên app proxy vào khung
+       của Cảng Lướt. Tab proxy TỰ mở thẳng trang đích, người dùng không
+       phải chép–dán gì: nạp PROXY_BASE + "/" vào khung trước để app tự
+       đăng ký/kích hoạt service worker của nó, chờ worker sẵn sàng, rồi
+       chuyển CÙNG khung đó sang đúng đường mã hóa của frame.go(). Nếu lần
+       chuyển sang đường mã hóa kết thúc nhanh bất thường (dấu hiệu máy chủ
+       trả 404 "could not route" vì worker chưa kịp chặn) thì hâm nóng lại
+       bằng trang chủ proxy rồi thử lại, tối đa 3 lần; chỉ khi cả 3 lần đều
+       vậy mới hiện thanh chép–dán thủ công làm đường dự phòng. */
+    var PROXY_BASE = "https://scramjet-app-fzpj.onrender.com";
+    var BR_PROXY_CAPTCHA_NOTE = "Google/YouTube qua proxy có thể bắt xác minh do IP máy chủ dùng chung — nếu bị chặn, dùng ô tìm chính hoặc app Xem video.";
+    function brProxyHost(url) {
+      try { return new URL(url).hostname.replace(/^www\./, "").toLowerCase(); } catch (e) { return ""; }
+    }
+    function brProxyNeedsNote(url) {
+      var h = brProxyHost(url);
+      return h === "google.com" || h === "youtube.com" || /\.google\.com$/.test(h) || /\.youtube\.com$/.test(h);
+    }
+    function brProxyFrameUrl(url) { return PROXY_BASE + "/scramjet/" + encodeURIComponent(url); }
+    function brOpenProxy(url) {
+      if (!url) return;
+      brNewTab("proxy:" + encodeURIComponent(url), "Proxy: " + (brProxyHost(url) || "trang đích"));
+    }
     function brClassify(url) {
       /* Các mục lịch sử đặc biệt của bản thiết kế lại: trang kết quả tự vẽ,
          chế độ đọc chữ, thẻ trang — không phải URL thật nên xét trước */
@@ -7202,6 +7280,7 @@
         if (url === "home") return { mode: "home" };
         if (url.indexOf("search:") === 0) return { mode: "search" };
         if (url.indexOf("reader:") === 0) return { mode: "reader" };
+        if (url.indexOf("proxy:") === 0) return { mode: "proxy" };
         if (url.indexOf("card:") === 0) {
           try { var pl0 = JSON.parse(decodeURIComponent(url.slice(5))); return { mode: "card", blocked: !!pl0.b }; }
           catch (e) { return { mode: "card" }; }
@@ -7235,6 +7314,7 @@
       if (!url || url === "home") return "Trang bắt đầu";
       if (url.indexOf("search:") === 0) { try { return "Tìm: " + decodeURIComponent(url.slice(7)); } catch (e) { return "Kết quả tìm kiếm"; } }
       if (url.indexOf("reader:") === 0) { try { return "Đọc: " + new URL(decodeURIComponent(url.slice(7))).hostname.replace(/^www\./, ""); } catch (e) { return "Đọc chữ"; } }
+      if (url.indexOf("proxy:") === 0) { try { return "Proxy: " + new URL(decodeURIComponent(url.slice(6))).hostname.replace(/^www\./, ""); } catch (e) { return "Proxy"; } }
       if (url.indexOf("card:") === 0) { try { var pl1 = JSON.parse(decodeURIComponent(url.slice(5))); return pl1.t || brTitleFor(pl1.u); } catch (e) { return "Thẻ trang"; } }
       try { return new URL(url).hostname.replace(/^www\./, ""); } catch (e) { return "Tab mới"; }
     }
@@ -7286,13 +7366,13 @@
       var t = brCur(); if (!t) return;
       var url = t.hist[t.hi];
       var home = $("brHome"), frame = $("brFrame"), blocked = $("brBlocked");
-      var results = $("brResults"), reader = $("brReader"), card = $("brCard");
+      var results = $("brResults"), reader = $("brReader"), card = $("brCard"), proxy = $("brProxy");
       var addr = $("brAddr"), chip = $("brChip"), helper = $("brHelper");
       $("brBack").disabled = t.hi <= 0;
       $("brFwd").disabled = t.hi >= t.hist.length - 1;
       if (url === "home") {
         home.style.display = ""; frame.hidden = true; blocked.hidden = true;
-        results.hidden = true; reader.hidden = true; card.hidden = true;
+        results.hidden = true; reader.hidden = true; card.hidden = true; proxy.hidden = true;
         if (frame.getAttribute("src")) frame.removeAttribute("src");
         addr.value = ""; chip.hidden = true; helper.hidden = true;
         return;
@@ -7300,7 +7380,7 @@
       /* --- Ba chế độ đặc biệt của bản thiết kế lại --- */
       if (url.indexOf("search:") === 0) {
         home.style.display = "none"; frame.hidden = true; blocked.hidden = true;
-        reader.hidden = true; card.hidden = true; results.hidden = false;
+        reader.hidden = true; card.hidden = true; results.hidden = false; proxy.hidden = true;
         if (frame.getAttribute("src")) frame.removeAttribute("src");
         var sq = ""; try { sq = decodeURIComponent(url.slice(7)); } catch (e) {}
         addr.value = sq;
@@ -7311,7 +7391,7 @@
       }
       if (url.indexOf("reader:") === 0) {
         home.style.display = "none"; frame.hidden = true; blocked.hidden = true;
-        results.hidden = true; card.hidden = true; reader.hidden = false;
+        results.hidden = true; card.hidden = true; reader.hidden = false; proxy.hidden = true;
         if (frame.getAttribute("src")) frame.removeAttribute("src");
         var rt = ""; try { rt = decodeURIComponent(url.slice(7)); } catch (e) {}
         addr.value = rt;
@@ -7322,7 +7402,7 @@
       }
       if (url.indexOf("card:") === 0) {
         home.style.display = "none"; frame.hidden = true; blocked.hidden = true;
-        results.hidden = true; reader.hidden = true; card.hidden = false;
+        results.hidden = true; reader.hidden = true; card.hidden = false; proxy.hidden = true;
         if (frame.getAttribute("src")) frame.removeAttribute("src");
         var pl = null; try { pl = JSON.parse(decodeURIComponent(url.slice(5))); } catch (e) {}
         if (!pl || !pl.u) { $("brCardTitle").textContent = "Thẻ trang này đã hỏng"; $("brCardText").textContent = "Bấm Về trang bắt đầu để tra cứu lại nhé."; brCardCur = null; addr.value = ""; chip.hidden = true; helper.hidden = true; return; }
@@ -7351,13 +7431,36 @@
           rsn.textContent = "Cảng Lướt chưa biết chắc trang này có cho mở trong khung hay không. Bạn có thể thử mở nguyên trang trong game (khung trắng thì quay lại đây), đọc phần chữ ngay trong game, hoặc mở tab mới.";
         } else rsn.hidden = true;
         $("brCardTry").hidden = !!pl.b;
+        var cnote = $("brCardNote");
+        if (cnote) {
+          if (brProxyNeedsNote(pl.u)) { cnote.hidden = false; cnote.textContent = BR_PROXY_CAPTCHA_NOTE; }
+          else cnote.hidden = true;
+        }
+        return;
+      }
+      if (url.indexOf("proxy:") === 0) {
+        home.style.display = "none"; frame.hidden = true; blocked.hidden = true;
+        results.hidden = true; reader.hidden = true; card.hidden = true; proxy.hidden = false;
+        if (frame.getAttribute("src")) frame.removeAttribute("src");
+        var pt = ""; try { pt = decodeURIComponent(url.slice(6)); } catch (e) {}
+        brProxyCur = pt;
+        addr.value = pt;
+        chip.hidden = false; chip.textContent = "Qua proxy"; chip.className = "br-chip";
+        helper.hidden = true;
+        $("brProxyTarget").textContent = pt;
+        var pnote = $("brProxyNote");
+        if (pnote) {
+          if (brProxyNeedsNote(pt)) { pnote.hidden = false; pnote.textContent = BR_PROXY_CAPTCHA_NOTE; }
+          else pnote.hidden = true;
+        }
+        brRunProxy(url, pt);
         return;
       }
       addr.value = url;
       var cls = brClassify(url);
       if (cls.mode === "blocked") {
         home.style.display = "none"; frame.hidden = true; blocked.hidden = false;
-        results.hidden = true; reader.hidden = true; card.hidden = true;
+        results.hidden = true; reader.hidden = true; card.hidden = true; proxy.hidden = true;
         if (frame.getAttribute("src")) frame.removeAttribute("src");
         chip.hidden = false; chip.textContent = "Chặn nhúng"; chip.className = "br-chip blocked";
         helper.hidden = true;
@@ -7380,10 +7483,15 @@
             alt.append(ab, as);
           } else alt.hidden = true;
         }
+        var bnote = $("brBlockedNote");
+        if (bnote) {
+          if (brProxyNeedsNote(url)) { bnote.hidden = false; bnote.textContent = BR_PROXY_CAPTCHA_NOTE; }
+          else bnote.hidden = true;
+        }
         return;
       }
       home.style.display = "none"; blocked.hidden = true; frame.hidden = false;
-      results.hidden = true; reader.hidden = true; card.hidden = true;
+      results.hidden = true; reader.hidden = true; card.hidden = true; proxy.hidden = true;
       if (frame.getAttribute("src") !== url) frame.src = url;
       chip.hidden = false;
       if (cls.mode === "ok") { chip.textContent = "Mở trong game"; chip.className = "br-chip"; }
@@ -7431,7 +7539,7 @@
     /* ================= LỚP 1 + 3: KẾT QUẢ TỰ VẼ & ĐỌC CHỮ =================
        Mọi fetch đều bọc catch trả null/rỗng: mạng hỏng hay nguồn chết thì
        phần đó lặng lẽ biến mất, không bao giờ làm sập trang kết quả. */
-    var brSearchCache = {}, brReaderCache = {}, brLastSearch = null, brLastQuery = "", brCardCur = null;
+    var brSearchCache = {}, brReaderCache = {}, brProxyCache = {}, brLastSearch = null, brLastQuery = "", brCardCur = null, brProxyCur = null;
     /* Thoát cả nháy đơn lẫn nháy kép: mọi giá trị lấy từ trang/API bên ngoài
        đều được nhét vào thuộc tính bọc bằng nháy đơn trong các mẫu HTML tự vẽ
        (kết quả tìm kiếm, bản đọc chữ) — thiếu nháy đơn là một trang độc có
@@ -7603,6 +7711,171 @@
     /* Lớp 3: đọc chữ qua Jina Reader — chỉ nhận khi thấy dấu
        "Markdown Content:" hoặc đoạn chữ dài không phải JSON lỗi, vì Jina có
        kiểu từ chối mà HTTP vẫn 200 kèm phong bì JSON báo bị chặn */
+    /* Tab proxy: gọi PROXY_BASE dậy trước (Render Free ngủ sau 15 phút,
+       mở lại mất ~1 phút). Chờ tối đa ~20 giây: trả lời được thì TỰ mở
+       trang đích qua proxy (brProxyAutoOpen); quá giờ hoặc lỗi thì hiện
+       trạng thái "đang ngủ" tử tế kèm nút Thử lại + đường dự phòng,
+       không khung trắng */
+    function brRunProxy(entry, target) {
+      var st = $("brProxyStatus"), fr = $("brProxyFrame"), man = $("brProxyManual");
+      if (!st || !fr) return;
+      var cached = brProxyCache[entry];
+      if (cached && cached.state === "done") {
+        st.hidden = true;
+        if (man) man.hidden = true;
+        fr.hidden = false;
+        if (fr.getAttribute("src") !== brProxyFrameUrl(target)) fr.src = brProxyFrameUrl(target);
+        return;
+      }
+      if (cached && cached.state === "failed") { brPaintProxyFailed(target); return; }
+      if (cached && cached.state === "sleeping") { if (man) man.hidden = true; brPaintProxySleeping(target); return; }
+      if (cached && cached.state === "checking") { if (man) man.hidden = true; brPaintProxyChecking(target); return; }
+      if (cached && cached.state === "auto") {
+        /* Chuỗi tự mở đang chạy dở mà người dùng rời tab rồi quay lại:
+           các bước chờ đã tự hủy, cache bị hạ về "awake" — chạy lại từ đầu */
+        if (cached.runId !== brProxyRunSeq) { brProxyAutoOpen(entry, target); return; }
+        brPaintProxyProgress(target, cached.attempt || 0, cached.phase || "");
+        return;
+      }
+      if (cached && cached.state === "awake") { brProxyAutoOpen(entry, target); return; }
+      brProxyCache[entry] = { state: "checking" };
+      if (man) man.hidden = true;
+      brPaintProxyChecking(target);
+      var ctrl = null, timer = null;
+      try { ctrl = new AbortController(); } catch (e) { ctrl = null; }
+      if (ctrl) timer = setTimeout(function () { try { ctrl.abort(); } catch (e) {} }, 20000);
+      fetch(PROXY_BASE + "/", { mode: "no-cors", cache: "no-store", signal: ctrl ? ctrl.signal : undefined })
+        .then(function () { return true; })
+        .catch(function () { return false; })
+        .then(function (awake) {
+          if (timer) clearTimeout(timer);
+          var cur = brProxyCache[entry];
+          if (!cur || cur.state !== "checking") return;
+          brProxyCache[entry] = { state: awake ? "awake" : "sleeping" };
+          var t = brCur();
+          if (t && t.hist[t.hi] === entry) brRunProxy(entry, target);
+        });
+    }
+    /* Chuỗi TỰ mở trang đích qua proxy — người dùng không thao tác gì:
+       (1) nạp trang chủ proxy vào khung để service worker của proxy đăng
+       ký/kích hoạt trên chính tên miền của nó; (2) chờ worker sẵn sàng
+       (chờ tăng dần theo lần thử); (3) chuyển CÙNG khung sang đường mã
+       hóa của frame.go(). Trang 404 "could not route" của máy chủ trả về
+       gần như tức thì, còn trang thật đi qua Wisp/BareMux luôn mất lâu
+       hơn hẳn — nên một lần chuyển mà sự kiện load về trong <900ms bị coi
+       là worker chưa sẵn: hâm nóng lại rồi thử tiếp, tối đa 3 lần. Quá
+       15 giây chưa thấy load thì coi như trang đích đang tải chậm qua
+       proxy và để yên cho khung tải tiếp. Chỉ cả 3 lần đều bị nghi 404
+       mới chịu thua: hiện thanh chép–dán thủ công làm đường dự phòng. */
+    var brProxyRunSeq = 0;
+    function brProxyStill(entry, runId) {
+      var c = brProxyCache[entry];
+      var t = brCur();
+      return !!(c && c.runId === runId && t && t.hist[t.hi] === entry);
+    }
+    function brProxyYield(entry, runId) {
+      /* Người dùng đã rời tab proxy giữa chừng: hạ cache về "awake" để
+         lần quay lại tab này chuỗi tự mở chạy lại từ đầu */
+      var c = brProxyCache[entry];
+      if (c && c.runId === runId && c.state === "auto") brProxyCache[entry] = { state: "awake" };
+    }
+    function brProxyWaitLoad(fr, src, timeoutMs) {
+      return new Promise(function (resolve) {
+        var settled = false, started = Date.now();
+        var tm = setTimeout(function () { done("timeout", Date.now() - started); }, timeoutMs);
+        function done(kind, dur) {
+          if (settled) return; settled = true;
+          clearTimeout(tm);
+          if (fr.onload === onLoad) fr.onload = null;
+          resolve({ kind: kind, dur: dur });
+        }
+        function onLoad() { done("load", Date.now() - started); }
+        fr.onload = onLoad;
+        fr.src = src;
+      });
+    }
+    function brProxyWait(ms) { return new Promise(function (r) { setTimeout(r, ms); }); }
+    function brProxyAutoOpen(entry, target) {
+      var st = $("brProxyStatus"), fr = $("brProxyFrame"), man = $("brProxyManual");
+      if (!st || !fr) return;
+      var runId = ++brProxyRunSeq;
+      if (man) man.hidden = true;
+      fr.hidden = false;
+      function attempt(n) {
+        if (!brProxyStill(entry, runId)) { brProxyYield(entry, runId); return; }
+        brProxyCache[entry] = { state: "auto", runId: runId, attempt: n, phase: "warm" };
+        brPaintProxyProgress(target, n, "warm");
+        brProxyWaitLoad(fr, PROXY_BASE + "/", 12000).then(function () {
+          if (!brProxyStill(entry, runId)) { brProxyYield(entry, runId); return; }
+          var c = brProxyCache[entry]; if (c) c.phase = "wait";
+          brPaintProxyProgress(target, n, "wait");
+          return brProxyWait(3000 + n * 2000);
+        }).then(function () {
+          if (!brProxyStill(entry, runId)) { brProxyYield(entry, runId); return; }
+          var c = brProxyCache[entry]; if (c) c.phase = "go";
+          brPaintProxyProgress(target, n, "go");
+          return brProxyWaitLoad(fr, brProxyFrameUrl(target), 15000);
+        }).then(function (res) {
+          if (!brProxyStill(entry, runId)) { brProxyYield(entry, runId); return; }
+          if (res && res.kind === "load" && res.dur < 900 && n < 2) { attempt(n + 1); return; }
+          if (res && res.kind === "load" && res.dur < 900) {
+            brProxyCache[entry] = { state: "failed" };
+            brPaintProxyFailed(target);
+            return;
+          }
+          brProxyCache[entry] = { state: "done" };
+          st.hidden = true;
+          if (man) man.hidden = true;
+          fr.hidden = false;
+        });
+      }
+      attempt(0);
+    }
+    function brPaintProxyProgress(target, attempt, phase) {
+      var st = $("brProxyStatus"), fr = $("brProxyFrame"), man = $("brProxyManual");
+      if (!st || !fr) return;
+      if (man) man.hidden = true;
+      fr.hidden = false;
+      st.hidden = false;
+      var msg = phase === "warm" ? "Đang nạp Scramjet để sẵn sàng đường qua proxy…"
+        : phase === "wait" ? "Đang chờ đường qua proxy sẵn sàng…"
+        : "Đang đưa trang đích qua proxy…";
+      st.innerHTML = "<h4>Đang mở trang đích qua proxy…</h4>"
+        + "<p>" + msg + " (lần thử " + (attempt + 1) + "/3) — trang đích: " + brEsc(target) + "</p>";
+    }
+    function brPaintProxyFailed(target) {
+      var st = $("brProxyStatus"), fr = $("brProxyFrame"), man = $("brProxyManual");
+      if (!st || !fr) return;
+      if (man) man.hidden = false;
+      fr.hidden = false;
+      st.hidden = false;
+      st.innerHTML = "<h4>Chưa tự mở được trang đích qua proxy</h4>"
+        + "<p>Cảng Lướt đã thử tự đưa trang qua proxy 3 lần mà khung vẫn chưa tới nơi — có thể đường qua proxy đang trục trặc. Bấm Thử lại để Cảng Lướt tự mở lại từ đầu, hoặc dùng cách chép–dán dự phòng ở thanh phía trên khung. Trong lúc chờ, bạn vẫn đọc được phần chữ của trang ngay trong game hoặc mở trang thật ở tab mới.</p>"
+        + "<div class='br-blocked-actions'>"
+        + "<button type='button' class='br-open-out' data-pact='retry'>Thử lại</button>"
+        + "<button type='button' class='br-go-home' data-pact='read'>Đọc chữ trong game</button>"
+        + "<button type='button' class='br-go-home' data-pact='out'>Mở tab mới</button></div>";
+    }
+    function brPaintProxyChecking(target) {
+      var st = $("brProxyStatus"), fr = $("brProxyFrame");
+      if (!st || !fr) return;
+      fr.hidden = true;
+      st.hidden = false;
+      st.innerHTML = "<h4>Đang gọi proxy dậy…</h4>"
+        + "<p>Cảng Lướt đang kiểm tra máy chủ proxy Scramjet (" + brEsc(PROXY_BASE.replace(/^https?:\/\//, "")) + ") — chờ tối đa khoảng 20 giây. Trang đích: " + brEsc(target) + "</p>";
+    }
+    function brPaintProxySleeping(target) {
+      var st = $("brProxyStatus"), fr = $("brProxyFrame");
+      if (!st || !fr) return;
+      fr.hidden = true;
+      st.hidden = false;
+      st.innerHTML = "<h4>Proxy đang ngủ, đang đánh thức… thử lại sau ~1 phút</h4>"
+        + "<p>Máy chủ proxy chạy gói miễn phí nên ngủ sau 15 phút không có người dùng, mở lại mất khoảng 1 phút. Lần bấm Thử lại này cũng đã gửi tín hiệu đánh thức — chờ chừng 1 phút rồi bấm Thử lại nhé. Trong lúc chờ, bạn vẫn đọc được phần chữ của trang ngay trong game hoặc mở trang thật ở tab mới.</p>"
+        + "<div class='br-blocked-actions'>"
+        + "<button type='button' class='br-open-out' data-pact='retry'>Thử lại</button>"
+        + "<button type='button' class='br-go-home' data-pact='read'>Đọc chữ trong game</button>"
+        + "<button type='button' class='br-go-home' data-pact='out'>Mở tab mới</button></div>";
+    }
     function brRunReader(entry, target) {
       var wrap = $("brReaderWrap"); if (!wrap) return;
       var cached = brReaderCache[entry];
@@ -7698,6 +7971,11 @@
         if (url.indexOf("search:") === 0 || url.indexOf("reader:") === 0) {
           delete brSearchCache[url]; delete brReaderCache[url]; brRender(); return;
         }
+        if (url.indexOf("proxy:") === 0) {
+          delete brProxyCache[url];
+          var pf = $("brProxyFrame"); if (pf) pf.removeAttribute("src");
+          brRender(); return;
+        }
         if (url.indexOf("card:") === 0) { brRender(); return; }
         var f = $("brFrame"); var cur = f.getAttribute("src");
         if (cur) { f.removeAttribute("src"); setTimeout(function () { f.src = cur; }, 30); }
@@ -7709,6 +7987,7 @@
         if (!url || url === "home") return null;
         if (url.indexOf("search:") === 0) { try { return "https://www.bing.com/search?q=" + encodeURIComponent(decodeURIComponent(url.slice(7))); } catch (e) { return null; } }
         if (url.indexOf("reader:") === 0) { try { return decodeURIComponent(url.slice(7)); } catch (e) { return null; } }
+        if (url.indexOf("proxy:") === 0) { try { return decodeURIComponent(url.slice(6)); } catch (e) { return null; } }
         if (url.indexOf("card:") === 0) { try { return JSON.parse(decodeURIComponent(url.slice(5))).u || null; } catch (e) { return null; } }
         return url;
       }
@@ -7726,8 +8005,59 @@
         var url = t.hist[t.hi];
         if (url && url !== "home") brGo("reader:" + encodeURIComponent(url), "Đọc: " + brTitleFor(url));
       });
+      $("brBlockedProxy").addEventListener("click", function () {
+        var t = brCur(); if (!t) return;
+        var url = t.hist[t.hi];
+        if (url && url !== "home") brOpenProxy(url);
+      });
       /* Thẻ trang: đọc chữ / thử mở nguyên trang / mở tab mới / về nhà */
       $("brCardRead").addEventListener("click", function () { if (brCardCur) brGo("reader:" + encodeURIComponent(brCardCur.u), "Đọc: " + brTitleFor(brCardCur.u)); });
+      $("brCardProxy").addEventListener("click", function () { if (brCardCur) brOpenProxy(brCardCur.u); });
+      /* Thanh dự phòng của tab proxy (chỉ hiện khi chuỗi tự mở đã thử
+         hết 3 lần): chép địa chỉ đích / mở thẳng theo đường mã hóa của
+         frame.go() / tải lại app Scramjet; các trạng thái dùng data-pact */
+      $("brProxyCopy").addEventListener("click", function () {
+        var btn = $("brProxyCopy");
+        function done(ok) {
+          btn.textContent = ok ? "Đã chép địa chỉ!" : "Chép chưa được — hãy chép tay địa chỉ ở trên";
+          setTimeout(function () { btn.textContent = "Chép địa chỉ trang đích"; }, 2200);
+        }
+        if (!brProxyCur) { done(false); return; }
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(brProxyCur).then(function () { done(true); }, function () { done(false); });
+        } else {
+          try {
+            var ta = document.createElement("textarea");
+            ta.value = brProxyCur; ta.style.position = "fixed"; ta.style.opacity = "0";
+            document.body.appendChild(ta); ta.select();
+            var ok = document.execCommand("copy");
+            ta.remove(); done(!!ok);
+          } catch (e) { done(false); }
+        }
+      });
+      $("brProxyDirect").addEventListener("click", function () {
+        if (!brProxyCur) return;
+        var fr = $("brProxyFrame"), st = $("brProxyStatus");
+        if (st) st.hidden = true;
+        fr.hidden = false;
+        fr.src = brProxyFrameUrl(brProxyCur);
+      });
+      $("brProxyReloadFrame").addEventListener("click", function () {
+        var fr = $("brProxyFrame"), st = $("brProxyStatus");
+        if (st) st.hidden = true;
+        fr.hidden = false;
+        fr.src = PROXY_BASE + "/";
+      });
+      $("brProxyStatus").addEventListener("click", function (e) {
+        var b = e.target.closest ? e.target.closest("[data-pact]") : null;
+        if (!b || !brProxyCur) return;
+        var act = b.getAttribute("data-pact");
+        var t = brCur(); if (!t) return;
+        var entry = t.hist[t.hi];
+        if (act === "retry") { delete brProxyCache[entry]; brRender(); }
+        else if (act === "read") brGo("reader:" + encodeURIComponent(brProxyCur), "Đọc: " + brTitleFor(brProxyCur));
+        else if (act === "out") window.open(brProxyCur, "_blank", "noopener");
+      });
       $("brCardTry").addEventListener("click", function () { if (brCardCur) brGo(brCardCur.u, brCardCur.t || ""); });
       $("brCardOut").addEventListener("click", function () { if (brCardCur) window.open(brCardCur.u, "_blank", "noopener"); });
       $("brCardHome").addEventListener("click", function () { brGo("home", "Trang bắt đầu"); });
