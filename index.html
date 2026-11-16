@@ -13469,11 +13469,18 @@
        - Quản trị (đợt 2): adminBlocks/{uid} (khóa chat + lý do + hạn),
          broadcasts (thông báo chung của admin, chấm đỏ khi chưa xem),
          reports (báo cáo tin nhắn/đoạn chat trong nhóm từ nút Báo cáo).
-         Đọc/ghi lỗi quyền (rules chưa publish) đều nuốt lỗi, không crash.
-         LƯU Ý RULES: nếu rules Firestore hiện tại không cho người chơi tự
-         tạo doc groups/nhom-hem-cang hoặc tự thêm mình vào members thì
-         việc tự tham gia nhóm sẽ lỗi quyền (đã nuốt lỗi, app không crash)
-         và cần cập nhật rules riêng cho doc nhóm chung này. */
+         Đọc/ghi lỗi quyền (rules chưa publish) đều không làm crash app.
+         TỰ THAM GIA NHÓM (đã sửa lỗi "nhóm chung chưa hoạt động được"):
+         bản cũ get() doc nhóm trước khi tham gia — người chưa là thành
+         viên không đọc được doc nên bị chặn ngay, lỗi bị nuốt im lặng,
+         không bao giờ vào được nhóm. Nay ensureCommonGroup có đường dự
+         phòng ghi thẳng set+merge (arrayUnion, không cần đọc trước),
+         được gọi lại khi mở nhóm, khi tải tin lỗi và trước khi gửi tin;
+         lỗi còn lại hiện rõ mã lỗi trên màn hình thay vì mất hút. Nếu cả
+         2 đường đều bị permission-denied thì rules Firestore vẫn chưa
+         cho người chơi tự tham gia doc nhóm chung này — admin cần nới
+         rules cho groups/nhom-hem-cang (tự thêm uid của mình vào
+         members + đọc/ghi messages khi là thành viên). */
     var CLOUDINARY_CLOUD_NAME = "cslzx8db";    /* tài khoản Cloudinary miễn phí của văn phòng (tạo 16/11) */
     var CLOUDINARY_UPLOAD_PRESET = "tham-tu-chat"; /* preset upload không ký (Unsigned, folder tham-tu-chat) */
     (function () {
@@ -14038,7 +14045,13 @@
           groups = {};
           snap.forEach(function (d) { groups[d.id] = d.data() || {}; });
           renderConvoList();
-        }, function () {});
+        }, function (err) {
+          /* Trước đây lỗi listener nhóm bị nuốt im lặng — nay ghi log
+             để còn biết nhóm hỏng ở đâu; danh sách vẫn vẽ nhóm chung
+             mặc định nên người chơi vẫn bấm vào nhóm được. */
+          if (window.console) console.warn("[Tin nhắn] Nghe danh sách nhóm lỗi:", (err && err.code) || err);
+          renderConvoList();
+        });
 
         db.collection("threads").doc(me.uid).onSnapshot(function (snap) {
           adminThread = snap.exists ? (snap.data() || {}) : null;
@@ -14050,7 +14063,12 @@
         watchBroadcasts();
 
         renderConvoList();
-        if (!cur) openAdminConvo();
+        /* Mặc định mở thẳng NHÓM CHUNG khi chưa chọn hội thoại nào:
+           bản cũ tự mở đoạn chat với admin trước, trên điện thoại danh
+           sách hội thoại bị ẩn sau khung chat nên người chơi không thấy
+           nhóm đâu và tưởng nhóm chưa hoạt động. Nhóm là nơi trò chuyện
+           chính theo mô hình mới — mở app là vào nhóm luôn. */
+        if (!cur) openGroupConvo(COMMON_GROUP_ID);
       }
 
       /* ---------- Nhóm chung tự động (Nhóm Hẻm Cảng) ----------
@@ -14060,29 +14078,71 @@
            viên đầu tiên (createdBy "system", admin quản lý qua web admin).
          - Doc đã có mà mình chưa ở trong members: tự ghi thêm mình vào
            members (arrayUnion, không trùng) + memberNames.
-         Mọi lỗi (mất mạng / rules chưa cho người chơi tự tạo nhóm hoặc
-         tự tham gia) đều nuốt im lặng: nhóm vẫn hiện trong danh sách,
-         mở ra xem được phần đã tải; nếu rules chặn thì cần cập nhật
-         rules Firestore riêng cho doc nhóm chung này. */
+         SỬA LỖI "nhóm chung chưa hoạt động được": bản cũ phải get() đọc
+         doc nhóm TRƯỚC rồi mới ghi tên mình vào members được — nhưng
+         người chưa là thành viên thường không có quyền ĐỌC doc nhóm,
+         get() bị từ chối là toàn bộ bước tham gia chết theo, lỗi lại bị
+         nuốt im lặng nên người chơi không bao giờ vào được nhóm (không
+         đọc được tin, gửi tin cũng bị chặn vì chưa là thành viên).
+         Nay ensureCommonGroup:
+         - Trả về Promise và nhớ trạng thái đã vào nhóm (commonJoinedUid)
+           để mở nhóm / gửi tin / tải tin lỗi đều gọi lại được.
+         - Đường chính vẫn là get() → tạo mới hoặc update arrayUnion.
+         - Đường dự phòng khi đường chính lỗi BẤT KỲ bước nào: ghi thẳng
+           set(..., {merge:true}) với members arrayUnion + memberNames
+           lồng nhau — KHÔNG cần đọc doc trước, doc chưa có thì tự tạo,
+           đã có thì chỉ thêm mình vào, không đụng lastMessage/createdAt
+           của nhóm đang chạy.
+         - Lỗi sau cả 2 đường thì LƯU mã lỗi (commonJoinErr) để hiện rõ
+           lên màn hình thay vì nuốt im lặng như trước. */
+      var commonJoinedUid = "";
+      var commonJoinErr = "";
+      var commonJoinPromise = null;
       function ensureCommonGroup() {
-        if (!db || !me) return;
+        if (!db || !me) return Promise.resolve(false);
+        if (commonJoinedUid === me.uid) return Promise.resolve(true);
+        if (commonJoinPromise) return commonJoinPromise;
         var ref = db.collection("groups").doc(COMMON_GROUP_ID);
-        ref.get().then(function (snap) {
+        var myUid = me.uid, myNm = myName();
+        function blindJoin() {
+          var names = {}; names[myUid] = myNm;
+          return ref.set({
+            name: COMMON_GROUP_NAME, common: true,
+            members: firebase.firestore.FieldValue.arrayUnion(myUid),
+            memberNames: names
+          }, { merge: true });
+        }
+        commonJoinPromise = ref.get().then(function (snap) {
           if (!snap.exists) {
-            var names = {}; names[me.uid] = myName();
+            var names = {}; names[myUid] = myNm;
             return ref.set({
-              name: COMMON_GROUP_NAME, members: [me.uid], memberNames: names,
+              name: COMMON_GROUP_NAME, members: [myUid], memberNames: names,
               createdBy: "system", common: true,
               createdAt: ts(), updatedAt: ts(), lastMessage: ""
             });
           }
           var d = snap.data() || {};
           var members = d.members || [];
-          if (members.indexOf(me.uid) >= 0) return null;
-          var upd = { members: firebase.firestore.FieldValue.arrayUnion(me.uid) };
-          upd["memberNames." + me.uid] = myName();
-          return ref.update(upd);
-        }).catch(function () { /* lỗi quyền/mạng: bỏ qua, listener nhóm sẽ tự cập nhật khi được */ });
+          if (members.indexOf(myUid) >= 0) return null;
+          var upd = { members: firebase.firestore.FieldValue.arrayUnion(myUid) };
+          upd["memberNames." + myUid] = myNm;
+          return ref.update(upd).catch(function () { return blindJoin(); });
+        }).catch(function () {
+          /* get() bị chặn (chưa là thành viên nên không đọc được doc
+             nhóm) hoặc tạo/cập nhật lỗi: thử đường ghi thẳng không cần
+             đọc — đây là lối thoát khỏi vòng luẩn quẩn đọc–tham gia. */
+          return blindJoin();
+        }).then(function () {
+          commonJoinedUid = myUid; commonJoinErr = "";
+          commonJoinPromise = null;
+          return true;
+        }, function (err) {
+          commonJoinErr = (err && err.code) || "không rõ";
+          commonJoinPromise = null;
+          if (window.console) console.warn("[Tin nhắn] Tự tham gia Nhóm Hẻm Cảng thất bại, mã lỗi:", commonJoinErr, err);
+          return false;
+        });
+        return commonJoinPromise;
       }
 
       /* ---------- Danh sách hội thoại ---------- */
@@ -14129,7 +14189,10 @@
         var gt = document.createElement("div"); gt.className = "msg-sec-title"; gt.textContent = "Nhóm chung"; host.appendChild(gt);
         host.appendChild(convoItem({
           ava: "N", title: COMMON_GROUP_NAME,
-          preview: cg && cg.lastMessage ? cg.lastMessage : "Nhóm chung của cả hẻm — admin quản lý nhóm",
+          preview: cg && cg.lastMessage ? cg.lastMessage
+            : (commonJoinErr && commonJoinedUid !== (me && me.uid)
+              ? "Chưa vào được nhóm (mã lỗi: " + commonJoinErr + ") — bấm vào để thử vào lại"
+              : "Nhóm chung của cả hẻm — admin quản lý nhóm"),
           on: cur && cur.kind === "group" && cur.id === COMMON_GROUP_ID,
           onClick: function () { openGroupConvo(COMMON_GROUP_ID); }
         }));
@@ -14194,6 +14257,7 @@
         });
       }
 
+      var watchRetryFor = "";   /* convoId đã tự thử tải lại 1 lần sau khi tham gia nhóm lại */
       function watchMsgs(ref) {
         if (unsubMsgs) { try { unsubMsgs(); } catch (e) {} unsubMsgs = null; }
         msgDocsCache = [];
@@ -14208,8 +14272,26 @@
             msgDocsCache.forEach(function (it) { if (it.data.sender) uids.push(it.data.sender); });
             fetchSenderProfiles(uids);
           }
-        }, function () {
-          host.innerHTML = '<p class="msg-empty">Không tải được tin nhắn. Kiểm tra mạng rồi mở lại hội thoại nhé.</p>';
+        }, function (err) {
+          var code = (err && err.code) || "không rõ";
+          if (window.console) console.warn("[Tin nhắn] Tải tin nhắn lỗi, mã lỗi:", code, err);
+          /* Đang ở trong nhóm mà tải tin lỗi (hay gặp nhất: bước tự
+             tham gia nhóm lúc đăng nhập chưa xong hoặc vừa bị lỗi):
+             tự tham gia lại rồi tự tải lại tin MỘT lần, khỏi bắt người
+             chơi đóng mở app. */
+          if (cur && cur.kind === "group" && watchRetryFor !== cur.id) {
+            watchRetryFor = cur.id;
+            var retryId = cur.id;
+            host.innerHTML = '<p class="msg-empty">Đang vào Nhóm Hẻm Cảng…</p>';
+            ensureCommonGroup().then(function () {
+              if (cur && cur.kind === "group" && cur.id === retryId) {
+                watchMsgs(db.collection("groups").doc(retryId).collection("messages"));
+              }
+            });
+            return;
+          }
+          host.innerHTML = '<p class="msg-empty">Không tải được tin nhắn (mã lỗi: ' + esc(code) + '). Kiểm tra mạng rồi mở lại hội thoại nhé.' +
+            (cur && cur.kind === "group" && commonJoinErr ? ' Chưa vào được nhóm (mã lỗi: ' + esc(commonJoinErr) + ') — báo admin kiểm tra luật dữ liệu của nhóm nhé.' : '') + '</p>';
         });
       }
       function openAdminConvo() {
@@ -14257,6 +14339,12 @@
         closePanel();
         renderConvoList();
         setComposerEnabled(true);
+        /* Mở nhóm là bảo đảm mình đã ở trong nhóm trước đã (nhóm chung
+           thì gọi ensure — bước tham gia lúc đăng nhập có thể đã lỗi
+           mạng/quyền tạm thời), xong mới nghe tin; nghe tin mà vẫn lỗi
+           thì watchMsgs tự tham gia lại + tải lại một lần nữa. */
+        watchRetryFor = "";
+        if (isCommon) { ensureCommonGroup(); }
         watchMsgs(db.collection("groups").doc(gid).collection("messages"));
       }
 
@@ -14359,9 +14447,20 @@
         }
         payload.senderName = myName();
         payload.createdAt = ts();
-        return colRef.add(payload).then(function () {
-          return parentRef.set(parentData, { merge: true }).catch(function () {});
-        });
+        function doAdd() {
+          return colRef.add(payload).then(function () {
+            return parentRef.set(parentData, { merge: true }).catch(function () {});
+          });
+        }
+        /* Gửi tin trong nhóm: bảo đảm mình đã là thành viên TRƯỚC khi
+           ghi tin — chưa là thành viên thì máy chủ chặn ghi tin, đó là
+           một nửa lý do "nhóm chưa hoạt động được" (vào nhóm lỗi im
+           lặng lúc mở app, đến lúc gửi mới biết). Tham gia lại mà vẫn
+           lỗi thì cứ thử gửi: lỗi thật (kèm mã) sẽ hiện ở doSend. */
+        if (cur.kind === "group") {
+          return ensureCommonGroup().then(doAdd, doAdd);
+        }
+        return doAdd();
       }
 
       function doSend() {
@@ -14377,7 +14476,10 @@
           if (type === "bug") setStatus("Đã gửi báo lỗi cho admin. Admin sẽ xem và trả lời ngay trong đoạn chat này.");
         }).catch(function (err) {
           if (err && (err.message === "blocked" || err.message === "no-convo" || err.message === "chat-blocked")) return; /* dòng trạng thái cụ thể đã hiện ở sendPayload */
-          setStatus("Gửi chưa được — kiểm tra mạng rồi bấm Gửi lại nhé.", true);
+          var code = (err && err.code) || "";
+          if (window.console) console.warn("[Tin nhắn] Gửi tin lỗi:", code || (err && err.message), err);
+          setStatus("Gửi chưa được" + (code ? " (mã lỗi: " + code + ")" : "") + " — kiểm tra mạng rồi bấm Gửi lại nhé." +
+            (code === "permission-denied" && commonJoinErr ? " Chưa vào được Nhóm Hẻm Cảng (mã lỗi: " + commonJoinErr + ") — báo admin kiểm tra luật dữ liệu của nhóm nhé." : ""), true);
         }).then(function () { btn.disabled = false; setComposerEnabled(true); inp.focus(); });
       }
 
