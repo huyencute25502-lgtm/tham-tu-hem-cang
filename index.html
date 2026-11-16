@@ -844,12 +844,12 @@
 
       /* ============ DESKTOP BLOOM + MÀN KHÓA + ĐĂNG NHẬP + 3 APP ============ */
       .screen{ background:#9fb8cf url("assets/img-e83ee530ff38.jpeg") center 58% / cover no-repeat; }
-      #reportView, #howtoView, #badgesView, #youtubeView, #dailyView{ display:none; margin:0 14px 16px 104px; position:relative; z-index:2;
+      #reportView, #howtoView, #badgesView, #youtubeView, #dailyView, #miniView{ display:none; margin:0 14px 16px 104px; position:relative; z-index:2;
         background:var(--bg); border:1px solid rgba(255,255,255,.1); border-top:none;
         border-radius:0 0 8px 8px; box-shadow:0 24px 54px rgba(0,0,0,.42); overflow:clip; }
-      @media (prefers-color-scheme: light){ #reportView, #howtoView, #badgesView, #youtubeView, #dailyView{ border-color:rgba(0,0,0,.1); } }
+      @media (prefers-color-scheme: light){ #reportView, #howtoView, #badgesView, #youtubeView, #dailyView, #miniView{ border-color:rgba(0,0,0,.1); } }
       body.on-desktop .os-bar{ display:none; }
-      body.in-case #homeView, body.in-case #reportView, body.in-case #howtoView, body.in-case #badgesView, body.in-case #youtubeView, body.in-case #dailyView{
+      body.in-case #homeView, body.in-case #reportView, body.in-case #howtoView, body.in-case #badgesView, body.in-case #youtubeView, body.in-case #dailyView, body.in-case #miniView{
         margin:0; border:none; border-radius:0; box-shadow:none;
         flex:1 1 auto; min-height:0; overflow-y:auto; overflow-x:hidden;
       }
@@ -943,7 +943,7 @@
       #loginView{ display:none; }
       body.locked #loginView{ display:flex; }
       body.locked .os-bar, body.locked .desktop-icons,
-      body.locked #homeView, body.locked #caseView, body.locked #reportView, body.locked #howtoView, body.locked #badgesView, body.locked #youtubeView, body.locked #dailyView{ display:none !important; }
+      body.locked #homeView, body.locked #caseView, body.locked #reportView, body.locked #howtoView, body.locked #badgesView, body.locked #youtubeView, body.locked #dailyView, body.locked #miniView{ display:none !important; }
       #loginView{
         position:relative; flex:1 1 auto; min-height:70vh; flex-direction:column;
         padding:30px 34px 22px; color:#fff; overflow:clip;
@@ -1127,7 +1127,7 @@
         #loginView{ padding:18px 14px 14px; min-height:64vh; }
         .lock-widgets{ grid-template-columns:1fr 1fr; }
         .lock-top-right{ top:10px; right:10px; }
-        #reportView, #howtoView, #badgesView, #youtubeView, #dailyView{ margin:0 8px 10px; }
+        #reportView, #howtoView, #badgesView, #youtubeView, #dailyView, #miniView{ margin:0 8px 10px; }
       }
 
       /* ============ KHUNG CỐ ĐỊNH FULL MÀN — DESKTOP WIN 11 TRỌN TRÌNH DUYỆT ============ */
@@ -1170,8 +1170,8 @@
       }
       body.on-desktop .os-bar{ display:none !important; }
       /* Các cửa sổ app: cùng một khung cố định, cuộn NỘI BỘ, không làm trang cuộn/tràn */
-      #homeView, #caseView, #reportView, #howtoView, #badgesView, #youtubeView, #dailyView,
-      body.in-case #homeView, body.in-case #caseView, body.in-case #reportView, body.in-case #howtoView, body.in-case #badgesView, body.in-case #youtubeView, body.in-case #dailyView{
+      #homeView, #caseView, #reportView, #howtoView, #badgesView, #youtubeView, #dailyView, #miniView,
+      body.in-case #homeView, body.in-case #caseView, body.in-case #reportView, body.in-case #howtoView, body.in-case #badgesView, body.in-case #youtubeView, body.in-case #dailyView, body.in-case #miniView{
         flex:1 1 auto !important; min-height:0 !important;
         margin:0 14px 14px 104px; border:1px solid rgba(255,255,255,.1); border-top:none;
         border-radius:0 0 8px 8px; box-shadow:0 24px 54px rgba(0,0,0,.42);
@@ -1179,11 +1179,11 @@
         overscroll-behavior:contain;
       }
       @media (prefers-color-scheme: light){
-        #homeView, #caseView, #reportView, #howtoView, #badgesView, #youtubeView, #dailyView,
-        body.in-case #homeView, body.in-case #caseView, body.in-case #reportView, body.in-case #howtoView, body.in-case #badgesView, body.in-case #youtubeView, body.in-case #dailyView{ border-color:rgba(0,0,0,.1); }
+        #homeView, #caseView, #reportView, #howtoView, #badgesView, #youtubeView, #dailyView, #miniView,
+        body.in-case #homeView, body.in-case #caseView, body.in-case #reportView, body.in-case #howtoView, body.in-case #badgesView, body.in-case #youtubeView, body.in-case #dailyView, body.in-case #miniView{ border-color:rgba(0,0,0,.1); }
       }
       /* Khi đang ở desktop trống (chưa mở app) không có cửa sổ nào chiếm khung */
-      body.on-desktop #homeView, body.on-desktop #caseView, body.on-desktop #reportView, body.on-desktop #howtoView, body.on-desktop #badgesView, body.on-desktop #youtubeView, body.on-desktop #dailyView{ display:none !important; }
+      body.on-desktop #homeView, body.on-desktop #caseView, body.on-desktop #reportView, body.on-desktop #howtoView, body.on-desktop #badgesView, body.on-desktop #youtubeView, body.on-desktop #dailyView, body.on-desktop #miniView{ display:none !important; }
       body.on-desktop .taskbar{ margin-top:auto; }
       /* ===== 3 MÀN = 1 KHUNG DUY NHẤT =====
          Màn khóa, màn đăng nhập PIN và desktop Win 11 đều là nội dung BÊN TRONG
@@ -1216,8 +1216,8 @@
       @media (max-width:760px){
         .desktop-icons, body.in-case .desktop-icons{ display:none !important; }
         .os-bar, body.in-case .os-bar{ margin:8px 8px 0; }
-        #homeView, #caseView, #reportView, #howtoView, #badgesView, #youtubeView, #dailyView,
-        body.in-case #homeView, body.in-case #caseView, body.in-case #reportView, body.in-case #howtoView, body.in-case #badgesView, body.in-case #youtubeView, body.in-case #dailyView{
+        #homeView, #caseView, #reportView, #howtoView, #badgesView, #youtubeView, #dailyView, #miniView,
+        body.in-case #homeView, body.in-case #caseView, body.in-case #reportView, body.in-case #howtoView, body.in-case #badgesView, body.in-case #youtubeView, body.in-case #dailyView, body.in-case #miniView{
           margin:0 8px 10px;
         }
         #loginView{ min-height:0 !important; padding:18px 14px 14px; }
@@ -1339,7 +1339,7 @@
       html[data-theme="light"] .sm-app{ color:#1c1c1c; }
       html[data-theme="light"] .sm-foot{ background:rgba(0,0,0,.045); border-top-color:rgba(0,0,0,.06); }
       html[data-theme="light"] .sm-power{ color:#333; }
-      html[data-theme="light"] #homeView, html[data-theme="light"] #caseView, html[data-theme="light"] #reportView, html[data-theme="light"] #howtoView, html[data-theme="light"] #badgesView, html[data-theme="light"] #youtubeView, html[data-theme="light"] #settingsView, html[data-theme="light"] #dailyView{ border-color:rgba(0,0,0,.1); }
+      html[data-theme="light"] #homeView, html[data-theme="light"] #caseView, html[data-theme="light"] #reportView, html[data-theme="light"] #howtoView, html[data-theme="light"] #badgesView, html[data-theme="light"] #youtubeView, html[data-theme="light"] #settingsView, html[data-theme="light"] #dailyView, html[data-theme="light"] #miniView{ border-color:rgba(0,0,0,.1); }
       html[data-theme="dark"] .os-bar{ background:rgba(32,32,32,.88); color:#e8eaee; border-color:rgba(255,255,255,.1); }
       html[data-theme="dark"] .os-app{ color:#f2f3f5; }
       html[data-theme="dark"] .os-addr{ background:rgba(255,255,255,.09); border-color:rgba(255,255,255,.07); color:#aeb9c8; }
@@ -1356,7 +1356,7 @@
       html[data-theme="dark"] .sm-app{ color:#eef1f5; }
       html[data-theme="dark"] .sm-foot{ background:rgba(0,0,0,.22); border-top-color:rgba(255,255,255,.07); }
       html[data-theme="dark"] .sm-power{ color:#dfe5ee; }
-      html[data-theme="dark"] #homeView, html[data-theme="dark"] #caseView, html[data-theme="dark"] #reportView, html[data-theme="dark"] #howtoView, html[data-theme="dark"] #badgesView, html[data-theme="dark"] #youtubeView, html[data-theme="dark"] #settingsView, html[data-theme="dark"] #dailyView{ border-color:rgba(255,255,255,.1); }
+      html[data-theme="dark"] #homeView, html[data-theme="dark"] #caseView, html[data-theme="dark"] #reportView, html[data-theme="dark"] #howtoView, html[data-theme="dark"] #badgesView, html[data-theme="dark"] #youtubeView, html[data-theme="dark"] #settingsView, html[data-theme="dark"] #dailyView, html[data-theme="dark"] #miniView{ border-color:rgba(255,255,255,.1); }
       /* ================= MÁY TÍNH NÀY + THÙNG RÁC (app thật) ================= */
       #pcView, #trashView{ display:none; margin:0 14px 14px 104px; position:relative; z-index:2;
         background:var(--bg); border:1px solid rgba(255,255,255,.1); border-top:none;
@@ -1893,6 +1893,82 @@
       .share-box canvas{ width:100%; height:auto; border-radius:10px; box-shadow:0 24px 60px rgba(0,0,0,.55); display:block; }
       .share-actions{ display:flex; flex-wrap:wrap; gap:10px; justify-content:center; margin-top:14px; }
       .share-actions .modal-btn{ flex:1 1 150px; }
+
+      /* ================= MINI GAME HẺM ================= */
+      .mg-menu{ display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:14px; }
+      .mg-card{ text-align:left; border:1px solid var(--line, rgba(128,128,128,.28)); border-radius:12px; padding:18px;
+        background:rgba(127,127,127,.05); color:var(--ink); font:inherit; cursor:pointer; display:flex; flex-direction:column; gap:6px; }
+      .mg-card:hover{ border-color:rgba(232,163,61,.65); background:rgba(232,163,61,.07); }
+      .mg-card .mg-ic{ width:48px; height:48px; border-radius:12px; display:grid; place-items:center; color:#e8a33d;
+        border:1px solid rgba(232,163,61,.45); background:rgba(232,163,61,.1); }
+      .mg-card b{ font-size:17px; }
+      .mg-card p{ margin:0; font-size:13.5px; line-height:1.5; color:var(--ink-dim); }
+      .mg-card .mg-best{ margin-top:auto; font-size:13px; font-weight:700; color:#b97a17; }
+      .mg-card .mg-won{ font-size:12px; font-weight:800; color:#3d9e57; }
+      html[data-theme="dark"] .mg-card .mg-best{ color:#f5c877; }
+      @media (prefers-color-scheme: dark){ .mg-card .mg-best{ color:#f5c877; } }
+      .mg-hud{ display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin:0 0 14px; }
+      .mg-hud .pill b{ font-variant-numeric:tabular-nums; }
+      .mg-hud .mg-time b{ color:#b97a17; }
+      .mg-hud .mg-time.low b{ color:#c62f1e; }
+      .mg-actions{ display:flex; flex-wrap:wrap; gap:10px; margin-top:16px; }
+      .mg-btn-ghost{ background:transparent; color:var(--ink); border:1px solid var(--line, rgba(128,128,128,.4)); font-weight:700;
+        border-radius:10px; padding:8px 16px; font:inherit; cursor:pointer; }
+      .mg-btn-ghost:hover{ border-color:rgba(232,163,61,.65); }
+      .mg-note{ font-size:14px; line-height:1.55; color:var(--ink-dim); margin:0 0 14px; max-width:640px; }
+      .mg-result{ border:1px solid rgba(87,176,106,.5); border-radius:12px; padding:16px 18px; background:rgba(87,176,106,.08); margin:0 0 6px; }
+      .mg-result h4{ margin:0 0 6px; font-size:18px; }
+      .mg-result p{ margin:0 0 6px; line-height:1.55; }
+      /* Lật thẻ trí nhớ */
+      .mg-mem-grid{ display:grid; grid-template-columns:repeat(4, minmax(0,1fr)); gap:10px; max-width:520px; }
+      .mg-mem-card{ aspect-ratio:3/3.4; border-radius:12px; border:1px solid rgba(128,128,128,.35); cursor:pointer; padding:0;
+        background:linear-gradient(160deg, #2c3e55, #1b2839); color:#f5c877; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:5px;
+        font:inherit; transition:transform .18s ease, background .18s ease; }
+      .mg-mem-card .mg-mem-back{ font-size:26px; font-weight:800; opacity:.85; }
+      .mg-mem-card .mg-mem-face{ display:none; flex-direction:column; align-items:center; gap:5px; }
+      .mg-mem-card .mg-mem-face small{ font-size:11.5px; color:var(--ink-dim); font-weight:700; }
+      .mg-mem-card.open{ background:rgba(232,163,61,.12); border-color:rgba(232,163,61,.6); color:#e8a33d; cursor:default; }
+      .mg-mem-card.open .mg-mem-back{ display:none; }
+      .mg-mem-card.open .mg-mem-face{ display:flex; }
+      .mg-mem-card.matched{ background:rgba(87,176,106,.14); border-color:rgba(87,176,106,.65); color:#3d9e57; }
+      /* Ai nói dối? */
+      .mg-scene{ border:1px solid rgba(192,124,29,.45); border-radius:12px; padding:16px 18px; margin:0 0 14px;
+        background:linear-gradient(160deg, rgba(192,124,29,.09), rgba(127,127,127,.04)); line-height:1.6; font-size:15px; }
+      .mg-claims{ display:flex; flex-direction:column; gap:9px; }
+      .mg-claim{ text-align:left; border:1px solid var(--line, rgba(128,128,128,.3)); border-radius:10px; padding:12px 14px;
+        background:rgba(127,127,127,.05); color:var(--ink); font:inherit; cursor:pointer; line-height:1.55; }
+      .mg-claim b{ display:block; font-size:14.5px; margin-bottom:2px; }
+      .mg-claim span{ font-size:14px; color:var(--ink-dim); }
+      .mg-claim:hover:not(:disabled){ border-color:rgba(232,163,61,.65); }
+      .mg-claim:disabled{ cursor:default; opacity:.85; }
+      .mg-claim.lie{ border-color:rgba(198,47,30,.75); background:rgba(198,47,30,.1); opacity:1; }
+      .mg-claim.truth{ border-color:rgba(87,176,106,.6); background:rgba(87,176,106,.07); }
+      .mg-explain{ border:1px solid var(--line, rgba(128,128,128,.3)); border-radius:10px; padding:13px 15px; margin-top:14px; line-height:1.6; font-size:14.5px; background:rgba(127,127,127,.05); }
+      .mg-explain b{ display:block; margin-bottom:3px; }
+      /* Tìm điểm khác nhau */
+      .mg-spot-wrap{ display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+      .mg-spot-fig{ margin:0; }
+      .mg-spot-fig figcaption{ font-size:13px; font-weight:700; color:var(--ink-dim); margin:0 0 6px; }
+      .mg-spot-fig svg{ width:100%; height:auto; display:block; border-radius:10px; border:1px solid rgba(128,128,128,.3); }
+      .mg-spot-fig .hot{ fill:rgba(255,255,255,0); stroke:none; cursor:pointer; }
+      .mg-spot-fig .found-ring{ fill:none; stroke:#e33; stroke-width:2.6; pointer-events:none; }
+      @media (max-width:640px){ .mg-spot-wrap{ grid-template-columns:1fr; } }
+      /* Giải mã mật thư */
+      .mg-cipher-text{ font-family:ui-monospace, "Cascadia Mono", Consolas, monospace; font-size:clamp(17px, 3.4vw, 23px); font-weight:700;
+        letter-spacing:.14em; line-height:1.7; border:1px dashed rgba(192,124,29,.55); border-radius:12px; padding:18px; margin:0 0 14px;
+        background:rgba(192,124,29,.06); overflow-wrap:break-word; }
+      .mg-cipher-row{ display:flex; flex-wrap:wrap; gap:10px; }
+      .mg-cipher-input{ flex:1 1 260px; box-sizing:border-box; border:1px solid var(--line, rgba(128,128,128,.35)); border-radius:10px;
+        background:rgba(127,127,127,.06); color:var(--ink); font:inherit; font-size:16px; padding:11px 14px; text-transform:uppercase; }
+      .mg-cipher-input:focus{ outline:2px solid rgba(192,124,29,.55); outline-offset:1px; }
+      .mg-cipher-msg{ min-height:22px; font-size:14px; font-weight:700; margin:10px 0 0; }
+      .mg-cipher-msg.bad{ color:#c62f1e; }
+      .mg-cipher-msg.good{ color:#3d9e57; }
+      .mg-alpha{ margin-top:14px; border:1px solid var(--line, rgba(128,128,128,.3)); border-radius:10px; padding:12px 14px; overflow-x:auto; }
+      .mg-alpha table{ border-collapse:collapse; font-family:ui-monospace, Consolas, monospace; font-size:14px; }
+      .mg-alpha td{ padding:3px 5px; text-align:center; min-width:20px; }
+      .mg-alpha tr:first-child td{ color:var(--ink-dim); font-weight:700; }
+      .mg-alpha tr:last-child td{ color:#b97a17; font-weight:800; }
     </style>
   </head>
   <body class="locked on-desktop">
@@ -2037,6 +2113,7 @@
               <button type="button" class="d-icon" data-app="thispc" style="background:none;border:none;font-family:inherit;cursor:pointer;left:14px;top:536px"><span class="d-glyph" style="color:#7cc4ff"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="4" width="19" height="12.5" rx="1.6"/><path d="M9.5 20.5h5M12 16.5v4"/></svg></span><span>Máy tính này</span></button>
               <button type="button" class="d-icon" data-app="trash" style="background:none;border:none;font-family:inherit;cursor:pointer;left:14px;top:640px"><span class="d-glyph" style="color:#d7dee9"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 6.5h15M9.5 6V4.2A1.2 1.2 0 0 1 10.7 3h2.6a1.2 1.2 0 0 1 1.2 1.2V6M6.5 6.5l1 13a1.6 1.6 0 0 0 1.6 1.5h5.8a1.6 1.6 0 0 0 1.6-1.5l1-13M10 10.5v6M14 10.5v6"/></svg></span><span>Thùng rác</span><span class="d-badge" id="trashBadge" hidden>0</span></button>
               <button type="button" class="d-icon" data-app="daily" style="background:none;border:none;font-family:inherit;cursor:pointer;left:14px;top:744px"><span class="d-glyph" style="color:#e8a33d"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/><path d="m9.2 16.2 2 2 3.6-3.8"/></svg></span><span>Vụ án hôm nay</span></button>
+              <button type="button" class="d-icon" data-app="minigames" style="background:none;border:none;font-family:inherit;cursor:pointer;left:14px;top:848px"><span class="d-glyph" style="color:#57e6c9"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="7" width="19" height="11" rx="5.5"/><path d="M7.5 11v3M6 12.5h3"/><circle cx="15.8" cy="11.3" r="1.05" fill="currentColor" stroke="none"/><circle cx="18" cy="14" r="1.05" fill="currentColor" stroke="none"/></svg></span><span>Mini game hẻm</span></button>
             </div>
             <div class="os-bar" aria-hidden="true">
               <span class="os-dots"><i></i><i></i><i></i></span>
@@ -2062,11 +2139,11 @@
             </div>
             <div class="profile-main">
               <div class="rank-line">
-                <span class="rank-name" id="rankName">Thám tử tập sự</span>
+                <span class="rank-name" id="rankName">Thám tử Tập sự</span>
                 <span class="rep"><span id="repPoints">0</span> danh tiếng</span>
               </div>
               <div class="bar"><i id="rankBar" style="width:0%"></i></div>
-              <div class="next-rank" id="nextRank">Còn 200 điểm để thành Thám tử hẻm nhỏ</div>
+              <div class="next-rank" id="nextRank">Còn 150 điểm để thành Thám tử Hẻm Nhỏ</div>
             </div>
             <div class="profile-stats">
               <div class="stat"><b id="statSolved">0/18</b><span>VỤ ĐÃ PHÁ</span></div>
@@ -2195,7 +2272,7 @@
           </div>
           <div class="case-meta">
             <span class="pill">Đã đạt: <b id="badgeCount">0/10 huy hiệu</b></span>
-            <span class="pill">Cấp bậc: <b id="badgesRank">Thám tử tập sự</b></span>
+            <span class="pill">Cấp bậc: <b id="badgesRank">Thám tử Tập sự</b></span>
             <span class="pill">Danh tiếng: <b id="badgesRep">0</b></span>
           </div>
         </div>
@@ -2225,6 +2302,24 @@
           </div>
         </div>
         <section class="pane" id="dailyPane"></section>
+      </div>
+    </div>
+
+    <!-- ================= APP MINI GAME HẺM ================= -->
+    <div id="miniView">
+      <div class="case-shell">
+        <div class="case-head">
+          <span class="app-ic" style="color:#57e6c9"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="7" width="19" height="11" rx="5.5"/><path d="M7.5 11v3M6 12.5h3"/><circle cx="15.8" cy="11.3" r="1.05" fill="currentColor" stroke="none"/><circle cx="18" cy="14" r="1.05" fill="currentColor" stroke="none"/></svg></span>
+          <div class="case-head-main">
+            <h2>Mini game hẻm</h2>
+            <p class="app-desc">Bốn trò chơi nhanh 30–60 giây để luyện mắt thám tử — thắng một ván được cộng 5 điểm danh tiếng. Thắng đủ cả 4 trò ít nhất một lần để nhận huy hiệu “Vua trò chơi”.</p>
+          </div>
+          <div class="case-meta">
+            <span class="pill">Đã thắng: <b id="miniWonPill">0/4 trò</b></span>
+            <span class="pill">Danh tiếng: <b id="miniRep">0</b></span>
+          </div>
+        </div>
+        <section class="pane" id="miniPane"></section>
       </div>
     </div>
 
@@ -2286,7 +2381,7 @@
         <aside class="set-side">
           <div class="set-user">
             <div class="avatar js-det-avatar" aria-hidden="true"></div>
-            <div><b class="js-det-name">Thám tử Hẻm Cảng</b><span id="setUserRank">Thám tử</span></div>
+            <div><b class="js-det-name">Thám tử Hẻm Cảng</b><span id="setUserRank">Thám tử Tập sự</span></div>
           </div>
           <button type="button" class="set-nav-btn" data-setpane="profile"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4.5 20.5c1.2-3.6 4-5.2 7.5-5.2s6.3 1.6 7.5 5.2"/></svg>Thông tin thám tử</button>
           <button type="button" class="set-nav-btn" data-setpane="wallpaper"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="15" rx="2"/><circle cx="9" cy="10" r="1.7"/><path d="m4.5 18 5-5 3.5 3.5L17 12l2.5 2.6"/></svg>Hình nền</button>
@@ -2496,6 +2591,7 @@
         <button type="button" class="sm-app" data-go="howto"><span class="sm-ic" style="color:#c4b5fd"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5v14Z"/><path d="M4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5"/><path d="M9 7h7M9 11h5"/></svg></span>Cách phá án</button>
         <button type="button" class="sm-app" data-go="badges"><span class="sm-ic" style="color:#e8a33d"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9" r="5.5"/><path d="M8.8 13.5 7 21l5-2.6L17 21l-1.8-7.5"/></svg></span>Huy hiệu</button>
         <button type="button" class="sm-app" data-go="daily"><span class="sm-ic" style="color:#e8a33d"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/><path d="m9.2 16.2 2 2 3.6-3.8"/></svg></span>Vụ án hôm nay</button>
+        <button type="button" class="sm-app" data-go="minigames"><span class="sm-ic" style="color:#57e6c9"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="7" width="19" height="11" rx="5.5"/><path d="M7.5 11v3M6 12.5h3"/><circle cx="15.8" cy="11.3" r="1.05" fill="currentColor" stroke="none"/><circle cx="18" cy="14" r="1.05" fill="currentColor" stroke="none"/></svg></span>Mini game hẻm</button>
         <button type="button" class="sm-app" data-go="youtube"><span class="sm-ic" style="color:#f5c877"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="5" width="19" height="14" rx="3"/><path d="M10 9.2v5.6L15 12Z" fill="currentColor" stroke="none"/></svg></span>Xem video</button>
         <button type="button" class="sm-app" data-go="settings"><span class="sm-ic" style="color:#9fb0c3"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3.2"/><path d="M19.4 13.6a7.9 7.9 0 0 0 0-3.2l2-1.5-2-3.4-2.3 1a8 8 0 0 0-2.8-1.6L14 2.5h-4l-.3 2.4a8 8 0 0 0-2.8 1.6l-2.3-1-2 3.4 2 1.5a7.9 7.9 0 0 0 0 3.2l-2 1.5 2 3.4 2.3-1a8 8 0 0 0 2.8 1.6l.3 2.4h4l.3-2.4a8 8 0 0 0 2.8-1.6l2.3 1 2-3.4-2-1.5Z"/></svg></span>Cài đặt</button>
         <button type="button" class="sm-app" data-go="thispc"><span class="sm-ic" style="color:#7cc4ff"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="4" width="19" height="12.5" rx="1.6"/><path d="M9.5 20.5h5M12 16.5v4"/></svg></span>Máy tính này</button>
@@ -2589,11 +2685,16 @@
     <script>
     /* ==================== DỮ LIỆU VỤ ÁN (viết riêng cho game này) ==================== */
     const RANKS = [
-      { min: 0,    name: "Thám tử tập sự" },
-      { min: 200,  name: "Thám tử hẻm nhỏ" },
-      { min: 450,  name: "Thám tử khu phố" },
-      { min: 750,  name: "Thám tử bến cảng" },
-      { min: 1050, name: "Thám tử lừng danh" }
+      { min: 0,    name: "Thám tử Tập sự" },
+      { min: 150,  name: "Thám tử Hẻm Nhỏ" },
+      { min: 350,  name: "Thám tử Điều Tra" },
+      { min: 600,  name: "Thám tử Dày Dạn" },
+      { min: 900,  name: "Thám tử Trưởng" },
+      { min: 1250, name: "Thám tử Kỳ Cựu" },
+      { min: 1650, name: "Thám tử Tài Ba" },
+      { min: 2100, name: "Thám tử Lừng Danh" },
+      { min: 2700, name: "Thám tử Huyền Thoại" },
+      { min: 3400, name: "Bậc Thầy Phá Án" }
     ];
 
     const CASES = [
@@ -5644,7 +5745,8 @@
       { id: "b7", name: "Ca đêm ở VSIP", desc: "Phá cả 3 phần của series Ca đêm ở VSIP" },
       { id: "b8", name: "Điểm thi ở 171 Phan Đăng Lưu", desc: "Phá cả 3 phần của series Điểm thi ở 171 Phan Đăng Lưu" },
       { id: "b9", name: "Chuỗi 3 ngày", desc: "Phá Vụ án hôm nay 3 ngày liên tiếp" },
-      { id: "b10", name: "Chuỗi 7 ngày", desc: "Phá Vụ án hôm nay 7 ngày liên tiếp" }
+      { id: "b10", name: "Chuỗi 7 ngày", desc: "Phá Vụ án hôm nay 7 ngày liên tiếp" },
+      { id: "b11", name: "Vua trò chơi", desc: "Thắng đủ cả 4 trò trong app Mini game hẻm, mỗi trò ít nhất 1 lần" }
     ];
 
     /* ==================== TRẠNG THÁI GAME ==================== */
@@ -5961,11 +6063,23 @@
     })();
 
     function rankOf(rep) {
-      let cur = RANKS[0], next = null;
+      let cur = RANKS[0], next = null, idx = 0;
       for (let i = 0; i < RANKS.length; i++) {
-        if (rep >= RANKS[i].min) { cur = RANKS[i]; next = RANKS[i + 1] || null; }
+        if (rep >= RANKS[i].min) { cur = RANKS[i]; next = RANKS[i + 1] || null; idx = i; }
       }
-      return { cur, next };
+      return { cur, next, idx };
+    }
+
+    /* Lên cấp: khi điểm danh tiếng vừa tăng qua một mốc mới thì báo chúc
+       mừng qua chuông thông báo (toast) — ví dụ phá xong vụ đầu (~170
+       điểm) là lên Thám tử Hẻm Nhỏ ngay. Chỉ báo khi tăng điểm và cấp
+       mới cao hơn cấp trước; trừ điểm không bao giờ báo. */
+    function checkRankUp(oldRep, newRep) {
+      if (!(newRep > oldRep)) return;
+      const before = rankOf(oldRep), after = rankOf(newRep);
+      if (after.idx <= before.idx) return;
+      const newName = after.cur.name, pts = newRep;
+      setTimeout(() => toast("Lên cấp! Bạn đã trở thành " + newName, "Danh tiếng của bạn đã đạt " + pts + " điểm."), 700);
     }
 
     /* ==================== MÀN HÌNH CHÍNH ==================== */
@@ -5993,7 +6107,7 @@
         $("nextRank").textContent = "Còn " + (next.min - G.rep) + " điểm để thành " + next.name;
       } else {
         $("rankBar").style.width = "100%";
-        $("nextRank").textContent = "Đã đạt cấp cao nhất của hẻm Cảng";
+        $("nextRank").textContent = "Đã đạt cấp cao nhất — " + cur.name;
       }
       const solvedCount = Object.keys(G.solved).length;
       $("statSolved").textContent = solvedCount + "/" + CASES.length;
@@ -6142,6 +6256,8 @@
       $("badgesView").style.display = "none";
       $("youtubeView").style.display = "none";
       $("dailyView").style.display = "none";
+      $("miniView").style.display = "none";
+      if (typeof mgClearTimers === "function") mgClearTimers();
       $("settingsView").style.display = "none";
       $("pcView").style.display = "none";
       $("trashView").style.display = "none";
@@ -6311,6 +6427,729 @@
       renderDaily();
       syncTaskbar();
       window.scrollTo({ top: 0 });
+    }
+
+    /* ==================== MINI GAME HẺM ====================
+       App "Mini game hẻm": 4 trò chơi nhanh (Lật thẻ trí nhớ, Ai nói dối?,
+       Tìm điểm khác nhau, Giải mã mật thư). Thắng một ván cộng đúng 5 điểm
+       danh tiếng qua chuông thông báo (toast) như mọi lần cộng điểm khác.
+       Riêng Ai nói dối? và Giải mã mật thư cộng 5 điểm cho mỗi câu/thư giải
+       đúng ngay trong ván (đúng luật từng trò đã ghi trong app), còn Lật thẻ
+       và Tìm điểm khác nhau cộng 5 điểm khi hoàn thành ván. Kỷ lục tốt nhất
+       của từng trò + danh sách trò đã thắng lưu bền ở localStorage
+       (hem-cang-minigames-v1). Thắng đủ cả 4 trò ít nhất 1 lần -> huy hiệu
+       b11 "Vua trò chơi". Không đụng tới điểm/đáp án của 18 vụ và vụ ngày. */
+    var MINI_KEY = "hem-cang-minigames-v1";
+    var MG_GAMES = ["memory", "liar", "spot", "cipher"];
+    function loadMini() {
+      try { var o = JSON.parse(localStorage.getItem(MINI_KEY) || "{}"); return (o && typeof o === "object") ? o : {}; } catch (e) { return {}; }
+    }
+    function saveMini(st) {
+      try { localStorage.setItem(MINI_KEY, JSON.stringify(st)); } catch (e) { /* hết chỗ lưu: kỷ lục vẫn tính trong phiên đang mở */ }
+    }
+    /* Bộ hẹn giờ riêng của mini game: rời app / về menu / chơi lại là hủy hết
+       để đồng hồ của ván cũ không chạy chồng lên ván mới. */
+    var mgTimers = [];
+    function mgEvery(fn, ms) { var id = setInterval(fn, ms); mgTimers.push(id); return id; }
+    function mgAfter(fn, ms) { var id = setTimeout(fn, ms); mgTimers.push(id); return id; }
+    function mgClearTimers() { mgTimers.forEach(function (id) { clearInterval(id); clearTimeout(id); }); mgTimers = []; }
+
+    function openMini() {
+      G.currentApp = "minigames";
+      hideAllViews();
+      $("miniView").style.display = "block";
+      document.body.classList.remove("on-desktop");
+      document.body.classList.add("in-case");
+      setWinTitle("Mini game hẻm");
+      renderMiniMenu();
+      syncTaskbar();
+      window.scrollTo({ top: 0 });
+    }
+
+    /* Cộng đúng 5 điểm danh tiếng cho một lần thắng, báo qua chuông như thường lệ */
+    function mgAward5(sub) {
+      const repBeforeMg = G.rep;
+      G.rep += 5;
+      checkRankUp(repBeforeMg, G.rep);
+      toast("+5 điểm danh tiếng", sub);
+      sndSolve();
+      var rp = $("miniRep"); if (rp) rp.textContent = G.rep;
+    }
+    /* Ghi nhận một trò đã thắng: cập nhật kỷ lục nếu tốt hơn, kiểm tra huy hiệu b11 */
+    function mgRecordWin(gameId, best, isBetter) {
+      var st = loadMini();
+      if (!st.wins || typeof st.wins !== "object") st.wins = {};
+      if (!st.best || typeof st.best !== "object") st.best = {};
+      st.wins[gameId] = true;
+      if (best && (!st.best[gameId] || isBetter(st.best[gameId], best))) st.best[gameId] = best;
+      saveMini(st);
+      if (MG_GAMES.every(function (k) { return st.wins[k]; })) awardBadge("b11");
+    }
+    function mgBestText(gameId, st) {
+      var b = st.best && st.best[gameId];
+      if (!b) return "Chưa có kỷ lục — chơi ván đầu tiên nào!";
+      if (gameId === "memory") return "Kỷ lục: " + b.flips + " lượt lật · " + fmtDuration(b.secs);
+      if (gameId === "liar") return "Kỷ lục: đúng " + b.correct + "/10 câu";
+      if (gameId === "spot") return "Kỷ lục: tìm đủ 10 điểm trong " + fmtDuration(b.secs);
+      if (gameId === "cipher") return "Kỷ lục: giải " + (b.solved || 0) + "/5 thư" + (b.secs ? " · " + fmtDuration(b.secs) : "");
+      return "";
+    }
+    function mgSyncHead(st) {
+      st = st || loadMini();
+      var won = MG_GAMES.filter(function (k) { return st.wins && st.wins[k]; }).length;
+      var wp = $("miniWonPill"); if (wp) wp.textContent = won + "/4 trò";
+      var rp = $("miniRep"); if (rp) rp.textContent = G.rep;
+    }
+    function mgEl(tag, cls, text) {
+      var e = document.createElement(tag);
+      if (cls) e.className = cls;
+      if (text != null) e.textContent = text;
+      return e;
+    }
+    function mgNavButtons(onReplay) {
+      var row = mgEl("div", "mg-actions");
+      var rp = mgEl("button", "to-report-btn", "Chơi lại");
+      rp.type = "button"; rp.onclick = onReplay;
+      var bm = mgEl("button", "mg-btn-ghost", "← Về menu");
+      bm.type = "button"; bm.onclick = renderMiniMenu;
+      row.append(rp, bm);
+      return row;
+    }
+    function mgHud(items) {
+      var hud = mgEl("div", "mg-hud");
+      var spans = {};
+      items.forEach(function (it) {
+        var p = mgEl("span", "pill" + (it.cls ? " " + it.cls : ""));
+        p.append(document.createTextNode(it.label + " "));
+        var b = mgEl("b", null, it.value);
+        p.appendChild(b);
+        hud.appendChild(p);
+        spans[it.key] = b;
+      });
+      return { hud: hud, spans: spans };
+    }
+
+    function renderMiniMenu() {
+      mgClearTimers();
+      var pane = $("miniPane"); if (!pane) return;
+      var st = loadMini();
+      mgSyncHead(st);
+      pane.innerHTML = "";
+      var h = mgEl("h3", "pane-title", "Chọn một trò chơi");
+      var sub = mgEl("p", "pane-sub", "Mỗi trò chỉ tốn khoảng 30–60 giây. Thắng một ván được cộng 5 điểm danh tiếng — thắng đủ cả 4 trò ít nhất một lần để nhận huy hiệu “Vua trò chơi”.");
+      pane.append(h, sub);
+      var grid = mgEl("div", "mg-menu");
+      var defs = [
+        { id: "memory", name: "Lật thẻ trí nhớ", desc: "16 thẻ úp thành 8 cặp đồ nghề thám tử. Lật 2 thẻ giống nhau để giữ mở — lật hết 8 cặp là thắng, càng ít lượt lật càng giỏi.",
+          icon: '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="8" height="10" rx="2"/><rect x="13" y="4" width="8" height="10" rx="2"/><rect x="3" y="16" width="8" height="5" rx="2"/><rect x="13" y="16" width="8" height="5" rx="2"/></svg>', start: mgStartMemory },
+        { id: "liar", name: "Ai nói dối?", desc: "Mỗi vòng một tình huống ở Hẻm Cảng kèm 3 lời khai — đúng 1 lời nói dối mâu thuẫn với tình huống. Chỉ ra lời nói dối trong 30 giây, chơi 10 vòng, đúng từ 6 vòng là thắng ván.",
+          icon: '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-8 8H4l2.3-2.9A8 8 0 1 1 21 12Z"/><path d="M9.5 9.8 14.5 14M14.5 9.8 9.5 14"/></svg>', start: mgStartLiar },
+        { id: "spot", name: "Tìm điểm khác nhau", desc: "Hai hình hiện trường gần giống hệt nhau, mỗi cảnh có 5 điểm khác. Bấm vào điểm khác trên một trong hai hình để đánh dấu — tìm đủ cả 2 cảnh là thắng.",
+          icon: '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.3 15.3 21 21"/><path d="M8 10.5h5M10.5 8v5" opacity=".55"/></svg>', start: mgStartSpot },
+        { id: "cipher", name: "Giải mã mật thư", desc: "5 bức thư ngắn bị mã hóa bằng mật mã Caesar (dịch chữ cái theo khóa cho sẵn), mỗi thư 60 giây. Gõ lại nội dung đã giải mã — giải đúng mỗi thư được cộng 5 điểm.",
+          icon: '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4.5" y="10" width="15" height="10" rx="2"/><path d="M8 10V7.5a4 4 0 0 1 7.8-1.3"/><circle cx="12" cy="15" r="1.6"/><path d="M12 16.6v1.6"/></svg>', start: mgStartCipher }
+      ];
+      defs.forEach(function (d) {
+        var card = mgEl("button", "mg-card");
+        card.type = "button";
+        var ic = mgEl("span", "mg-ic"); ic.innerHTML = d.icon;
+        var b = mgEl("b", null, d.name);
+        var p = mgEl("p", null, d.desc);
+        var best = mgEl("span", "mg-best", mgBestText(d.id, st));
+        card.append(ic, b, p, best);
+        if (st.wins && st.wins[d.id]) card.appendChild(mgEl("span", "mg-won", "Đã thắng ✓"));
+        card.onclick = d.start;
+        grid.appendChild(card);
+      });
+      pane.appendChild(grid);
+    }
+
+    /* ---------- Trò 1: Lật thẻ trí nhớ ---------- */
+    var MG_MEM_SYMBOLS = [
+      { id: "van-tay", name: "Dấu vân tay", svg: '<svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M12 11.5a2.6 2.6 0 0 1 2.6 2.6c0 2.2-.3 4.3-1 6.2M9.4 14.1c0 3-.4 5.4-1.3 7.4M6.9 10.6a7.5 7.5 0 0 1 13.5 2.8c.4 2.9.2 5.7-.6 8.4M4.6 8.4a10 10 0 0 1 3-3.6M17.5 14.2c0 2.6-.3 5-1 7.3"/></svg>' },
+      { id: "chia-khoa", name: "Chìa khóa", svg: '<svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="15.5" r="4.5"/><path d="M11.3 12.3 20 3.6M16.5 7l3 3M13.8 9.7l2.4 2.4"/></svg>' },
+      { id: "phong-bi", name: "Phong bì thư", svg: '<svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5.5" width="18" height="13" rx="2"/><path d="m3.5 7 8.5 6.5L20.5 7"/></svg>' },
+      { id: "kinh-lup", name: "Kính lúp", svg: '<svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.3 15.3 21 21"/></svg>' },
+      { id: "may-anh", name: "Máy ảnh", svg: '<svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-2.5h6L17 8h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1Z"/><circle cx="12" cy="13.5" r="3.6"/></svg>' },
+      { id: "den-pin", name: "Đèn pin", svg: '<svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h6l1 5H8L9 3ZM10.5 8v11a1.5 1.5 0 0 0 3 0V8M5 5.5 3.5 4M19 5.5 20.5 4M12 1.8V.8" transform="translate(0 1.5)"/></svg>' },
+      { id: "dau-chan", name: "Dấu chân", svg: '<svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="10" cy="14.5" rx="3.4" ry="4.6" transform="rotate(-12 10 14.5)"/><circle cx="6.4" cy="7.6" r="1.25"/><circle cx="9.6" cy="6.4" r="1.25"/><circle cx="12.8" cy="6.6" r="1.25"/><circle cx="15.4" cy="8.2" r="1.15"/></svg>' },
+      { id: "cong-tay", name: "Còng tay", svg: '<svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="8" cy="15" r="4.6"/><circle cx="16.5" cy="15" r="4.6"/><path d="M12 6.5c0 2 1 3 2.3 3.9M12 6.5c0 2-1 3-2.3 3.9M12 4.8v1.7"/></svg>' }
+    ];
+    function mgShuffle(a) {
+      for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; }
+      return a;
+    }
+    function mgStartMemory() {
+      mgClearTimers();
+      var pane = $("miniPane"); if (!pane) return;
+      mgSyncHead();
+      pane.innerHTML = "";
+      pane.appendChild(mgEl("h3", "pane-title", "Lật thẻ trí nhớ"));
+      pane.appendChild(mgEl("p", "mg-note", "Bấm để lật từng thẻ. Hai thẻ giống nhau sẽ giữ mở, khác nhau sẽ úp lại sau 1 giây. Lật hết 8 cặp là thắng ván (+5 điểm danh tiếng)."));
+      var hud = mgHud([
+        { key: "flips", label: "Lượt lật:", value: "0" },
+        { key: "pairs", label: "Đã mở:", value: "0/8 cặp" },
+        { key: "time", label: "Thời gian:", value: "0 giây", cls: "mg-time" }
+      ]);
+      pane.appendChild(hud.hud);
+      var grid = mgEl("div", "mg-mem-grid");
+      pane.appendChild(grid);
+      var resultBox = mgEl("div");
+      pane.appendChild(resultBox);
+      pane.appendChild(mgNavButtons(mgStartMemory));
+
+      var deck = mgShuffle(MG_MEM_SYMBOLS.concat(MG_MEM_SYMBOLS).map(function (s, i) { return { sym: s, key: i }; }));
+      var first = null, lock = false, flips = 0, matched = 0, secs = 0, started = false;
+      mgEvery(function () {
+        if (!started || matched >= 8) return;
+        secs++;
+        hud.spans.time.textContent = fmtDuration(secs);
+      }, 1000);
+      deck.forEach(function (cardData) {
+        var btn = mgEl("button", "mg-mem-card");
+        btn.type = "button";
+        btn.setAttribute("aria-label", "Thẻ úp — " + cardData.sym.name);
+        var back = mgEl("span", "mg-mem-back", "?");
+        var face = mgEl("span", "mg-mem-face");
+        face.innerHTML = cardData.sym.svg;
+        face.appendChild(mgEl("small", null, cardData.sym.name));
+        btn.append(back, face);
+        btn.onclick = function () {
+          if (lock || btn.classList.contains("open")) return;
+          started = true;
+          btn.classList.add("open");
+          beep(880, 0.08, 0);
+          if (!first) { first = { btn: btn, data: cardData }; return; }
+          flips++;
+          hud.spans.flips.textContent = String(flips);
+          if (first.data.sym.id === cardData.sym.id) {
+            first.btn.classList.add("matched");
+            btn.classList.add("matched");
+            matched++;
+            hud.spans.pairs.textContent = matched + "/8 cặp";
+            sndClue();
+            first = null;
+            if (matched >= 8) {
+              var finalSecs = Math.max(1, secs);
+              mgAward5("Lật thẻ trí nhớ — mở hết 8 cặp trong " + flips + " lượt lật.");
+              mgRecordWin("memory", { flips: flips, secs: finalSecs }, function (old, nw) {
+                return nw.flips < old.flips || (nw.flips === old.flips && nw.secs < old.secs);
+              });
+              mgSyncHead();
+              resultBox.innerHTML = "";
+              var res = mgEl("div", "mg-result");
+              res.appendChild(mgEl("h4", null, "Thắng rồi! +5 điểm danh tiếng"));
+              res.appendChild(mgEl("p", null, "Bạn mở hết 8 cặp thẻ trong " + flips + " lượt lật, thời gian " + fmtDuration(finalSecs) + ". Kỷ lục của trò này đã được lưu lại ở menu."));
+              resultBox.appendChild(res);
+            }
+          } else {
+            lock = true;
+            var f = first; first = null;
+            mgAfter(function () {
+              f.btn.classList.remove("open");
+              btn.classList.remove("open");
+              lock = false;
+            }, 1000);
+          }
+        };
+        grid.appendChild(btn);
+      });
+    }
+
+    /* ---------- Trò 2: Ai nói dối? ---------- */
+    var MG_LIAR_ROUNDS = [
+      { scene: "Đêm qua mưa lớn trút xuống Hẻm Cảng từ 21 giờ tới tận sáng. Sân kho nhà bà Tư ngập nước lênh láng, mọi lối đi trong hẻm đều ướt sũng, ai bước ra cũng lội bì bõm.",
+        claims: [
+          { name: "Anh Hậu · giữ kho", text: "Tôi ở trong kho suốt đêm trông hàng, không bước ra ngoài lần nào." },
+          { name: "Chị Lài · bán cháo khuya", text: "Khoảng 23 giờ tôi thấy ánh đèn pin loang loáng ngoài sân kho, có người lội nước đi qua." },
+          { name: "Anh Bảy · chạy xe ôm", text: "Nửa đêm tôi có ghé sân kho, sân khô ráo, đi dép lê qua lại thoải mái lắm." }
+        ], liar: 2, explain: "Sân kho ngập nước lênh láng suốt đêm vì mưa lớn tới sáng — không thể có chuyện sân khô ráo, đi dép lê thoải mái. Anh Bảy nói dối." },
+      { scene: "Cửa hàng tạp hóa của cô Sáu đóng cửa cả ngày chủ nhật vì cô về quê ăn giỗ. Tấm bảng “nghỉ bán hôm nay” được treo ngay cửa từ sáng sớm, ai trong hẻm đi qua cũng thấy.",
+        claims: [
+          { name: "Chị Phượng · hàng xóm", text: "Sáng chủ nhật tôi ghé mua mì tôm, thấy bảng nghỉ bán nên quay về." },
+          { name: "Anh Tùng · thợ sửa xe", text: "Chiều chủ nhật tôi mua được chai nước mắm ở tạp hóa cô Sáu, cô ấy đứng bán như mọi ngày." },
+          { name: "Bà Năm · bán vé số", text: "Sáng chủ nhật tôi gọi điện cho cô Sáu, cô bảo đang ở quê, mai mới ra." }
+        ], liar: 1, explain: "Cửa hàng đóng cửa cả ngày chủ nhật, cô Sáu ở quê — không ai mua được nước mắm ở đó vào chiều chủ nhật cả. Anh Tùng nói dối." },
+      { scene: "Ở bến cá có con chó mực tên Vện giữ kho lưới. Hễ người lạ tới gần kho lưới ban đêm là Vện sủa ầm ĩ, cả hẻm đều nghe thấy; còn người quen trong hẻm đi qua thì nó nằm im.",
+        claims: [
+          { name: "Chú Ba · chủ vựa cá", text: "Đêm qua Vện sủa dữ dội lúc 2 giờ sáng, tôi giật mình tỉnh giấc." },
+          { name: "Anh Khải · người mới tới hẻm", text: "Tôi là người lạ mới tới, đêm qua tôi đi sát qua kho lưới mà Vện nằm im, không sủa tiếng nào." },
+          { name: "Chị Sen · bán cá", text: "Tôi là người trong hẻm, khuya qua đi qua kho lưới, Vện ngẩng đầu nhìn rồi nằm xuống ngủ tiếp." }
+        ], liar: 1, explain: "Người lạ tới gần kho lưới ban đêm là Vện sủa ầm ĩ — anh Khải tự nhận là người lạ mà bảo Vện nằm im không sủa, trái hẳn tính của Vện. Anh Khải nói dối." },
+      { scene: "Chiếc đồng hồ trên tháp chợ Hẻm Cảng đã hỏng cả tuần nay, hai kim đứng yên ở 6 giờ 15, chưa có thợ nào tới sửa. Cả hẻm ai cũng biết chuyện này.",
+        claims: [
+          { name: "Anh Đức · bán nước mía", text: "Sáng nay tôi ngước nhìn đồng hồ tháp thấy 6 giờ 15, suýt tưởng mình dậy sớm quá." },
+          { name: "Chị Hòa · tiểu thương", text: "Chiều qua tôi xem đồng hồ tháp, nó chỉ đúng 5 giờ chiều, chuẩn như mọi ngày." },
+          { name: "Ông Sáu · xe ôm", text: "Cả tuần nay tôi toàn xem giờ bằng điện thoại, vì đồng hồ tháp hỏng đứng im một chỗ." }
+        ], liar: 1, explain: "Kim đồng hồ tháp đứng yên ở 6 giờ 15 suốt cả tuần — nó không thể “chỉ đúng 5 giờ chiều” được. Chị Hòa nói dối." },
+      { scene: "Thuyền đánh cá của ông Ba Lành rời bến từ 4 giờ sáng nay và neo ngoài khơi cả ngày, chỉ quay về bến lúc 6 giờ tối. Suốt thời gian đó ông Ba không hề đặt chân lên bờ.",
+        claims: [
+          { name: "Anh Mẫn · phu bến", text: "Trưa nay tôi gặp ông Ba Lành đang ngồi bán cá ngay ở chợ bến, nói chuyện rôm rả." },
+          { name: "Chị Tư · mua cá", text: "Sáng sớm tôi ra bến tiễn thuyền ông Ba rời bến như mọi ngày." },
+          { name: "Anh Vinh · thợ máy tàu", text: "Tối nay thuyền ông Ba mới về, cá đầy khoang, tôi còn phụ khiêng lên bờ." }
+        ], liar: 0, explain: "Ông Ba neo ngoài khơi từ 4 giờ sáng tới 6 giờ tối, không đặt chân lên bờ — không thể ngồi bán cá ở chợ bến lúc trưa được. Anh Mẫn nói dối." },
+      { scene: "Tối qua cả Hẻm Cảng mất điện từ 20 giờ đến 22 giờ vì trạm biến áp bị cháy. Suốt hai tiếng đó, nhà nào cũng thắp nến, đèn đường tắt ngúm, không một bóng điện nào sáng.",
+        claims: [
+          { name: "Chị Ngọc · thợ may", text: "Tối qua tôi thắp nến ngồi ăn cơm với cả nhà lúc 20 giờ rưỡi." },
+          { name: "Anh Phong · sinh viên thuê trọ", text: "Tối qua tôi ở nhà xem tivi tới 21 giờ mới tắt đi ngủ." },
+          { name: "Bà Bảy · hàng rong", text: "Đèn đường trong hẻm tối om suốt hai tiếng, tôi phải lần mò đẩy xe về." }
+        ], liar: 1, explain: "Cả hẻm mất điện từ 20 giờ đến 22 giờ, không nhà nào có điện — anh Phong không thể xem tivi tới 21 giờ được. Anh Phong nói dối." },
+      { scene: "Cổng kho bến cá chỉ có đúng hai chiếc chìa khóa: một chiếc do tổ trưởng giữ, một chiếc treo trong phòng bảo vệ. Ngoài hai chiếc đó ra không còn chiếc chìa nào khác mở được cổng kho.",
+        claims: [
+          { name: "Anh Lộc · bốc xếp", text: "Sáng nay tôi vào phòng bảo vệ mượn chìa treo ở đó để mở cổng kho." },
+          { name: "Anh Sang · lái xe tải", text: "Tôi mở cổng bằng chiếc chìa thứ ba mà tôi tự đánh thêm từ năm ngoái, tiện lắm." },
+          { name: "Chị Mai · thủ kho", text: "5 giờ sáng nay tổ trưởng cầm chìa của mình mở cổng cho xe hàng vào." }
+        ], liar: 1, explain: "Cổng kho chỉ có đúng hai chiếc chìa, không có chiếc thứ ba nào hết — chiếc chìa “tự đánh thêm” của anh Sang không thể tồn tại. Anh Sang nói dối." },
+      { scene: "Ba ngày nay, tấm biển quảng cáo mới treo của quán cà phê đầu hẻm che khuất hoàn toàn camera của quán. Camera không quay được bất cứ thứ gì ở khu vực sân quán trong suốt ba ngày đó.",
+        claims: [
+          { name: "Anh Quân · khách quen", text: "Camera của quán quay rõ cảnh tôi ngồi uống cà phê ở sân quán chiều hôm qua đấy." },
+          { name: "Chị chủ quán cà phê", text: "Camera bị tấm biển che mất rồi, ba ngày nay chẳng xem lại được gì ở sân quán cả." },
+          { name: "Anh Thợ treo biển", text: "Tấm biển tôi mới treo che mất nửa sân quán, đứng dưới nhìn lên là thấy ngay." }
+        ], liar: 0, explain: "Camera bị biển quảng cáo che khuất hoàn toàn suốt ba ngày, không quay được gì ở sân quán — làm sao “quay rõ” cảnh anh Quân ngồi ở sân chiều qua được. Anh Quân nói dối." },
+      { scene: "Sổ giao hàng của vựa hải sản ghi rõ ràng: sáng nay vựa chỉ nhập đúng 50 ký cá thu, và trong ngày hôm nay không nhập thêm bất kỳ đợt cá thu nào nữa.",
+        claims: [
+          { name: "Anh Hải · người giao cá", text: "Sáng nay tôi cân đúng 50 ký cá thu giao cho vựa, ký sổ đàng hoàng." },
+          { name: "Chị Lan · khách mua sỉ", text: "Chiều nay tôi tới, vựa còn bán ra những 80 ký cá thu nhập từ sáng nay cơ mà." },
+          { name: "Bà chủ vựa hải sản", text: "Cá thu nhập sáng nay bán tới trưa là hết sạch, khách chiều tới tôi đành lắc đầu." }
+        ], liar: 1, explain: "Cả ngày vựa chỉ có đúng 50 ký cá thu nhập từ sáng, lại bán hết từ trưa — không thể chiều còn bán ra 80 ký cá thu của sáng nay. Chị Lan nói dối." },
+      { scene: "Chú Tám bảo vệ bến cá chỉ có đúng một chiếc đèn pin. Tối qua chú để quên chiếc đèn pin đó ở chòi gác, và vì không có đèn nên cả đêm chú ngồi yên ở chòi, không đi tuần vòng nào.",
+        claims: [
+          { name: "Anh Bình · ngư dân", text: "Nửa đêm qua tôi thấy chú Tám cầm đèn pin đi tuần quanh bến, ánh đèn quét qua quét lại." },
+          { name: "Chị Hạnh · bán chè", text: "Chiếc đèn pin của chú Tám nằm trong chòi gác suốt đêm qua, tôi dọn hàng khuya còn thấy." },
+          { name: "Anh Tuấn · giữ xe", text: "Đêm qua chú Tám ngồi ở chòi gác cả đêm, tôi còn ghé vào uống chung ấm trà." }
+        ], liar: 0, explain: "Chú Tám chỉ có một chiếc đèn pin và nó nằm ở chòi gác suốt đêm, chú cũng không đi tuần vòng nào — không thể có cảnh chú cầm đèn pin đi tuần lúc nửa đêm. Anh Bình nói dối." }
+    ];
+    function mgStartLiar() {
+      mgClearTimers();
+      var pane = $("miniPane"); if (!pane) return;
+      mgSyncHead();
+      pane.innerHTML = "";
+      pane.appendChild(mgEl("h3", "pane-title", "Ai nói dối?"));
+      pane.appendChild(mgEl("p", "mg-note", "Đọc kỹ tình huống, rồi bấm vào lời khai nói dối — lời mâu thuẫn với tình huống đã cho. Mỗi vòng 30 giây; trả lời đúng được cộng 5 điểm danh tiếng. Chơi hết 10 vòng, đúng từ 6 vòng trở lên là thắng ván."));
+      var hud = mgHud([
+        { key: "round", label: "Vòng:", value: "1/10" },
+        { key: "score", label: "Đúng:", value: "0 câu" },
+        { key: "time", label: "Còn:", value: "30 giây", cls: "mg-time" }
+      ]);
+      pane.appendChild(hud.hud);
+      var body = mgEl("div");
+      pane.appendChild(body);
+      pane.appendChild(mgNavButtons(mgStartLiar));
+
+      var idx = 0, correct = 0, locked = false, remain = 30;
+      function tick() {
+        hud.spans.time.textContent = remain + " giây";
+        hud.spans.time.parentElement.classList.toggle("low", remain <= 8);
+      }
+      function startTimer() {
+        remain = 30; tick();
+        mgEvery(function () {
+          if (locked) return;
+          remain--;
+          tick();
+          if (remain <= 0) answer(-1);
+        }, 1000);
+      }
+      function renderRound() {
+        locked = false;
+        var r = MG_LIAR_ROUNDS[idx];
+        hud.spans.round.textContent = (idx + 1) + "/10";
+        hud.spans.score.textContent = correct + " câu";
+        body.innerHTML = "";
+        var sc = mgEl("div", "mg-scene", r.scene);
+        body.appendChild(sc);
+        var claims = mgEl("div", "mg-claims");
+        r.claims.forEach(function (cl, ci) {
+          var b = mgEl("button", "mg-claim");
+          b.type = "button";
+          b.appendChild(mgEl("b", null, cl.name));
+          b.appendChild(mgEl("span", null, "“" + cl.text + "”"));
+          b.onclick = function () { answer(ci); };
+          claims.appendChild(b);
+        });
+        body.appendChild(claims);
+        startTimer();
+      }
+      function answer(ci) {
+        if (locked) return;
+        locked = true;
+        mgClearTimers();
+        var r = MG_LIAR_ROUNDS[idx];
+        var right = ci === r.liar;
+        if (right) {
+          correct++;
+          mgAward5("Ai nói dối? — vòng " + (idx + 1) + ": chỉ đúng lời nói dối của " + r.claims[r.liar].name.split(" · ")[0] + ".");
+        } else {
+          sndBad();
+        }
+        hud.spans.score.textContent = correct + " câu";
+        hud.spans.time.textContent = "—";
+        body.querySelectorAll(".mg-claim").forEach(function (b, bi) {
+          b.disabled = true;
+          if (bi === r.liar) b.classList.add("lie");
+          else b.classList.add("truth");
+        });
+        var ex = mgEl("div", "mg-explain");
+        ex.appendChild(mgEl("b", null, right ? "Đúng rồi! Đó chính là lời nói dối." : (ci === -1 ? "Hết giờ! Lời nói dối bị bỏ lỡ." : "Chưa đúng — lời bạn chọn là lời thật.")));
+        ex.appendChild(document.createTextNode(r.explain));
+        body.appendChild(ex);
+        var nx = mgEl("button", "to-report-btn", idx >= MG_LIAR_ROUNDS.length - 1 ? "Xem kết quả →" : "Vòng tiếp theo →");
+        nx.type = "button";
+        nx.style.marginTop = "14px";
+        nx.onclick = function () {
+          idx++;
+          if (idx >= MG_LIAR_ROUNDS.length) finish();
+          else renderRound();
+        };
+        body.appendChild(nx);
+      }
+      function finish() {
+        mgClearTimers();
+        body.innerHTML = "";
+        var win = correct >= 6;
+        var res = mgEl("div", "mg-result");
+        res.appendChild(mgEl("h4", null, win ? "Thắng ván! Bạn đúng " + correct + "/10 câu" : "Chưa thắng — bạn đúng " + correct + "/10 câu"));
+        res.appendChild(mgEl("p", null, win
+          ? "Mắt thám tử tinh lắm: nhận ra lời nói dối trong ít nhất 6/10 vòng. Ván này đã được ghi là đã thắng ở menu."
+          : "Cần đúng từ 6/10 câu mới thắng ván này. Đọc kỹ tình huống trước khi chọn nhé — lời nói dối luôn vênh với một chi tiết đã cho sẵn."));
+        body.appendChild(res);
+        if (win) {
+          mgRecordWin("liar", { correct: correct }, function (old, nw) { return nw.correct > old.correct; });
+          mgSyncHead();
+        } else {
+          var st = loadMini();
+          if (!st.best || typeof st.best !== "object") st.best = {};
+          if (!st.best.liar || correct > (st.best.liar.correct || 0)) { st.best.liar = { correct: correct }; saveMini(st); }
+        }
+      }
+      renderRound();
+    }
+
+    /* ---------- Trò 3: Tìm điểm khác nhau ---------- */
+    /* Hai cảnh vẽ bằng SVG; mỗi cảnh có 5 điểm khác nhau. Tọa độ các điểm
+       bấm (hot) dùng chung cho cả hai hình của cảnh — bấm trúng trên một
+       trong hai hình là đánh dấu được ở cả hai. */
+    function mgSpotScenes() {
+      var desk = function (variant) {
+        var clockHand = variant === 0
+          ? '<line x1="160" y1="42" x2="160" y2="28" stroke="#333" stroke-width="2.4" stroke-linecap="round"/><line x1="160" y1="42" x2="171" y2="42" stroke="#333" stroke-width="2.4" stroke-linecap="round"/>'
+          : '<line x1="160" y1="42" x2="152" y2="52" stroke="#333" stroke-width="2.4" stroke-linecap="round"/><line x1="160" y1="42" x2="149" y2="38" stroke="#333" stroke-width="2.4" stroke-linecap="round"/>';
+        var frame2 = variant === 1 ? '<rect x="212" y="24" width="34" height="26" rx="2" fill="#f3e2b8" stroke="#8a5a2b" stroke-width="2.4"/><circle cx="229" cy="37" r="6" fill="#7cc4ff"/>' : "";
+        var bookMid = variant === 0 ? "#3f6fb5" : "#c0453e";
+        var cup = variant === 0 ? '<path d="M236 148h26l-3.4 20h-19.2L236 148Z" fill="#e8e3d5" stroke="#8a8378" stroke-width="2"/><path d="M262 152c6 0 8 3.4 8 6.4s-2.4 6-7 6.4" fill="none" stroke="#8a8378" stroke-width="2"/>' : "";
+        var key = variant === 0
+          ? '<g stroke="#b8860b" stroke-width="2.6" fill="none" stroke-linecap="round"><circle cx="66" cy="152" r="7"/><path d="M71 147l16-11M82 131l5 4M78 135l4 3"/></g>'
+          : '<g stroke="#b8860b" stroke-width="2.6" fill="none" stroke-linecap="round"><circle cx="196" cy="196" r="7"/><path d="M201 191l16-11M212 175l5 4M208 179l4 3"/></g>';
+        return '<svg viewBox="0 0 320 240" role="img" aria-label="Hiện trường bàn làm việc">'
+          + '<rect x="0" y="0" width="320" height="240" fill="#dfe7ef"/>'
+          + '<rect x="0" y="168" width="320" height="72" fill="#b08d5f"/>'
+          + '<rect x="0" y="162" width="320" height="10" fill="#8a5a2b"/>'
+          + '<circle cx="160" cy="42" r="21" fill="#fdfdf8" stroke="#5a4632" stroke-width="3"/>' + clockHand + '<circle cx="160" cy="42" r="2.6" fill="#333"/>'
+          + '<rect x="34" y="26" width="40" height="30" rx="2" fill="#cfe3f7" stroke="#5a4632" stroke-width="2.4"/><path d="M38 50l10-12 8 7 7-8 7 9" fill="none" stroke="#57b06a" stroke-width="2.2"/>'
+          + frame2
+          + '<path d="M40 162l10-52h16l10 52Z" fill="#3c4b5f"/><rect x="52" y="96" width="12" height="10" fill="#2c3646"/>'
+          + '<path d="M58 96c-10-14-24-16-34-8 8 2 12 6 15 12Z" fill="#f5c877" opacity=".85"/>'
+          + '<rect x="96" y="146" width="52" height="10" rx="2" fill="#7a4f9d"/><rect x="100" y="134" width="46" height="11" rx="2" fill="' + bookMid + '"/><rect x="104" y="122" width="40" height="11" rx="2" fill="#4d8a5a"/>'
+          + cup + key
+          + '<rect x="150" y="186" width="52" height="7" rx="3.5" fill="#c9cfd8"/><path d="M202 186l16 3-16 4Z" fill="#e8a33d"/>'
+          + "</svg>";
+      };
+      var stall = function (variant) {
+        var sign = variant === 0 ? "#4d8a5a" : "#e07b2a";
+        var basket2 = variant === 1 ? "" : '<path d="M226 176h44l-6 26h-32L226 176Z" fill="#c9a15f" stroke="#8a5a2b" stroke-width="2"/><path d="M232 186h32M235 196h26" stroke="#8a5a2b" stroke-width="1.6"/><path d="M238 176c4-7 12-7 16 0" fill="none" stroke="#7cc4ff" stroke-width="3"/>';
+        var needle = variant === 0
+          ? '<line x1="86" y1="96" x2="98" y2="84" stroke="#c62f1e" stroke-width="2.6" stroke-linecap="round"/>'
+          : '<line x1="86" y1="96" x2="75" y2="85" stroke="#c62f1e" stroke-width="2.6" stroke-linecap="round"/>';
+        var bulb = variant === 0
+          ? '<circle cx="238" cy="52" r="8" fill="#f5c877" stroke="#b8860b" stroke-width="2"/>'
+          : '<circle cx="238" cy="52" r="8" fill="#fdfdf8" stroke="#8a8378" stroke-width="2"/>';
+        var cat = variant === 0
+          ? '<g fill="#5a4632"><ellipse cx="46" cy="212" rx="14" ry="8"/><circle cx="60" cy="205" r="6.5"/><path d="M64 201l3-5 2 6M57 200l1-5 3 4" stroke="#5a4632" stroke-width="2" fill="none"/><path d="M33 210c-6-2-8-7-6-12" stroke="#5a4632" stroke-width="3" fill="none" stroke-linecap="round"/></g>'
+          : '<g fill="#5a4632"><ellipse cx="272" cy="212" rx="14" ry="8"/><circle cx="286" cy="205" r="6.5"/><path d="M290 201l3-5 2 6M283 200l1-5 3 4" stroke="#5a4632" stroke-width="2" fill="none"/><path d="M259 210c-6-2-8-7-6-12" stroke="#5a4632" stroke-width="3" fill="none" stroke-linecap="round"/></g>';
+        return '<svg viewBox="0 0 320 240" role="img" aria-label="Hiện trường sạp cá ở bến">'
+          + '<rect x="0" y="0" width="320" height="240" fill="#e8eef2"/>'
+          + '<rect x="0" y="196" width="320" height="44" fill="#9db3c4"/>'
+          + '<path d="M20 34h280l14 26H6L20 34Z" fill="#b0523f"/>'
+          + '<rect x="96" y="66" width="128" height="26" rx="4" fill="' + sign + '"/><text x="160" y="84" text-anchor="middle" font-size="15" font-weight="700" fill="#fff">SẠP CÁ BÀ TƯ</text>'
+          + '<line x1="238" y1="60" x2="238" y2="44" stroke="#5a4632" stroke-width="2.4"/>' + bulb
+          + '<rect x="30" y="150" width="260" height="12" fill="#8a5a2b"/><rect x="44" y="162" width="10" height="36" fill="#6e4525"/><rect x="266" y="162" width="10" height="36" fill="#6e4525"/>'
+          + '<path d="M52 128h68l-8 22H60L52 128Z" fill="#c9a15f" stroke="#8a5a2b" stroke-width="2"/><path d="M60 138h52M63 145h46" stroke="#8a5a2b" stroke-width="1.6"/><path d="M70 128c5-8 14-8 19 0M92 128c5-8 14-8 19 0" fill="none" stroke="#7cc4ff" stroke-width="3.4"/>'
+          + basket2
+          + '<rect x="80" y="98" width="12" height="30" fill="#5a4632"/><circle cx="86" cy="96" r="17" fill="#fdfdf8" stroke="#5a4632" stroke-width="2.6"/>' + needle + '<circle cx="86" cy="96" r="2.4" fill="#333"/>'
+          + '<rect x="150" y="120" width="52" height="30" rx="3" fill="#7cc4ff" opacity=".55" stroke="#4d7fa8" stroke-width="2"/>'
+          + cat
+          + "</svg>";
+      };
+      return [
+        { title: "Cảnh 1 · Bàn làm việc của thám tử", a: desk(0), b: desk(1), spots: [
+          { x: 160, y: 42, label: "Đồng hồ treo tường chỉ giờ khác nhau" },
+          { x: 250, y: 158, label: "Chiếc tách trên bàn bị thiếu ở hình B" },
+          { x: 123, y: 139, label: "Cuốn sách giữa chồng sách đổi màu" },
+          { x: 76, y: 146, bx: 204, by: 188, label: "Chìa khóa đổi chỗ trên bàn" },
+          { x: 229, y: 37, label: "Hình B có thêm một khung ảnh trên tường" }
+        ] },
+        { title: "Cảnh 2 · Sạp cá ở bến", a: stall(0), b: stall(1), spots: [
+          { x: 160, y: 79, label: "Biển hiệu sạp cá đổi màu" },
+          { x: 248, y: 188, label: "Giỏ cá bên phải bị thiếu ở hình B" },
+          { x: 86, y: 96, label: "Kim đồng hồ cân chỉ khác hướng" },
+          { x: 238, y: 52, label: "Bóng đèn trên sạp: hình A đang sáng, hình B đã tắt" },
+          { x: 48, y: 208, bx: 274, by: 208, label: "Con mèo ngồi ở phía bên kia của sạp" }
+        ] }
+      ];
+    }
+    function mgStartSpot() {
+      mgClearTimers();
+      var pane = $("miniPane"); if (!pane) return;
+      mgSyncHead();
+      pane.innerHTML = "";
+      pane.appendChild(mgEl("h3", "pane-title", "Tìm điểm khác nhau"));
+      pane.appendChild(mgEl("p", "mg-note", "Hai hình của mỗi cảnh chỉ khác nhau ở đúng 5 điểm. Bấm vào điểm khác trên hình A hoặc hình B để đánh dấu — tìm đủ 5 điểm của cảnh này sẽ sang cảnh tiếp theo, tìm đủ cả 2 cảnh là thắng ván (+5 điểm danh tiếng)."));
+      var hud = mgHud([
+        { key: "scene", label: "Cảnh:", value: "1/2" },
+        { key: "found", label: "Đã tìm:", value: "0/5 điểm" },
+        { key: "time", label: "Thời gian:", value: "0 giây", cls: "mg-time" }
+      ]);
+      pane.appendChild(hud.hud);
+      var body = mgEl("div");
+      pane.appendChild(body);
+      pane.appendChild(mgNavButtons(mgStartSpot));
+
+      var scenes = mgSpotScenes();
+      var sceneIdx = 0, totalSecs = 0, timerOn = true;
+      mgEvery(function () {
+        if (!timerOn) return;
+        totalSecs++;
+        hud.spans.time.textContent = fmtDuration(totalSecs);
+      }, 1000);
+      function renderScene() {
+        var sc = scenes[sceneIdx];
+        hud.spans.scene.textContent = (sceneIdx + 1) + "/2";
+        hud.spans.found.textContent = "0/5 điểm";
+        body.innerHTML = "";
+        body.appendChild(mgEl("h4", "pane-title", sc.title));
+        var wrap = mgEl("div", "mg-spot-wrap");
+        var foundSet = {};
+        var foundCount = 0;
+        [["Hình A", sc.a], ["Hình B", sc.b]].forEach(function (pair, fi) {
+          var fig = mgEl("figure", "mg-spot-fig");
+          var cap = mgEl("figcaption", null, pair[0]);
+          fig.appendChild(cap);
+          var holder = mgEl("div");
+          holder.innerHTML = pair[1];
+          var svg = holder.querySelector("svg");
+          var NS = "http://www.w3.org/2000/svg";
+          sc.spots.forEach(function (sp, si) {
+            /* Điểm "đổi chỗ" (chìa khóa, con mèo) có tọa độ riêng ở hình B (bx, by) */
+            var px = (fi === 1 && sp.bx != null) ? sp.bx : sp.x;
+            var py = (fi === 1 && sp.by != null) ? sp.by : sp.y;
+            var hot = document.createElementNS(NS, "circle");
+            hot.setAttribute("cx", px); hot.setAttribute("cy", py); hot.setAttribute("r", 17);
+            hot.setAttribute("class", "hot");
+            var t = document.createElementNS(NS, "title"); t.textContent = "Điểm khác nhau?";
+            hot.appendChild(t);
+            hot.addEventListener("click", function () { markFound(si); });
+            svg.appendChild(hot);
+            var ring = document.createElementNS(NS, "circle");
+            ring.setAttribute("cx", px); ring.setAttribute("cy", py); ring.setAttribute("r", 13);
+            ring.setAttribute("class", "found-ring");
+            ring.style.display = "none";
+            ring.dataset.spotRing = String(si);
+            svg.appendChild(ring);
+          });
+          fig.appendChild(svg);
+          wrap.appendChild(fig);
+        });
+        body.appendChild(wrap);
+        var listBox = mgEl("div");
+        listBox.style.marginTop = "12px";
+        body.appendChild(listBox);
+        function markFound(si) {
+          if (foundSet[si]) return;
+          foundSet[si] = true;
+          foundCount++;
+          sndClue();
+          body.querySelectorAll('[data-spot-ring="' + si + '"]').forEach(function (r) { r.style.display = ""; });
+          hud.spans.found.textContent = foundCount + "/5 điểm";
+          var li = mgEl("p", null, "✓ " + sc.spots[si].label);
+          li.style.margin = "0 0 4px";
+          listBox.appendChild(li);
+          if (foundCount >= 5) {
+            if (sceneIdx === 0) {
+              var nx = mgEl("button", "to-report-btn", "Đủ 5 điểm! Sang cảnh 2 →");
+              nx.type = "button";
+              nx.style.marginTop = "10px";
+              nx.onclick = function () { sceneIdx = 1; renderScene(); };
+              listBox.appendChild(nx);
+              toast("Đã tìm đủ 5 điểm khác nhau", "Cảnh 1 xong — sang cảnh 2: sạp cá ở bến.");
+            } else {
+              timerOn = false;
+              var finalSecs = Math.max(1, totalSecs);
+              mgAward5("Tìm điểm khác nhau — tìm đủ 10 điểm ở cả 2 cảnh.");
+              mgRecordWin("spot", { secs: finalSecs }, function (old, nw) { return nw.secs < old.secs; });
+              mgSyncHead();
+              var res = mgEl("div", "mg-result");
+              res.style.marginTop = "12px";
+              res.appendChild(mgEl("h4", null, "Thắng rồi! +5 điểm danh tiếng"));
+              res.appendChild(mgEl("p", null, "Bạn tìm đủ 10 điểm khác nhau ở cả 2 cảnh trong " + fmtDuration(finalSecs) + ". Kỷ lục đã được lưu ở menu."));
+              listBox.appendChild(res);
+            }
+          }
+        }
+      }
+      renderScene();
+    }
+
+    /* ---------- Trò 4: Giải mã mật thư ---------- */
+    var MG_CIPHER_LETTERS = [
+      { plain: "MANH MOI NAM DUOI CHAN DEN", shift: 3 },
+      { plain: "CHIA KHOA GIAU TRONG TUI AO", shift: 5 },
+      { plain: "CAMERA GHI LAI TAT CA", shift: 7 },
+      { plain: "NGUOI CHUNG O BEN CA", shift: 2 },
+      { plain: "DAU VET CON MOI TINH", shift: 4 }
+    ];
+    function mgCaesar(text, shift) {
+      return text.replace(/[A-Z]/g, function (ch) {
+        return String.fromCharCode((ch.charCodeAt(0) - 65 + shift) % 26 + 65);
+      });
+    }
+    function mgStartCipher() {
+      mgClearTimers();
+      var pane = $("miniPane"); if (!pane) return;
+      mgSyncHead();
+      pane.innerHTML = "";
+      pane.appendChild(mgEl("h3", "pane-title", "Giải mã mật thư"));
+      pane.appendChild(mgEl("p", "mg-note", "Mỗi bức thư bị dịch chữ cái theo mật mã Caesar — khóa ghi ngay trên thư (ví dụ “A → D” nghĩa là chữ A trong thư thật đã bị viết thành D). Gõ lại nội dung thư thật (tiếng Việt không dấu) trong 60 giây; giải đúng mỗi thư được cộng 5 điểm, giải đủ 5 thư là thắng ván."));
+      var hud = mgHud([
+        { key: "letter", label: "Thư:", value: "1/5" },
+        { key: "solved", label: "Đã giải:", value: "0 thư" },
+        { key: "time", label: "Còn:", value: "60 giây", cls: "mg-time" }
+      ]);
+      pane.appendChild(hud.hud);
+      var body = mgEl("div");
+      pane.appendChild(body);
+      pane.appendChild(mgNavButtons(mgStartCipher));
+
+      var idx = 0, solved = 0, locked = false, remain = 60, totalSecs = 0;
+      function tick() {
+        hud.spans.time.textContent = remain + " giây";
+        hud.spans.time.parentElement.classList.toggle("low", remain <= 10);
+      }
+      function renderLetter() {
+        locked = false;
+        var L = MG_CIPHER_LETTERS[idx];
+        hud.spans.letter.textContent = (idx + 1) + "/5";
+        hud.spans.solved.textContent = solved + " thư";
+        body.innerHTML = "";
+        var keyLine = mgEl("p", "mg-note", "Khóa của thư này: A → " + String.fromCharCode(65 + L.shift) + " (mỗi chữ cái bị dịch tới " + L.shift + " chữ). Nội dung thư khi giải ra là một câu tiếng Việt không dấu.");
+        body.appendChild(keyLine);
+        body.appendChild(mgEl("div", "mg-cipher-text", mgCaesar(L.plain, L.shift)));
+        var row = mgEl("div", "mg-cipher-row");
+        var input = mgEl("input", "mg-cipher-input");
+        input.type = "text";
+        input.placeholder = "Gõ nội dung đã giải mã vào đây…";
+        input.setAttribute("aria-label", "Nội dung thư đã giải mã");
+        input.autocomplete = "off";
+        var check = mgEl("button", "to-report-btn", "Kiểm tra");
+        check.type = "button";
+        row.append(input, check);
+        body.appendChild(row);
+        var msg = mgEl("p", "mg-cipher-msg");
+        body.appendChild(msg);
+        var hintBtn = mgEl("button", "mg-btn-ghost", "Xem gợi ý — bảng chữ cái đã dịch");
+        hintBtn.type = "button";
+        hintBtn.style.marginTop = "12px";
+        body.appendChild(hintBtn);
+        var alphaBox = mgEl("div");
+        body.appendChild(alphaBox);
+        hintBtn.onclick = function () {
+          if (alphaBox.firstChild) { alphaBox.innerHTML = ""; return; }
+          var wrapA = mgEl("div", "mg-alpha");
+          var table = mgEl("table");
+          var tr1 = mgEl("tr"), tr2 = mgEl("tr");
+          for (var i = 0; i < 26; i++) {
+            tr1.appendChild(mgEl("td", null, String.fromCharCode(65 + i)));
+            tr2.appendChild(mgEl("td", null, mgCaesar(String.fromCharCode(65 + i), L.shift)));
+          }
+          var cap = mgEl("p", null, "Hàng trên là chữ trong thư đã mã hóa, hàng dưới là chữ thật tương ứng — đối chiếu từng chữ để giải thư.");
+          cap.style.margin = "0 0 8px"; cap.style.fontSize = "13px";
+          table.append(tr2, tr1);
+          wrapA.append(cap, table);
+          alphaBox.appendChild(wrapA);
+        };
+        function submit() {
+          if (locked) return;
+          var guess = norm(input.value).toUpperCase().replace(/[^A-Z ]/g, "").replace(/\s+/g, " ").trim();
+          if (!guess) { msg.className = "mg-cipher-msg bad"; msg.textContent = "Bạn chưa gõ đáp án."; return; }
+          if (guess === L.plain) {
+            locked = true;
+            mgClearTimers();
+            solved++;
+            totalSecs += (60 - remain);
+            mgAward5("Giải mã mật thư — thư " + (idx + 1) + "/5 giải đúng.");
+            hud.spans.solved.textContent = solved + " thư";
+            msg.className = "mg-cipher-msg good";
+            msg.textContent = "Đúng rồi! Thư thật viết: “" + L.plain + "”. +5 điểm danh tiếng.";
+            input.disabled = true; check.disabled = true;
+            nextBtn("Thư tiếp theo →");
+          } else {
+            sndBad();
+            msg.className = "mg-cipher-msg bad";
+            msg.textContent = "Chưa đúng — thử lại nhé, đồng hồ vẫn đang chạy.";
+            input.focus();
+          }
+        }
+        function nextBtn(label) {
+          var nx = mgEl("button", "to-report-btn", idx >= MG_CIPHER_LETTERS.length - 1 ? "Xem kết quả →" : label);
+          nx.type = "button";
+          nx.style.marginTop = "14px";
+          nx.onclick = function () {
+            idx++;
+            if (idx >= MG_CIPHER_LETTERS.length) finish();
+            else renderLetter();
+          };
+          body.appendChild(nx);
+        }
+        check.onclick = submit;
+        input.addEventListener("keydown", function (e) { if (e.key === "Enter") { e.preventDefault(); submit(); } });
+        remain = 60; tick();
+        mgEvery(function () {
+          if (locked) return;
+          remain--;
+          tick();
+          if (remain <= 0) {
+            locked = true;
+            mgClearTimers();
+            totalSecs += 60;
+            sndBad();
+            msg.className = "mg-cipher-msg bad";
+            msg.textContent = "Hết 60 giây! Thư thật viết: “" + L.plain + "”.";
+            input.disabled = true; check.disabled = true;
+            nextBtn("Thư tiếp theo →");
+          }
+        }, 1000);
+        input.focus();
+      }
+      function finish() {
+        mgClearTimers();
+        body.innerHTML = "";
+        var win = solved >= MG_CIPHER_LETTERS.length;
+        var res = mgEl("div", "mg-result");
+        res.appendChild(mgEl("h4", null, win ? "Thắng ván! Giải đủ 5/5 thư" : "Đã hết 5 thư — giải được " + solved + "/5 thư"));
+        res.appendChild(mgEl("p", null, win
+          ? "Cả 5 bức thư đều được giải mã. Ván này đã được ghi là đã thắng ở menu."
+          : "Giải đúng cả 5 thư mới thắng ván này — mỗi thư đúng vẫn được cộng 5 điểm như thường. Bấm Chơi lại để thử sức lần nữa."));
+        body.appendChild(res);
+        var st = loadMini();
+        if (!st.best || typeof st.best !== "object") st.best = {};
+        var old = st.best.cipher || { solved: 0 };
+        if (solved > (old.solved || 0)) { st.best.cipher = { solved: solved, secs: win ? totalSecs : (old.secs || 0) }; saveMini(st); }
+        else if (win && (!old.secs || totalSecs < old.secs)) { st.best.cipher = { solved: 5, secs: totalSecs }; saveMini(st); }
+        if (win) {
+          mgRecordWin("cipher", { solved: 5, secs: totalSecs }, function (o, nw) { return (nw.solved || 0) > (o.solved || 0) || (!o.secs && !!nw.secs) || (nw.secs && o.secs && nw.secs < o.secs); });
+          mgSyncHead();
+        }
+      }
+      renderLetter();
     }
 
     function renderDaily() {
@@ -6717,11 +7556,11 @@
         lens: '<svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.3 15.3 21 21"/></svg>'
       };
       /* 1 — Hồ sơ nhân vật thám tử */
-      const profData = { tenThamTu: G.profile.name, soHieu: "HC-" + badgeNo(G.profile.name), capBacHoSo: G.profile.rank || "Thám tử", mauChanDung: styleNames[normStyle(G.profile.style)] || G.profile.style, mauAoKhoac: G.profile.color, anhDaiDien: G.profile.usePhoto ? "Ảnh bạn tải lên" : "Mẫu vẽ sẵn" };
+      const profData = { tenThamTu: G.profile.name, soHieu: "HC-" + badgeNo(G.profile.name), capBacHoSo: rankOf(G.rep).cur.name, mauChanDung: styleNames[normStyle(G.profile.style)] || G.profile.style, mauAoKhoac: G.profile.color, anhDaiDien: G.profile.usePhoto ? "Ảnh bạn tải lên" : "Mẫu vẽ sẵn" };
       files.push({
         id: "profile", name: "ho-so-tham-tu.json", kind: "Hồ sơ nhân vật",
         desc: "Nhân vật thám tử · thẻ căn cước · ảnh đại diện", icon: IC.user, size: jsonSize(profData),
-        rows: [["Tên thám tử", G.profile.name], ["Số hiệu", "HC-" + badgeNo(G.profile.name)], ["Cấp bậc hồ sơ", G.profile.rank || "Thám tử"], ["Mẫu chân dung", styleNames[normStyle(G.profile.style)] || G.profile.style], ["Màu áo khoác", G.profile.color], ["Ảnh đại diện", G.profile.usePhoto ? "Ảnh bạn tải lên" : "Mẫu vẽ sẵn"], ["PIN đăng nhập", "•••• — được giấu, không ghi vào file xuất"]],
+        rows: [["Tên thám tử", G.profile.name], ["Số hiệu", "HC-" + badgeNo(G.profile.name)], ["Cấp bậc", rankOf(G.rep).cur.name], ["Mẫu chân dung", styleNames[normStyle(G.profile.style)] || G.profile.style], ["Màu áo khoác", G.profile.color], ["Ảnh đại diện", G.profile.usePhoto ? "Ảnh bạn tải lên" : "Mẫu vẽ sẵn"], ["PIN đăng nhập", "•••• — được giấu, không ghi vào file xuất"]],
         note: "File này được lưu bền trên máy này (tải lại trang vẫn còn). Xóa file sẽ đưa nhân vật về mặc định ban đầu, gồm cả PIN 1234.",
         exportFn: function () { downloadGenerated("ho-so-tham-tu.json", JSON.stringify(profData, null, 2)); toast("Đã xuất file hồ sơ thám tử", "ho-so-tham-tu.json đã tải xuống máy của bạn."); },
         deleteFn: function () {
@@ -7412,6 +8251,7 @@
           const repBeforeD = G.rep;
           G.rep += c.reward + (firstTryD ? 50 : 0);
           const ptsD = G.rep - repBeforeD;
+          checkRankUp(repBeforeD, G.rep);
           r.solvedHere = true;
           delete G.progress[c.id];
           recordDailySolve(c, ptsD, firstTryD, r);
@@ -7436,6 +8276,7 @@
         const repBefore = G.rep;
         G.rep += c.reward + (firstTry ? 50 : 0);
         const pts = G.rep - repBefore;
+        checkRankUp(repBefore, G.rep);
         r.solvedHere = true;
         G.solved[c.id] = { firstTry };
         delete G.progress[c.id]; /* vụ đã phá: dọn tiến độ đang làm dở đã cất */
@@ -7521,6 +8362,7 @@
       { id: "howto",       label: "Cách phá án",   color: "#c4b5fd", icon: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5v14Z"/><path d="M4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5"/><path d="M9 7h7M9 11h5"/></svg>' },
       { id: "badges",      label: "Huy hiệu",      color: "#f5c877", icon: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9" r="5.5"/><path d="M8.8 13.5 7 21l5-2.6L17 21l-1.8-7.5"/></svg>' },
       { id: "daily",       label: "Vụ án hôm nay", color: "#e8a33d", icon: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/><path d="m9.2 16.2 2 2 3.6-3.8"/></svg>' },
+      { id: "minigames",   label: "Mini game hẻm", color: "#57e6c9", icon: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="7" width="19" height="11" rx="5.5"/><path d="M7.5 11v3M6 12.5h3"/><circle cx="15.8" cy="11.3" r="1.05" fill="currentColor" stroke="none"/><circle cx="18" cy="14" r="1.05" fill="currentColor" stroke="none"/></svg>' },
       { id: "youtube",     label: "Xem video",     color: "#f5c877", icon: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="5" width="19" height="14" rx="3"/><path d="M10 9.2v5.6L15 12Z" fill="currentColor" stroke="none"/></svg>' },
       { id: "thispc",      label: "Máy tính này",  color: "#7cc4ff", icon: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="4" width="19" height="12.5" rx="1.6"/><path d="M9.5 20.5h5M12 16.5v4"/></svg>' },
       { id: "trash",       label: "Thùng rác",     color: "#d7dee9", icon: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 6.5h15M9.5 6V4.2A1.2 1.2 0 0 1 10.7 3h2.6a1.2 1.2 0 0 1 1.2 1.2V6M6.5 6.5l1 13a1.6 1.6 0 0 0 1.6 1.5h5.8a1.6 1.6 0 0 0 1.6-1.5l1-13M10 10.5v6M14 10.5v6"/></svg>' },
@@ -7561,6 +8403,7 @@
           else if (app.id === "howto") openHowto();
           else if (app.id === "badges") openBadges();
           else if (app.id === "daily") openDaily();
+          else if (app.id === "minigames") openMini();
           else if (app.id === "youtube") openYoutube();
           else if (app.id === "thispc") openThisPC();
           else if (app.id === "trash") openTrash();
@@ -8351,6 +9194,7 @@
         else if (go === "howto") openHowto();
         else if (go === "badges") openBadges();
         else if (go === "daily") openDaily();
+        else if (go === "minigames") openMini();
         else if (go === "youtube") openYoutube();
         else if (go === "thispc") openThisPC();
         else if (go === "trash") openTrash();
@@ -9317,7 +10161,7 @@
         var h = '<h3>Thông tin thám tử</h3><p class="set-sub">Hồ sơ nhân sự của văn phòng — cũng là trang Profile mở từ avatar ở chân menu Start.</p>';
         h += '<div class="set-card"><div class="set-idcard"><div class="avatar js-det-avatar">' + avatarHTML(G.profile) + '</div><div>' +
           '<p class="f-lab">Họ và tên</p><p class="f-val">' + esc(G.profile.name) + '</p>' +
-          '<p class="f-lab">Cấp bậc hồ sơ · Cấp bậc danh tiếng</p><p class="f-val">' + esc(G.profile.rank || "Thám tử") + ' · ' + esc(rk.cur.name) + '</p>' +
+          '<p class="f-lab">Cấp bậc</p><p class="f-val">' + esc(rk.cur.name) + '</p>' +
           '<p class="f-lab">Số hiệu</p><p class="f-val" style="margin:0">HC-' + badgeNo(G.profile.name) + '</p></div></div>' +
           '<div class="set-stats">' +
           '<div class="stat" style="background:var(--bg2);border-color:var(--line)"><b style="color:var(--ink)">' + G.rep + '</b><span style="color:var(--ink-dim)">ĐIỂM DANH TIẾNG</span></div>' +
@@ -9325,6 +10169,15 @@
           '<div class="stat" style="background:var(--bg2);border-color:var(--line)"><b style="color:var(--ink)">' + badges + '/' + BADGES.length + '</b><span style="color:var(--ink-dim)">HUY HIỆU</span></div>' +
           '<div class="stat" style="background:var(--bg2);border-color:var(--line)"><b style="color:var(--ink)">' + G.wrongTotal + '</b><span style="color:var(--ink-dim)">LẦN BUỘC TỘI SAI</span></div>' +
           '</div></div>';
+        /* Thanh tiến độ lên cấp: cấp hiện tại, cấp tiếp theo và số điểm còn thiếu */
+        var rankPct = rk.next ? Math.min(100, Math.round((G.rep - rk.cur.min) / (rk.next.min - rk.cur.min) * 100)) : 100;
+        var rankNextTxt = rk.next
+          ? 'Cấp tiếp theo: <b style="color:var(--ink)">' + esc(rk.next.name) + '</b> — còn ' + (rk.next.min - G.rep) + ' điểm nữa thì lên cấp.'
+          : 'Đã đạt cấp cao nhất.';
+        h += '<div class="set-card"><h4>Tiến độ lên cấp</h4>' +
+          '<p class="desc">Cấp hiện tại: <b style="color:var(--ink)">' + esc(rk.cur.name) + '</b> · ' + G.rep + ' điểm danh tiếng</p>' +
+          '<div style="height:9px;border-radius:99px;background:var(--bg2);border:1px solid var(--line);overflow:hidden;margin:12px 0 8px"><i style="display:block;height:100%;width:' + rankPct + '%;background:linear-gradient(90deg,#c07c1d,var(--accent));border-radius:99px"></i></div>' +
+          '<p class="desc" style="margin:0">' + rankNextTxt + '</p></div>';
         h += '<div class="set-card"><h4>Đổi tên thám tử</h4><p class="desc">Tên mới hiện ngay trên thẻ, màn đăng nhập và menu Start.</p>' +
           '<div style="margin-top:12px"><input class="set-input" id="setNameInput" type="text" maxlength="24" value="' + esc(G.profile.name) + '" placeholder="Ví dụ: Thám tử Lan" autocomplete="off" /></div></div>';
         h += '<div class="set-card"><h4>Đổi ảnh đại diện</h4><p class="desc">Chọn một mẫu chân dung, đổi màu áo khoác, hoặc tải ảnh của bạn từ máy.</p>' +
@@ -9596,7 +10449,7 @@
         h += '<div class="set-card set-about">' +
           '<p><b>Thám tử Hẻm Cảng</b> — Hồ Sơ Hẻm Cảng · Phiên bản 1.0</p>' +
           '<p>Game trinh thám chữ viết riêng cho xóm cảng Thủy Nguyên, Hải Phòng: ' + CASES.length + ' vụ án (3 series, mỗi series 3 phần nối nhau, và 9 hồ sơ lẻ). Nhận vụ ở app Nhận nhiệm vụ, rồi làm hết trong app Làm nhiệm vụ: đọc thư giao vụ, hỏi chuyện, lướt Mạng hẻm &amp; tra cứu, ghim đủ 3 bằng chứng và buộc tội nộp kết quả ngay trong đó.</p>' +
-          '<p><b>Cách tính điểm:</b> phá án nhận trọn điểm của vụ, đúng ngay lần đầu +50; sai người −25, sai bằng chứng −10, xem gợi ý −5. Đủ điểm sẽ thăng 5 cấp bậc, từ Thám tử tập sự tới Thám tử lừng danh, cùng 8 huy hiệu sưu tầm.</p>' +
+          '<p><b>Cách tính điểm:</b> phá án nhận trọn điểm của vụ, đúng ngay lần đầu +50; sai người −25, sai bằng chứng −10, xem gợi ý −5. Đủ điểm sẽ thăng qua 10 cấp bậc, từ Thám tử Tập sự tới Bậc Thầy Phá Án, cùng 8 huy hiệu sưu tầm.</p>' +
           '<p>Nhạc nền: Kevin MacLeod (incompetech.com), CC BY</p>' +
           '<p>Mọi nhân vật và vụ án trong game đều là hư cấu. Nhân vật thám tử, tiến trình và cài đặt chỉ lưu trên máy của bạn.</p></div>';
         main.innerHTML = h;
@@ -9606,7 +10459,7 @@
       function render() {
         window.__lastSettingsPane = curPane;
         document.querySelectorAll(".set-nav-btn").forEach(function (b) { b.classList.toggle("active", b.dataset.setpane === curPane); });
-        var ur = document.getElementById("setUserRank"); if (ur) ur.textContent = (G.profile.rank || "Thám tử") + " · " + rankOf(G.rep).cur.name;
+        var ur = document.getElementById("setUserRank"); if (ur) ur.textContent = rankOf(G.rep).cur.name;
         (RENDERERS[curPane] || renderProfile)();
         var sv = document.getElementById("settingsView"); if (sv) sv.scrollTop = 0;
       }
