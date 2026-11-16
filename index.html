@@ -11018,39 +11018,52 @@
     var ytVolDirty = false;
     var ytVolLastPush = 0, ytVolTrailTimer = null;
 
-    function ytSendVolumeCmds(v) {
-      /* Thứ tự gửi: CHỈNH MỨC TRƯỚC, TẮT/BẬT TIẾNG SAU CÙNG, mỗi lệnh
-         một try riêng — trình phát YouTube thật xóa cờ tắt tiếng khi
-         setVolume chạy SAU mute() (bản v61 gửi mute trước rồi
-         setVolume(0): video đã im nhưng nút loa không chuyển sang đã
-         tắt tiếng khi kéo 53%→0%, đúng lỗi kiểm tra 18:08 ngày 16/11).
-         Gửi setVolume trước rồi mute/unMute sau thì mức 0 tắt tiếng
-         thật và mức >0 bật tiếng thật, cả hai đường gửi. */
-      if (v === 0) {
-        try { ytPlayer.setVolume(0); } catch (e) {}
-        try { ytPlayer.mute(); } catch (e) {}
-      } else {
-        try { ytPlayer.setVolume(v); } catch (e) {}
-        try { ytPlayer.unMute(); } catch (e) {}
-      }
+    /* Gửi một lệnh cho khung phát qua postMessage (cả hai đích: đích
+       danh youtube-nocookie và "*": khung phát thật đôi khi chạy ở
+       biến thể miền khác của YouTube khiến bản gửi đích danh bị lọc bỏ
+       — lệnh âm lượng không chứa dữ liệu nhạy cảm nên gửi mở vẫn an
+       toàn, và trình phát chỉ nhận lệnh đúng định dạng của nó). */
+    function ytPostCmd(func, args) {
       try {
         var fr = ytPlayer.getIframe && ytPlayer.getIframe();
         if (fr && fr.contentWindow) {
-          var cmds = v === 0
-            ? [["setVolume", [0]], ["mute", []]]
-            : [["setVolume", [v]], ["unMute", []]];
-          for (var i = 0; i < cmds.length; i++) {
-            var msg = JSON.stringify({ event: "command", func: cmds[i][0], args: cmds[i][1] });
-            fr.contentWindow.postMessage(msg, "https://www.youtube-nocookie.com");
-            /* Gửi thêm một bản với đích "*": khung phát thật đôi khi
-               chạy ở biến thể miền khác của YouTube (nocookie / thường)
-               khiến bản gửi đích danh bị lọc bỏ — lệnh âm lượng không
-               chứa dữ liệu nhạy cảm nên gửi mở vẫn an toàn, và trình
-               phát chỉ nhận lệnh đúng định dạng của nó. */
-            fr.contentWindow.postMessage(msg, "*");
-          }
+          var msg = JSON.stringify({ event: "command", func: func, args: args || [] });
+          fr.contentWindow.postMessage(msg, "https://www.youtube-nocookie.com");
+          fr.contentWindow.postMessage(msg, "*");
         }
       } catch (e) {}
+    }
+    /* Chỉ gửi mute() — đúng thao tác của nút loa trên trình phát. */
+    function ytSendMuteOnly() {
+      try { ytPlayer.mute(); } catch (e) {}
+      ytPostCmd("mute", []);
+    }
+    /* Nhịp thoát kẹt cho trình phát đã lỡ ở trạng thái "mức 0, chưa tắt
+       tiếng" (do bản cũ gửi setVolume(0) quanh mute()): nâng tạm lên
+       12% rồi mute() ngay sau — mute() ở mức 0 là lệnh thừa nên phải
+       nâng lên trước mới tắt tiếng được. Giãn ít nhất 4 giây/lần để
+       không spam lệnh; trả false khi chưa tới lượt (người gọi tự gửi
+       mute() thường thay thế). */
+    var ytEscalateAt = 0;
+    function ytEscalateMute() {
+      if (Date.now() - ytEscalateAt < 4000) return false;
+      ytEscalateAt = Date.now();
+      try { ytPlayer.setVolume(12); } catch (e) {}
+      ytPostCmd("setVolume", [12]);
+      setTimeout(function () { ytSendMuteOnly(); }, 300);
+      return true;
+    }
+    function ytSendVolumeCmds(v) {
+      /* Mức 0: CHỈ gửi mute(), không kèm setVolume(0) — bản v65 gửi
+         setVolume(0) quanh mute() nên trình phát YouTube thật không bật
+         được cờ tắt tiếng khi đang phát (video đã im nhưng nút loa vẫn
+         hiện "Tắt tiếng" khi kéo 53%→0%, đúng lỗi kiểm tra 18:22–18:23
+         ngày 16/11). Mức >0 giữ nguyên: chỉnh mức rồi bật tiếng. */
+      if (v === 0) { ytSendMuteOnly(); return; }
+      try { ytPlayer.setVolume(v); } catch (e) {}
+      try { ytPlayer.unMute(); } catch (e) {}
+      ytPostCmd("setVolume", [v]);
+      ytPostCmd("unMute", []);
     }
     function ytPlayerMatches(v) {
       var got = null, muted = null;
@@ -11087,7 +11100,10 @@
         if (ytPlayerMatches(v)) { ytVolDirty = false; return; }
         tries++;
         if (tries > 10) return; /* vẫn giữ cờ nợ: sự kiện trình phát kế tiếp sẽ đẩy lại */
-        ytSendVolumeCmds(v);
+        /* Mức 0 mà thử 3 lần vẫn chưa tắt tiếng: thoát kẹt bằng nhịp
+           nâng-rồi-tắt; chưa tới lượt thì gửi mute() thường. */
+        if (v === 0 && tries >= 3) { if (!ytEscalateMute()) ytSendVolumeCmds(v); }
+        else ytSendVolumeCmds(v);
         setTimeout(verify, tries < 3 ? 350 : 700);
       }
       setTimeout(verify, 350);
@@ -11123,7 +11139,16 @@
     setInterval(function () {
       if (!ytPlayer || !ytPlayerReady || ytStopped || !ytCurrentId) return;
       var v = ytGameVolume();
-      if (!ytPlayerMatches(v)) ytSendVolumeCmds(v);
+      if (ytPlayerMatches(v)) return;
+      /* Mức 0 mà trình phát đang ở mức 0 nhưng chưa tắt tiếng: thoát
+         kẹt bằng nhịp nâng-rồi-tắt (giãn ít nhất 4 giây/lần); còn lại
+         gửi lệnh thường. */
+      if (v === 0) {
+        var gv = null;
+        try { gv = ytPlayer.getVolume(); } catch (e) {}
+        if (gv === 0 && ytEscalateMute()) return;
+      }
+      ytSendVolumeCmds(v);
     }, 1000);
     /* Thanh trượt trong app ghi mức mới: lưu bền videoVol vào kho cài
        đặt chung (giữ nguyên các mục khác), áp ngay vào trình phát, rồi
