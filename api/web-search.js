@@ -1,33 +1,18 @@
-// Mẫu hàm serverless Vercel: GET /api/web-search?q=<từ khóa>
+// Hàm serverless Vercel: GET /api/web-search?q=<từ khóa>
 // Trả danh sách trang web thật (tiêu đề + link + đoạn trích) kiểu Google,
-// phục vụ trang kết quả tự vẽ của app Cảng Lướt. Không key, không tài khoản.
-// Nguồn theo thứ tự: DuckDuckGo HTML (POST) -> Bing HTML -> DuckDuckGo Lite.
-// Đã kiểm chứng logic parse bằng Node trên trang HTML thật ngày 16/11/2026
-// (DDG POST 9/9/10 kết quả, Bing 10/10, Lite 9).
-// CÁCH DÙNG: copy file này thành api/web-search.js ở gốc repo tham-tu-hem-cang.
-// Vercel tự nhận hàm serverless, không cần package.json, không cần biến môi trường.
-// Chi tiết đầy đủ xem report.md cùng thư mục.
+// phục vụ trang kết quả tự vẽ của app Cảng Lướt.
+// Nguồn theo thứ tự: Tavily có key -> Tavily keyless -> Serper -> Exa.
+// Gói miễn phí, KHÔNG cần thẻ: Tavily Researcher 1.000 lượt/tháng,
+// Serper 2.500 lượt một lần, Exa $10/tháng. Key giữ trong biến môi trường
+// Vercel (TAVILY_API_KEY, SERPER_API_KEY, EXA_API_KEY), không ghi vào code.
+// search_depth luôn "basic" (1 credit/lượt); không bật advanced,
+// include_answer hay include_raw_content (tốn thêm credit). Cache 5 phút.
+// Phân biệt "hết lượt miễn phí" (quota_exhausted: true) với "lỗi mạng".
+// Chi tiết đầy đủ xem research_notes/tim-kiem-web-that-khong-can-the-20261116/report.md
+// Lịch sử: trước đây dùng DuckDuckGo/Bing HTML, chết từ IP Vercel (kết quả
+// sai/502) nên bỏ hẳn từ bản này. Brave cũng bị loại vì bắt nhập thẻ.
 const CACHE = new Map();
 const CACHE_TTL = 5 * 60 * 1000; // 5 phút
-
-const UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36';
-
-function strip(s) {
-  return (s || '')
-    .replace(/<[^>]+>/g, '')
-    .replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&').replace(/&quot;/g, '"')
-    .replace(/&#39;/g, "'").replace(/&lt;/g, '<').replace(/&gt;/g, '>')
-    .replace(/&#(\d+);/g, (_, c) => String.fromCharCode(+c))
-    .replace(/\s+/g, ' ').trim();
-}
-
-function resolveUrl(href) {
-  href = (href || '').replace(/&amp;/g, '&');
-  const m = href.match(/uddg=([^&"']+)/);
-  if (m) { try { return decodeURIComponent(m[1]); } catch (e) {} }
-  if (href.startsWith('//')) return 'https:' + href;
-  return href;
-}
 
 function domainOf(url) {
   try { return new URL(url).hostname.replace(/^www\./, ''); } catch (e) { return ''; }
@@ -42,103 +27,102 @@ function clean(r) {
   };
 }
 
-async function fetchText(url, opts, timeoutMs = 7000) {
+function toResults(list) {
+  return (list || [])
+    .map((r) => clean(r))
+    .filter((r) => r.title && r.url.startsWith('http'));
+}
+
+function quotaError(source, status, detail) {
+  const e = new Error(source + ' hết lượt miễn phí (' + status + ')' + (detail ? ': ' + detail : ''));
+  e.quota = true;
+  return e;
+}
+
+async function fetchJson(url, opts, timeoutMs) {
   const c = new AbortController();
   const t = setTimeout(() => c.abort(), timeoutMs);
   try {
     const res = await fetch(url, { ...opts, signal: c.signal });
-    const text = await res.text();
-    return { status: res.status, text };
+    let data = null;
+    try { data = await res.json(); } catch (e) { data = null; }
+    return { status: res.status, data };
   } finally { clearTimeout(t); }
 }
 
-// ---- Nguồn 1: DuckDuckGo HTML qua POST (bắt buộc POST; GET bị trang anomaly) ----
-function parseDDG(html) {
-  const links = [...html.matchAll(/class="result__a"[^>]*href="([^"]+)"[^>]*>(.*?)<\/a>/gs)];
-  const snips = [...html.matchAll(/class="result__snippet"[^>]*>(.*?)<\/a>/gs)];
-  return links
-    .map((m, i) => ({ title: strip(m[2]), url: resolveUrl(m[1]), snippet: strip(snips[i] ? snips[i][1] : '') }))
-    .filter((r) => r.title && r.url.startsWith('http'));
-}
-
-async function searchDDG(q) {
-  for (let attempt = 0; attempt < 2; attempt++) {
-    if (attempt > 0) await new Promise((r) => setTimeout(r, 600));
-    const { status, text } = await fetchText('https://html.duckduckgo.com/html/', {
+// ---- Nguồn 1+2: Tavily (có key hoặc keyless) ----
+// POST https://api.tavily.com/search
+// Header có key:  Authorization: Bearer <TAVILY_API_KEY>
+// Header keyless: X-Tavily-Access-Mode: keyless (không gửi Authorization)
+async function searchTavily(q, apiKey) {
+  const label = apiKey ? 'tavily' : 'tavily-keyless';
+  const headers = { 'Content-Type': 'application/json' };
+  if (apiKey) headers['Authorization'] = 'Bearer ' + apiKey;
+  else headers['X-Tavily-Access-Mode'] = 'keyless';
+  let status, data;
+  try {
+    ({ status, data } = await fetchJson('https://api.tavily.com/search', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-        'User-Agent': UA,
-        'Accept-Language': 'vi-VN,vi;q=0.9',
-      },
-      body: 'q=' + encodeURIComponent(q),
-    });
-    if (status !== 200) throw new Error('DDG HTTP ' + status);
-    if (text.includes('anomaly')) throw new Error('DDG anomaly (bot check)');
-    const results = parseDDG(text);
-    if (results.length) return results;
-    // 0 kết quả: có thể là trang anomaly dạng khác -> thử lại 1 lần rồi buông
+      headers,
+      body: JSON.stringify({
+        query: q, search_depth: 'basic', max_results: 10,
+        include_answer: false, include_raw_content: false,
+      }),
+    }, 8000));
+  } catch (e) {
+    throw new Error(label + ' lỗi mạng/timeout: ' + (e && e.message ? e.message : String(e)));
   }
-  throw new Error('DDG: 0 kết quả sau 2 lần thử');
+  if (status === 402) throw quotaError(label, 402);
+  if (status === 429) throw quotaError(label, 429, 'daily_cap_reached/ip_rate_limit_exceeded');
+  if (status !== 200 || !data) throw new Error(label + ' HTTP ' + status);
+  const results = toResults((data.results || []).map((r) => ({
+    title: r.title, url: r.url, snippet: r.content || '',
+  })));
+  if (!results.length) throw new Error(label + ': 0 kết quả');
+  return results;
 }
 
-// ---- Nguồn 2: Bing HTML (GET). Link là redirect, URL thật ở tham số u (base64) ----
-function b64url(u) {
-  if (!u || !u.startsWith('a1')) return '';
-  try { return Buffer.from(u.slice(2).replace(/-/g, '+').replace(/_/g, '/'), 'base64').toString('utf8'); } catch (e) { return ''; }
-}
-
-function parseBing(html) {
-  const blocks = [...html.matchAll(/<li class="b_algo".*?<\/li>/gs)].map((m) => m[0]);
-  const out = [];
-  for (const b of blocks) {
-    const m = b.match(/<h2><a[^>]*href="([^"]+)"[^>]*>(.*?)<\/a><\/h2>/s);
-    if (!m) continue;
-    let url = '';
-    try {
-      const u = new URL(m[1].replace(/&amp;/g, '&'), 'https://www.bing.com').searchParams.get('u');
-      url = b64url(u || '');
-    } catch (e) {}
-    const sn = b.match(/<div class="b_caption"[^>]*>(.*?)<\/div>/s);
-    out.push({ title: strip(m[2]), url, snippet: strip(sn ? sn[1] : '') });
+// ---- Nguồn 3: Serper (kết quả Google thật) ----
+// POST https://google.serper.dev/search, header X-API-KEY
+async function searchSerper(q, apiKey) {
+  let status, data;
+  try {
+    ({ status, data } = await fetchJson('https://google.serper.dev/search', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-API-KEY': apiKey },
+      body: JSON.stringify({ q, num: 10, gl: 'vn', hl: 'vi' }),
+    }, 6000));
+  } catch (e) {
+    throw new Error('serper lỗi mạng/timeout: ' + (e && e.message ? e.message : String(e)));
   }
-  return out.filter((r) => r.title && r.url.startsWith('http'));
+  if (status === 402) throw quotaError('serper', 402);
+  if (status !== 200 || !data) throw new Error('serper HTTP ' + status);
+  const results = toResults((data.organic || []).map((r) => ({
+    title: r.title, url: r.link, snippet: r.snippet || '',
+  })));
+  if (!results.length) throw new Error('serper: 0 kết quả');
+  return results;
 }
 
-async function searchBing(q) {
-  for (let attempt = 0; attempt < 2; attempt++) {
-    if (attempt > 0) await new Promise((r) => setTimeout(r, 600));
-    const { status, text } = await fetchText(
-      'https://www.bing.com/search?q=' + encodeURIComponent(q) + '&setlang=vi-VN&cc=VN',
-      { headers: { 'User-Agent': UA, 'Accept-Language': 'vi-VN,vi;q=0.9' } }
-    );
-    if (status !== 200) throw new Error('Bing HTTP ' + status);
-    const results = parseBing(text);
-    if (results.length) return results;
+// ---- Nguồn 4: Exa (tìm kiếm ngữ nghĩa) ----
+// POST https://api.exa.ai/search, header x-api-key
+async function searchExa(q, apiKey) {
+  let status, data;
+  try {
+    ({ status, data } = await fetchJson('https://api.exa.ai/search', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-api-key': apiKey },
+      body: JSON.stringify({ query: q, type: 'auto', numResults: 10 }),
+    }, 6000));
+  } catch (e) {
+    throw new Error('exa lỗi mạng/timeout: ' + (e && e.message ? e.message : String(e)));
   }
-  throw new Error('Bing: 0 kết quả sau 2 lần thử');
-}
-
-// ---- Nguồn 3: DuckDuckGo Lite (GET) ----
-function parseLite(html) {
-  const tags = [...html.matchAll(/<a[^>]*class='result-link'[^>]*>(.*?)<\/a>/gs)];
-  const snips = [...html.matchAll(/class='result-snippet'[^>]*>(.*?)<\/td>/gs)];
-  return tags
-    .map((m, i) => {
-      const hm = m[0].match(/href="([^"]+)"/);
-      return { title: strip(m[1]), url: resolveUrl(hm ? hm[1] : ''), snippet: strip(snips[i] ? snips[i][1] : '') };
-    })
-    .filter((r) => r.title && r.url.startsWith('http'));
-}
-
-async function searchLite(q) {
-  const { status, text } = await fetchText(
-    'https://lite.duckduckgo.com/lite/?q=' + encodeURIComponent(q),
-    { headers: { 'User-Agent': UA, 'Accept-Language': 'vi-VN,vi;q=0.9' } }
-  );
-  if (status !== 200) throw new Error('Lite HTTP ' + status);
-  const results = parseLite(text);
-  if (!results.length) throw new Error('Lite: 0 kết quả');
+  if (status === 402) throw quotaError('exa', 402);
+  if (status !== 200 || !data) throw new Error('exa HTTP ' + status);
+  const results = toResults((data.results || []).map((r) => ({
+    title: r.title, url: r.url, snippet: r.text || '',
+  })));
+  if (!results.length) throw new Error('exa: 0 kết quả');
   return results;
 }
 
@@ -156,26 +140,41 @@ module.exports = async (req, res) => {
     res.status(200).json({ ok: true, source: hit.source, cached: true, results: hit.results });
     return;
   }
-  const attempts = [
-    ['duckduckgo', searchDDG],
-    ['bing', searchBing],
-    ['duckduckgo-lite', searchLite],
-  ];
+  const tavilyKey = (process.env.TAVILY_API_KEY || '').trim();
+  const serperKey = (process.env.SERPER_API_KEY || '').trim();
+  const exaKey = (process.env.EXA_API_KEY || '').trim();
+  const attempts = [];
+  if (tavilyKey) attempts.push(['tavily', () => searchTavily(q, tavilyKey)]);
+  attempts.push(['tavily-keyless', () => searchTavily(q, null)]);
+  if (serperKey) attempts.push(['serper', () => searchSerper(q, serperKey)]);
+  if (exaKey) attempts.push(['exa', () => searchExa(q, exaKey)]);
   let lastErr = '';
+  let quotaOnly = true;
   for (const [name, fn] of attempts) {
     try {
-      const results = (await fn(q)).slice(0, 10).map(clean);
+      const results = (await fn()).slice(0, 10).map(clean);
       if (results.length) {
         CACHE.set(key, { t: Date.now(), source: name, results });
         res.status(200).json({ ok: true, source: name, results });
         return;
       }
       lastErr = name + ': không có kết quả';
+      quotaOnly = false;
     } catch (e) {
       lastErr = name + ': ' + (e && e.message ? e.message : String(e));
+      if (!e || !e.quota) quotaOnly = false;
     }
   }
-  res.status(502).json({ ok: false, error: 'Không tìm được kết quả web. (' + lastErr + ')' });
+  // Hết lượt miễn phí ở mọi nguồn (khác với lỗi mạng): game hiện dòng
+  // "Hết lượt tìm miễn phí tháng này, thử lại mùng 1" thay vì tưởng game hỏng.
+  res.status(502).json({
+    ok: false,
+    quota_exhausted: quotaOnly && attempts.length > 0,
+    error: (quotaOnly
+      ? 'Đã hết lượt tìm miễn phí tháng này, thử lại vào mùng 1.'
+      : 'Không tìm được kết quả web. (' + lastErr + ')'),
+    details: lastErr,
+  });
 };
 
 // Cho phép nâng timeout hàm trên gói Hobby (mặc định 10s, tối đa 60s):
