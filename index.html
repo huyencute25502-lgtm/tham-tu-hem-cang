@@ -2400,7 +2400,7 @@
                   <div class="lock-widget"><b>Thời tiết · Hải Phòng</b><p><span class="big">Se lạnh</span><br />Đêm nay trời quang, gió nhẹ — hợp đi điều tra.</p></div>
                   <div class="lock-widget"><b>Hồ sơ văn phòng</b><p><span class="big">18 vụ án</span><br />Đang chờ trong app Nhận nhiệm vụ.</p></div>
                   <div class="lock-widget"><b>Giao thông hẻm Cảng</b><p>Đường hẻm thông thoáng, ngõ Chùa hơi trơn sau mưa phùn.</p></div>
-                  <div class="lock-widget"><b>Giấy nhớ trên bàn</b><p>PIN đăng nhập: <b id="lockPinHint">1234</b><br />Đừng quên uống cà phê trước giờ làm.</p></div>
+                  <div class="lock-widget"><b>Giấy nhớ trên bàn</b><p><span id="lockPinLine">PIN đăng nhập: <b id="lockPinHint">1234</b><br /></span><span id="lockCreateHint" hidden>Chưa có nhân vật — bấm “Tạo nhân vật thám tử” ở góc phải trên để tạo nhân vật trước, rồi mới đăng nhập bằng PIN được.<br /></span>Đừng quên uống cà phê trước giờ làm.</p></div>
                 </div>
               </div>
 
@@ -6456,6 +6456,26 @@
         G.profile.usePhoto = !!(p.usePhoto && G.profile.photo);
       } catch (e) { /* dữ liệu lưu hỏng: dùng nhân vật mặc định */ }
     }
+    /* Đã có nhân vật thám tử lưu trên máy này chưa? Hồ sơ mặc định trong
+       bộ nhớ (PIN 1234) KHÔNG tính là đã có nhân vật — chỉ khi người chơi
+       đã bấm "Cấp thẻ · Lưu nhân vật" thì khóa PROFILE_KEY mới có dữ liệu
+       (hoặc cờ phiên khi trình duyệt không ghi được localStorage). Màn
+       khóa dựa vào đây để bắt tạo nhân vật trước khi cho đăng nhập PIN. */
+    function hasDetectiveProfile() {
+      if (window.__detectiveCreatedHere) return true;
+      try { return !!localStorage.getItem(PROFILE_KEY); } catch (e) { return false; }
+    }
+    /* Giấy nhớ trên màn khóa: chưa có nhân vật thì ẩn dòng PIN và hiện
+       hướng dẫn tạo nhân vật; đã có nhân vật thì hiện PIN hiện tại. */
+    function refreshLockNote() {
+      var has = hasDetectiveProfile();
+      var line = document.getElementById("lockPinLine");
+      var guide = document.getElementById("lockCreateHint");
+      var hint = document.getElementById("lockPinHint");
+      if (line) line.hidden = !has;
+      if (guide) guide.hidden = has;
+      if (has && hint) hint.textContent = G.profile.pin;
+    }
     /* Lưu / khôi phục TIẾN TRÌNH CHƠI trên chính máy này (localStorage):
        điểm danh tiếng, lần buộc tội sai, vụ đã phá, huy hiệu, tiến độ vụ
        đang làm dở và thùng rác. Trước đây chỉ nhân vật, kỷ lục mini game,
@@ -6514,6 +6534,15 @@
     function applyProfile() {
       document.querySelectorAll(".js-det-avatar").forEach(el => { el.innerHTML = avatarHTML(G.profile); });
       document.querySelectorAll(".js-det-name").forEach(el => { el.textContent = G.profile.name; });
+    }
+    /* Đẩy ngay hồ sơ hiện tại (tên + ảnh đại diện mới nhất) lên máy chủ
+       chat mỗi khi người chơi đổi ảnh đại diện ở Hồ sơ / Cài đặt, qua cầu
+       nối window.__msgSyncProfile của app Tin nhắn (ghi đè users/{uid}
+       bằng merge + cập nhật threads/{uid} nếu đã có đoạn chat với
+       admin). Chưa từng mở app Tin nhắn thì cầu nối chưa nối được —
+       bỏ qua lặng lẽ, lần mở app tới app sẽ tự ghi lại ảnh hiện tại. */
+    function syncAvatarToServer() {
+      try { if (typeof window !== "undefined" && typeof window.__msgSyncProfile === "function") window.__msgSyncProfile(); } catch (e) { /* chat chưa sẵn sàng: lần mở app Tin nhắn tới sẽ ghi bù */ }
     }
 
     function newRun(c) {
@@ -11269,8 +11298,7 @@
     document.addEventListener("visibilitychange", function () {
       if (document.visibilityState === "hidden") saveProgress();
     });
-    var savedPinHint = document.getElementById("lockPinHint");
-    if (savedPinHint) savedPinHint.textContent = G.profile.pin;
+    refreshLockNote();
     applyProfile();
     renderHome();
     updateTrashBadge();
@@ -12160,12 +12188,28 @@
       var temp = { name: G.profile.name, style: normStyle(G.profile.style), color: G.profile.color, rank: G.profile.rank || "Thám tử", photo: G.profile.photo || null, usePhoto: !!G.profile.usePhoto };
 
       var loginView = document.getElementById("loginView");
+      /* Chưa có nhân vật lưu trên máy này thì chưa được đăng nhập bằng PIN:
+         hồ sơ mặc định trong bộ nhớ (PIN 1234) không tính là nhân vật. */
+      function hasProfile() {
+        if (typeof hasDetectiveProfile === "function") return hasDetectiveProfile();
+        try { return !!localStorage.getItem("hem-cang-detective-v1"); } catch (e) { return false; }
+      }
+      /* Chặn đăng nhập khi chưa có nhân vật: về màn khóa, hiện thông báo
+         hướng dẫn và mở sẵn popup tạo nhân vật để người chơi tạo trước. */
+      function requireCreator() {
+        showLock();
+        if (typeof refreshLockNote === "function") refreshLockNote();
+        toast("Chưa có nhân vật thám tử.", "Hãy bấm “Tạo nhân vật thám tử” và cấp thẻ trước — tạo xong mới đăng nhập bằng PIN được nhé.");
+        openCreator();
+      }
       /* Popup tạo nhân vật: chỉ mở trên màn khóa, đóng popup là về lại màn khóa */
       function openCreator() {
         var card0 = document.getElementById("idCard");
         if (card0) card0.classList.remove("stamped");
         var sv0 = document.getElementById("creatorSave");
         if (sv0) sv0.disabled = false;
+        var pinInp0 = document.getElementById("detPinInput");
+        if (pinInp0) pinInp0.placeholder = hasProfile() ? "Để trống = giữ PIN hiện tại" : "Để trống = dùng PIN mặc định 1234";
         paintCreator();
         if (creatorVeil) creatorVeil.hidden = false;
         if (createBtn) createBtn.setAttribute("aria-expanded", "true");
@@ -12177,6 +12221,10 @@
         if (createBtn) createBtn.setAttribute("aria-expanded", "false");
       }
       function showSignin() {
+        /* Chưa tạo nhân vật thì không vào màn PIN: phải tạo nhân vật trước */
+        if (!hasProfile()) { requireCreator(); return; }
+        var err0 = document.getElementById("loginError");
+        if (err0) { err0.textContent = "PIN chưa đúng — nhập lại nhé, hoặc bấm “Quên PIN” để đặt lại."; err0.hidden = true; }
         /* Màn đăng nhập: tắt hẳn nút + popup tạo nhân vật, chỉ còn avatar/tên/PIN */
         closeCreator();
         if (lockTopRight) lockTopRight.hidden = true;
@@ -12196,6 +12244,7 @@
         if (rp) rp.hidden = true;
         var ap = document.getElementById("a11yPanel");
         if (ap) ap.hidden = true;
+        if (typeof refreshLockNote === "function") refreshLockNote();
       }
       window.lockMachine = function () {
         document.body.classList.add("locked");
@@ -12218,6 +12267,15 @@
         e.preventDefault();
         var pin = document.getElementById("pinInput");
         var err = document.getElementById("loginError");
+        /* Chưa có nhân vật: PIN nào (kể cả 1234 mặc định) cũng không vào
+           được — báo hướng dẫn rồi mở sẵn popup tạo nhân vật. */
+        if (!hasProfile()) {
+          if (err) { err.textContent = "Chưa có nhân vật thám tử trên máy này — hãy tạo nhân vật trước rồi mới đăng nhập bằng PIN được nhé."; err.hidden = false; }
+          if (signinStage) { signinStage.classList.remove("shake"); void signinStage.offsetWidth; signinStage.classList.add("shake"); }
+          if (pin) pin.value = "";
+          setTimeout(function () { requireCreator(); }, 900);
+          return;
+        }
         if (pin && pin.value.trim() === G.profile.pin) {
           document.body.classList.remove("locked");
           showDesktop();
@@ -12239,11 +12297,14 @@
       var forgotBtn = document.getElementById("forgotPinBtn");
       var resetPanel = document.getElementById("resetPinPanel");
       if (forgotBtn && resetPanel) forgotBtn.onclick = function () {
+        /* Chưa có nhân vật thì không đặt lại PIN được: phải tạo nhân vật trước */
+        if (!hasProfile()) { requireCreator(); return; }
         resetPanel.hidden = !resetPanel.hidden;
         if (!resetPanel.hidden) { var n1 = document.getElementById("newPinInput"); if (n1) n1.focus(); }
       };
       var resetBtn = document.getElementById("resetPinBtn");
       if (resetBtn) resetBtn.onclick = function () {
+        if (!hasProfile()) { requireCreator(); return; }
         var n1 = document.getElementById("newPinInput"), n2 = document.getElementById("newPinInput2");
         var e2 = document.getElementById("resetPinError");
         var v1 = n1 ? n1.value.trim() : "", v2 = n2 ? n2.value.trim() : "";
@@ -12386,7 +12447,10 @@
           pinInp.value = "";
         }
         saveProfile();
+        window.__detectiveCreatedHere = true;
+        if (typeof refreshLockNote === "function") refreshLockNote();
         applyProfile();
+        syncAvatarToServer();
         /* Đóng dấu ĐÃ CẤP lên thẻ, ngắm một nhịp rồi mới đóng popup */
         stamping = true;
         saveBtn.disabled = true;
@@ -12627,7 +12691,7 @@
           b.type = "button"; b.className = "portrait-btn" + (!G.profile.usePhoto && normStyle(G.profile.style) === st[0] ? " sel" : "");
           b.style.background = "var(--bg2)"; b.style.color = "var(--ink)"; b.style.borderColor = "var(--line)";
           b.innerHTML = '<span class="p-face">' + avatarSVG({ style: st[0], color: G.profile.color }) + '</span>' + st[1];
-          b.onclick = function () { G.profile.style = st[0]; G.profile.usePhoto = false; saveProfile(); applyProfile(); render(); toast("Đã đổi ảnh đại diện.", "Mẫu " + st[1] + " đang được dùng khắp văn phòng."); };
+          b.onclick = function () { G.profile.style = st[0]; G.profile.usePhoto = false; saveProfile(); applyProfile(); syncAvatarToServer(); render(); toast("Đã đổi ảnh đại diện.", "Mẫu " + st[1] + " đang được dùng khắp văn phòng."); };
           pr.appendChild(b);
         });
         var colors = [["#8a5a2b", "Áo nâu"], ["#2563eb", "Áo xanh dương"], ["#9c2b2e", "Áo đỏ đô"], ["#2f7d43", "Áo xanh lá"], ["#374151", "Áo xám than"]];
@@ -12636,14 +12700,14 @@
           var b = document.createElement("button");
           b.type = "button"; b.className = "swatch" + (G.profile.color === c[0] ? " sel" : "");
           b.style.background = c[0]; b.setAttribute("aria-label", c[1]);
-          b.onclick = function () { G.profile.color = c[0]; saveProfile(); applyProfile(); render(); };
+          b.onclick = function () { G.profile.color = c[0]; saveProfile(); applyProfile(); syncAvatarToServer(); render(); };
           cr.appendChild(b);
         });
         var nameInp = document.getElementById("setNameInput");
         nameInp.addEventListener("change", function () {
           var v = nameInp.value.trim();
           G.profile.name = v || "Thám tử Hẻm Cảng";
-          saveProfile(); applyProfile(); render();
+          saveProfile(); applyProfile(); syncAvatarToServer(); render();
           toast("Đã đổi tên thám tử.", "Tên mới: " + G.profile.name);
         });
         var upBtn = document.getElementById("setUploadBtn"), fileInp = document.getElementById("setPhotoInput");
@@ -12663,7 +12727,7 @@
                 ctx.drawImage(img, (img.naturalWidth - side) / 2, (img.naturalHeight - side) / 2, side, side, 0, 0, 256, 256);
                 G.profile.photo = canvas.toDataURL("image/jpeg", 0.85);
                 G.profile.usePhoto = true;
-                saveProfile(); applyProfile(); render();
+                saveProfile(); applyProfile(); syncAvatarToServer(); render();
                 toast("Đã đổi ảnh đại diện.", "Ảnh của bạn đang hiện trên thẻ và menu Start.");
               } catch (err) { toast("Không đọc được ảnh này.", "Thử chọn một ảnh khác nhé."); }
             };
@@ -12673,7 +12737,7 @@
           reader.readAsDataURL(file);
         });
         var drawnBtn = document.getElementById("setUseDrawnBtn");
-        if (drawnBtn) drawnBtn.onclick = function () { G.profile.usePhoto = false; saveProfile(); applyProfile(); render(); };
+        if (drawnBtn) drawnBtn.onclick = function () { G.profile.usePhoto = false; saveProfile(); applyProfile(); syncAvatarToServer(); render(); };
       }
 
       function renderWallpaper() {
@@ -13217,12 +13281,29 @@
           avStyle: st.style, avColor: st.color, avPhoto: st.photo,
           lastSeen: ts(), updatedAt: ts()
         }, { merge: true }).catch(function () { /* hồ sơ cập nhật sau cũng được */ });
+        /* Đoạn chat với admin (threads/{uid}) cũng mang tên + ảnh đại
+           diện của người chơi: cập nhật luôn ảnh mới nhất vào đó.
+           update() chỉ chạy khi văn bản đã tồn tại (đã từng nhắn admin);
+           chưa có đoạn chat thì tự bỏ qua, không tạo đoạn chat trống. */
+        db.collection("threads").doc(me.uid).update({
+          playerName: myName(),
+          avStyle: st.style, avColor: st.color, avPhoto: st.photo
+        }).catch(function () { /* chưa từng nhắn admin: không có gì để cập nhật */ });
         var mn = $("msgMeName"); if (mn) mn.textContent = myName();
         var ma = $("msgMeAva");
         if (ma) { ma.innerHTML = ""; ma.appendChild(avatarNode({ avPhoto: st.photo, avStyle: st.style, avColor: st.color }, myName())); }
         var ms = $("msgMeSub");
         if (ms && st.rank) ms.textContent = st.rank + " · Đã phá " + st.solved + "/" + st.total + " vụ (" + st.pct + "%)";
       }
+
+      /* Cầu nối cho Hồ sơ / Cài đặt: mỗi lần người chơi đổi ảnh đại diện
+         (hoặc tên) là gọi vào đây để ghi NGAY ảnh mới nhất lên
+         users/{uid} (ghi đè bằng merge) và threads/{uid} — không phải
+         chờ tới lần mở app Tin nhắn sau thì bên admin mới thấy ảnh mới.
+         Chưa đăng nhập chat lần nào (db/me chưa có) thì syncMyProfile
+         tự bỏ qua; lần mở app tới, start()/onSignedIn sẽ ghi lại ảnh
+         hiện tại nên không lo mất đồng bộ. */
+      window.__msgSyncProfile = syncMyProfile;
 
       /* Nhịp tim online: khi app Tin nhắn đang mở, cập nhật lastSeen mỗi
          45 giây để mục "Đang online" thấy nhau trong cửa sổ 5 phút. */
