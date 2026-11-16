@@ -137,6 +137,7 @@
       .case-card.is-active:hover{ transform:none; }
 
       /* Mục "Vụ đang làm" trong app Nhận nhiệm vụ: chỉ để xem, không có nút bấm */
+      #activeCaseBox{ display:flex; flex-direction:column; gap:12px; }
       .active-case{
         background:var(--panel); border:1px solid var(--accent); border-radius:var(--radius);
         padding:18px; display:flex; flex-direction:column; gap:9px;
@@ -396,6 +397,34 @@
       .notif-item-time{ display:block; font-size:11.5px; opacity:.55; margin-top:5px; font-variant-numeric:tabular-nums; }
       .notif-empty{ margin:0; padding:6px 18px 20px; font-size:13.5px; opacity:.65; }
       .notif-empty[hidden]{ display:none; }
+      /* Nút xóa từng tin ngay trong bảng chuông: bấm là chuyển tin vào Thùng rác */
+      .notif-item-del{
+        flex:0 0 auto; width:28px; height:28px; min-height:28px; padding:0; display:grid; place-items:center;
+        background:none; border:none; border-radius:6px; color:inherit; opacity:.6; cursor:pointer;
+      }
+      .notif-item-del:hover{ background:rgba(127,127,127,.25); opacity:1; }
+      /* Chân bảng chuông: lối tắt sang Cài đặt → Thông báo khi còn tin đã đọc bị ẩn */
+      .notif-panel-more{
+        flex:0 0 auto; margin:0 12px 12px; padding:10px 12px; min-height:0;
+        background:rgba(127,127,127,.14); border:1px solid rgba(127,127,127,.22); border-radius:8px;
+        color:inherit; font-family:inherit; font-size:13px; font-weight:700; cursor:pointer; text-align:center;
+      }
+      .notif-panel-more:hover{ background:rgba(127,127,127,.24); }
+      .notif-panel-more[hidden]{ display:none; }
+      /* Danh sách thông báo đầy đủ trong Cài đặt → Thông báo */
+      .set-notif-row{ display:flex; gap:11px; align-items:flex-start; padding:13px 2px; border-bottom:1px solid var(--line); }
+      .set-notif-row:last-child{ border-bottom:none; }
+      .set-notif-dot{ flex:0 0 auto; width:9px; height:9px; border-radius:50%; margin-top:6px; background:transparent; }
+      .set-notif-row.unread .set-notif-dot{ background:var(--accent); box-shadow:0 0 6px rgba(232,163,61,.7); }
+      .set-notif-main{ flex:1 1 auto; min-width:0; }
+      .set-notif-main b{ display:block; font-size:14.5px; line-height:1.45; color:var(--ink); overflow-wrap:break-word; }
+      .set-notif-main .sub{ display:block; margin-top:2px; font-size:13.5px; line-height:1.55; color:var(--ink-dim); overflow-wrap:break-word; }
+      .set-notif-main .time{ display:block; margin-top:4px; font-size:11.5px; color:var(--ink-dim); opacity:.75; font-variant-numeric:tabular-nums; }
+      .set-notif-state{ flex:0 0 auto; font-size:11.5px; font-weight:700; padding:3px 9px; border-radius:99px; border:1px solid var(--line); color:var(--ink-dim); white-space:nowrap; margin-top:2px; }
+      .set-notif-row.unread .set-notif-state{ color:var(--accent); border-color:rgba(232,163,61,.55); }
+      .set-notif-acts{ flex:0 0 auto; display:flex; flex-direction:column; gap:6px; }
+      .set-notif-acts .set-btn{ padding:6px 11px; font-size:12.5px; min-height:0; white-space:nowrap; }
+      @media (max-width:560px){ .set-notif-row{ flex-wrap:wrap; } .set-notif-acts{ flex-direction:row; } }
       @media (prefers-color-scheme: light){
         .notif-popup, .notif-panel{ background:rgba(250,250,250,.95); color:#1c1c1c; border-color:rgba(0,0,0,.12); }
         .notif-item{ background:rgba(0,0,0,.045); border-color:rgba(0,0,0,.09); }
@@ -1239,12 +1268,18 @@
       #settingsView{ display:none; margin:0 14px 14px 104px; position:relative; z-index:2;
         background:var(--bg); border:1px solid rgba(255,255,255,.1); border-top:none;
         border-radius:0 0 8px 8px; box-shadow:0 24px 54px rgba(0,0,0,.42);
-        flex:1 1 auto; min-height:0; overflow-y:auto; overflow-x:hidden; overscroll-behavior:contain; }
+        flex:1 1 auto; min-height:0; overflow-y:auto; overflow-x:hidden; overscroll-behavior:contain; overflow-anchor:none; }
       @media (prefers-color-scheme: light){ #settingsView{ border-color:rgba(0,0,0,.1); } }
       body.locked #settingsView{ display:none !important; }
       body.on-desktop #settingsView{ display:none !important; }
-      body.in-case #settingsView{ margin:0; border:none; border-radius:0; box-shadow:none; }
-      @media (max-width:760px){ #settingsView{ margin:0 8px 10px; } body.in-case #settingsView{ margin:0; } }
+      /* Cài đặt nằm GỌN TRONG khung cửa sổ app như mọi app khác: mở app nào
+         cũng gắn body.in-case, nhưng khung cố định full màn ở trên đã chốt
+         mọi cửa sổ thụt vào trong (thanh tiêu đề .os-bar lề trái 104px) —
+         quy tắc cũ ép #settingsView về margin:0 + bỏ viền/bóng khi in-case
+         làm thân Cài đặt tràn full màn hình, lệch hẳn ra ngoài thanh tiêu
+         đề của chính nó. Giữ nguyên lề/viền/bóng của cửa sổ ở mọi trạng thái. */
+      body.in-case #settingsView{ margin:0 14px 14px 104px; border:1px solid rgba(255,255,255,.1); border-top:none; border-radius:0 0 8px 8px; box-shadow:0 24px 54px rgba(0,0,0,.42); }
+      @media (max-width:760px){ #settingsView, body.in-case #settingsView{ margin:0 8px 10px; } }
 
       .set-shell{ display:grid; grid-template-columns:248px 1fr; min-height:100%; }
       .set-side{ background:var(--bg2); border-right:1px solid var(--line); padding:18px 12px; display:flex; flex-direction:column; gap:4px; }
@@ -1581,6 +1616,8 @@
       body.locked .yt-mini{ display:none !important; }
       .yt-mini-thumb{ width:62px; height:35px; flex:0 0 auto; object-fit:cover; border-radius:8px; background:#000; display:block; }
       .yt-mini-title{ flex:1 1 auto; min-width:0; font-weight:700; font-size:14.5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+      .yt-mini-state{ flex:0 0 auto; font-size:12px; font-weight:700; color:var(--accent); white-space:nowrap; }
+      .yt-mini[data-playing="0"] .yt-mini-state{ color:var(--ink-dim); }
       .yt-mini-btn{ flex:0 0 auto; width:38px; height:38px; min-height:38px; padding:0; border-radius:50%; border:1px solid var(--line); background:var(--panel); color:var(--ink); display:grid; place-items:center; cursor:pointer; transition:border-color .15s ease, color .15s ease; }
       .yt-mini-btn:hover{ border-color:var(--accent); color:var(--accent); }
       .yt-mini .ic-play{ display:none; }
@@ -1731,32 +1768,64 @@
       /* ===== KÉO THẢ SNAP LƯỚI + MENU CHUỘT PHẢI DESKTOP ===== */
       .d-icon{ transition:left .18s ease, top .18s ease; }
       .d-icon.dragging{ transition:none; }
+      /* Icon đang được CHỌN: nhấn 1 cái chỉ chọn (chưa mở app), kéo khung
+         chọn trúng cũng vào trạng thái này — nền xanh mờ + viền sáng kiểu
+         Windows, ô glyph viền vàng đậm hơn để nổi rõ icon đã chọn. */
+      .d-icon.selected{
+        background:rgba(120,190,255,.28); outline:1px solid rgba(147,210,255,.85);
+      }
+      .d-icon.selected .d-glyph{ border-color:rgba(232,163,61,.95); }
+      /* Khung kéo chọn nhiều icon trên nền desktop trống: hình chữ nhật mờ
+         hiện theo con trỏ khi nhấn giữ chuột trên nền và kéo. */
+      .sel-band{
+        position:absolute; z-index:5; pointer-events:none; display:none;
+        background:rgba(76,170,255,.18); border:1px solid rgba(120,200,255,.75);
+        border-radius:2px;
+      }
+      .sel-band.show{ display:block; }
+      /* Menu chuột phải kiểu Windows 10 như ảnh mẫu: nền trắng, chữ tối,
+         icon nhỏ ở cột trái, mục có menu con thì dấu › ở phải và menu con mở
+         sang ngang (sát mép phải thì lật sang trái, sát đáy thì mở ngược lên). */
       .desk-menu{
-        position:fixed; z-index:96; min-width:248px; max-width:calc(100vw - 16px);
-        background:rgba(32,32,36,.95); backdrop-filter:blur(24px) saturate(1.5); -webkit-backdrop-filter:blur(24px) saturate(1.5);
-        color:#eef1f5; border:1px solid rgba(255,255,255,.14); border-radius:10px;
-        box-shadow:0 20px 50px rgba(0,0,0,.5); padding:6px;
-        opacity:0; transform:translateY(6px); visibility:hidden; pointer-events:none;
-        transition:opacity .16s ease, transform .16s ease, visibility .16s;
+        position:fixed; z-index:96; width:238px; max-width:calc(100vw - 16px);
+        background:#f5f5f5; color:#1b1b1b; border:1px solid #a3a3a3; border-radius:2px;
+        box-shadow:4px 6px 18px rgba(0,0,0,.45); padding:4px 0;
+        font-size:13px; line-height:1.35;
+        opacity:0; visibility:hidden; pointer-events:none;
       }
-      .desk-menu.show{ opacity:1; transform:translateY(0); visibility:visible; pointer-events:auto; }
+      .desk-menu.show{ opacity:1; visibility:visible; pointer-events:auto; }
       .desk-menu-item{
-        display:flex; align-items:center; gap:10px; width:100%; text-align:left;
-        background:none; border:none; border-radius:6px; color:inherit; font-family:inherit;
-        padding:9px 10px; font-size:13.5px; cursor:pointer; min-height:0;
+        position:relative; display:flex; align-items:center; gap:9px; width:100%; text-align:left;
+        background:none; border:none; border-radius:0; color:#1b1b1b; font-family:inherit;
+        padding:6px 10px 6px 8px; font-size:13px; cursor:pointer; min-height:30px;
       }
-      .desk-menu-item:hover{ background:rgba(127,127,127,.22); }
-      .desk-menu-item .dm-check{ flex:0 0 auto; width:18px; text-align:center; color:var(--accent); font-weight:800; visibility:hidden; }
-      .desk-menu-item.on .dm-check{ visibility:visible; }
-      .desk-menu-item small{ display:block; font-size:11.5px; opacity:.6; }
-      .desk-menu-sep{ height:1px; background:rgba(255,255,255,.12); margin:5px 8px; }
-      @media (prefers-color-scheme: light){
-        .desk-menu{ background:rgba(250,250,250,.96); color:#1c1c1c; border-color:rgba(0,0,0,.12); }
-        .desk-menu-sep{ background:rgba(0,0,0,.1); }
+      .desk-menu-item:hover, .desk-menu-item.open{ background:#dbe9f9; }
+      .desk-menu-item .dm-ic{ flex:0 0 auto; width:18px; height:18px; display:grid; place-items:center; color:#3d3d3d; }
+      .desk-menu-item .dm-label{ flex:1 1 auto; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+      .desk-menu-item .dm-arrow{ flex:0 0 auto; font-size:16px; line-height:1; color:#5a5a5a; margin-left:8px; }
+      .desk-menu-item .dm-check, .desk-menu-item .dm-dot{
+        flex:0 0 auto; width:18px; text-align:center; color:#1b1b1b; visibility:hidden;
       }
-      html[data-theme="light"] .desk-menu{ background:rgba(250,250,250,.96); color:#1c1c1c; border-color:rgba(0,0,0,.12); }
-      html[data-theme="light"] .desk-menu-sep{ background:rgba(0,0,0,.1); }
-      html[data-theme="dark"] .desk-menu{ background:rgba(32,32,36,.95); color:#eef1f5; border-color:rgba(255,255,255,.14); }
+      .desk-menu-item .dm-check{ font-weight:700; }
+      .desk-menu-item .dm-dot{ font-size:9px; }
+      .desk-menu-item.on .dm-check, .desk-menu-item.on .dm-dot{ visibility:visible; }
+      .desk-menu-sep{ height:1px; background:#d6d6d6; margin:4px 0; }
+      .desk-sub{
+        position:absolute; left:calc(100% - 2px); top:-5px; width:226px;
+        background:#f5f5f5; border:1px solid #a3a3a3; border-radius:2px;
+        box-shadow:4px 6px 18px rgba(0,0,0,.4); padding:4px 0;
+        opacity:0; visibility:hidden; pointer-events:none;
+      }
+      .desk-menu-item:hover > .desk-sub, .desk-menu-item.open > .desk-sub{ opacity:1; visibility:visible; pointer-events:auto; }
+      .desk-menu.flip .desk-sub{ left:auto; right:calc(100% - 2px); box-shadow:-4px 6px 18px rgba(0,0,0,.4); }
+      .desk-menu.sub-up .desk-sub{ top:auto; bottom:-5px; }
+      /* Cỡ icon desktop đổi từ menu Xem: Vừa là cỡ gốc (không class) */
+      .desktop-icons.sz-lg .d-icon{ width:106px; font-size:12.5px; }
+      .desktop-icons.sz-lg .d-glyph{ width:74px; height:74px; border-radius:19px; }
+      .desktop-icons.sz-lg .d-glyph svg{ width:48px; height:48px; }
+      .desktop-icons.sz-sm .d-icon{ width:66px; font-size:10px; }
+      .desktop-icons.sz-sm .d-glyph{ width:40px; height:40px; border-radius:11px; }
+      .desktop-icons.sz-sm .d-glyph svg{ width:26px; height:26px; }
 
       /* ===== BẢNG CÀI ĐẶT NHANH + BẢNG LỊCH (khay hệ thống) ===== */
       .tb-sys{ background:none; border:none; font-family:inherit; cursor:pointer; }
@@ -1837,6 +1906,7 @@
       .cal-case-main b{ display:block; font-size:13.5px; line-height:1.35; }
       .cal-case-main span{ display:block; font-size:11.5px; opacity:.65; margin-top:1px; }
       .cal-empty{ font-size:13px; opacity:.65; margin:0; }
+      .cal-cases-sub{ margin:13px 0 8px; padding-top:10px; border-top:1px dashed rgba(255,255,255,.16); font-size:12.5px; opacity:.85; }
       #brightOverlay{ position:fixed; inset:0; z-index:500; background:#000; opacity:0; pointer-events:none; }
       @media (prefers-color-scheme: light){
         .qs-panel, .cal-panel{ background:rgba(250,250,250,.95); color:#1c1c1c; border-color:rgba(0,0,0,.12); }
@@ -1849,6 +1919,7 @@
         .cal-day.today{ color:#8a5a10; }
         .cal-case{ background:rgba(0,0,0,.045); border-color:rgba(0,0,0,.09); }
         .cal-cases{ border-top-color:rgba(0,0,0,.09); }
+        .cal-cases-sub{ border-top-color:rgba(0,0,0,.16); }
       }
       html[data-theme="light"] .qs-panel, html[data-theme="light"] .cal-panel{ background:rgba(250,250,250,.95); color:#1c1c1c; border-color:rgba(0,0,0,.12); }
       html[data-theme="light"] .qs-tile{ background:rgba(0,0,0,.045); border-color:rgba(0,0,0,.09); }
@@ -1860,6 +1931,7 @@
       html[data-theme="light"] .cal-day.today{ color:#8a5a10; }
       html[data-theme="light"] .cal-case{ background:rgba(0,0,0,.045); border-color:rgba(0,0,0,.09); }
       html[data-theme="light"] .cal-cases{ border-top-color:rgba(0,0,0,.09); }
+      html[data-theme="light"] .cal-cases-sub{ border-top-color:rgba(0,0,0,.16); }
       html[data-theme="dark"] .qs-panel, html[data-theme="dark"] .cal-panel{ background:rgba(32,32,36,.94); color:#eef1f5; border-color:rgba(255,255,255,.14); }
       @media (max-width:760px){
         .qs-panel, .cal-panel{ right:8px; width:calc(100vw - 16px); bottom:calc(60px + env(safe-area-inset-bottom, 0px)); max-height:80dvh; }
@@ -2396,6 +2468,7 @@
           <button type="button" class="set-nav-btn" data-setpane="profile"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4.5 20.5c1.2-3.6 4-5.2 7.5-5.2s6.3 1.6 7.5 5.2"/></svg>Thông tin thám tử</button>
           <button type="button" class="set-nav-btn" data-setpane="wallpaper"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="15" rx="2"/><circle cx="9" cy="10" r="1.7"/><path d="m4.5 18 5-5 3.5 3.5L17 12l2.5 2.6"/></svg>Hình nền</button>
           <button type="button" class="set-nav-btn" data-setpane="sound"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6.5 9H3v6h3.5L11 19V5Z" fill="currentColor" stroke="none"/><path d="M15 9.5a4 4 0 0 1 0 5M17.5 7a7.5 7.5 0 0 1 0 10"/></svg>Âm thanh</button>
+          <button type="button" class="set-nav-btn" data-setpane="notifs"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 9.5a6 6 0 1 0-12 0c0 6-2.5 7-2.5 7h17S18 15.5 18 9.5M10 20a2.2 2.2 0 0 0 4 0"/></svg>Thông báo</button>
           <button type="button" class="set-nav-btn" data-setpane="appearance"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2.4M12 19.1v2.4M2.5 12h2.4M19.1 12h2.4M5 5l1.7 1.7M17.3 17.3 19 19M19 5l-1.7 1.7M6.7 17.3 5 19"/></svg>Giao diện</button>
           <button type="button" class="set-nav-btn" data-setpane="security"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="10.5" width="14" height="9.5" rx="1.8"/><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5M12 14.5v2"/></svg>PIN &amp; bảo mật</button>
           <button type="button" class="set-nav-btn" data-setpane="data"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5.5" rx="7.5" ry="2.8"/><path d="M4.5 5.5v13c0 1.6 3.4 2.8 7.5 2.8s7.5-1.2 7.5-2.8v-13M4.5 12c0 1.6 3.4 2.8 7.5 2.8s7.5-1.2 7.5-2.8"/></svg>Dữ liệu &amp; tiến trình</button>
@@ -2432,7 +2505,7 @@
           <span class="app-ic" style="color:#d7dee9"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 6.5h15M9.5 6V4.2A1.2 1.2 0 0 1 10.7 3h2.6a1.2 1.2 0 0 1 1.2 1.2V6M6.5 6.5l1 13a1.6 1.6 0 0 0 1.6 1.5h5.8a1.6 1.6 0 0 0 1.6-1.5l1-13M10 10.5v6M14 10.5v6"/></svg></span>
           <div class="case-head-main">
             <h2>Thùng rác</h2>
-            <p class="app-desc">Vụ án và manh mối đã xóa — khôi phục về game hoặc xóa vĩnh viễn.</p>
+            <p class="app-desc">Vụ án, manh mối và thông báo đã xóa — khôi phục lại hoặc xóa vĩnh viễn.</p>
           </div>
           <div class="case-meta">
             <span class="pill"><b id="trashCountPill">0 mục đã xóa</b></span>
@@ -2443,10 +2516,11 @@
     </div>
 
             <!-- Thanh nhạc nhỏ: hiện khi video đang phát mà người chơi không ở trong app Xem video — bấm vào thanh mở lại app, có nút tạm dừng/phát tiếp và nút dừng hẳn -->
-            <div class="yt-mini" id="ytMiniBar" hidden title="Đang phát video — bấm để mở app Xem video">
+            <div class="yt-mini" id="ytMiniBar" hidden title="Bấm để mở app Xem video">
               <img class="yt-mini-thumb" id="ytMiniThumb" alt="" />
               <span class="yt-mini-eq" aria-hidden="true"><i></i><i></i><i></i></span>
               <span class="yt-mini-title" id="ytMiniTitle"></span>
+              <span class="yt-mini-state" id="ytMiniState"></span>
               <button type="button" class="yt-mini-btn" id="ytMiniToggle" aria-label="Tạm dừng hoặc phát tiếp">
                 <svg class="ic-pause" width="17" height="17" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="5.5" y="4.5" width="4.5" height="15" rx="1.2"/><rect x="13.5" y="4.5" width="4.5" height="15" rx="1.2"/></svg>
                 <svg class="ic-play" width="17" height="17" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.3v13.4c0 .9 1 1.5 1.8 1L20 13a1.2 1.2 0 0 0 0-2L9.8 4.3C9 3.9 8 4.4 8 5.3Z"/></svg>
@@ -2494,20 +2568,47 @@
     <!-- Lớp phủ độ sáng: chỉnh ở bảng Cài đặt nhanh -->
     <div id="brightOverlay" aria-hidden="true"></div>
 
-    <!-- Menu chuột phải trên nền desktop trống: tùy chọn icon kiểu Win 11 -->
-    <div class="desk-menu" id="deskMenu" role="menu" aria-label="Tùy chọn icon desktop" aria-hidden="true">
-      <button type="button" class="desk-menu-item" id="dmAuto" role="menuitemcheckbox" aria-checked="false">
-        <span class="dm-check">✓</span>
-        <span>Tự sắp xếp icon<small>Icon tự xếp gọn vào lưới theo thứ tự</small></span>
-      </button>
-      <button type="button" class="desk-menu-item" id="dmGrid" role="menuitemcheckbox" aria-checked="true">
-        <span class="dm-check">✓</span>
-        <span>Căn icon theo lưới<small>Thả icon là tự nhảy vào ô lưới gần nhất</small></span>
+    <!-- Menu chuột phải trên nền desktop trống: kiểu Windows 10 như ảnh mẫu —
+         Xem › (cỡ icon, tự sắp xếp, căn lưới, về mặc định), Sắp xếp theo ›
+         (Tên / Ngày nhận / Loại), Làm mới, Cài đặt hiển thị, Cá nhân hóa -->
+    <div class="desk-menu" id="deskMenu" role="menu" aria-label="Menu chuột phải desktop" aria-hidden="true">
+      <div class="desk-menu-item has-sub" id="dmView" role="menuitem" aria-haspopup="true" tabindex="0">
+        <span class="dm-ic"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="3.5" width="7" height="7" rx="1"/><rect x="13.5" y="3.5" width="7" height="7" rx="1"/><rect x="3.5" y="13.5" width="7" height="7" rx="1"/><rect x="13.5" y="13.5" width="7" height="7" rx="1"/></svg></span>
+        <span class="dm-label">Xem</span>
+        <span class="dm-arrow" aria-hidden="true">›</span>
+        <div class="desk-sub" role="menu" aria-label="Xem">
+          <button type="button" class="desk-menu-item" data-size="lg" role="menuitemradio" aria-checked="false"><span class="dm-dot">●</span><span class="dm-label">Icon lớn</span></button>
+          <button type="button" class="desk-menu-item" data-size="md" role="menuitemradio" aria-checked="true"><span class="dm-dot">●</span><span class="dm-label">Icon vừa</span></button>
+          <button type="button" class="desk-menu-item" data-size="sm" role="menuitemradio" aria-checked="false"><span class="dm-dot">●</span><span class="dm-label">Icon nhỏ</span></button>
+          <div class="desk-menu-sep"></div>
+          <button type="button" class="desk-menu-item" id="dmAuto" role="menuitemcheckbox" aria-checked="false"><span class="dm-check">✓</span><span class="dm-label">Tự sắp xếp icon</span></button>
+          <button type="button" class="desk-menu-item" id="dmGrid" role="menuitemcheckbox" aria-checked="true"><span class="dm-check">✓</span><span class="dm-label">Căn icon theo lưới</span></button>
+          <div class="desk-menu-sep"></div>
+          <button type="button" class="desk-menu-item" id="dmReset" role="menuitem"><span class="dm-check"></span><span class="dm-label">Đưa icon về vị trí mặc định</span></button>
+        </div>
+      </div>
+      <div class="desk-menu-item has-sub" id="dmSort" role="menuitem" aria-haspopup="true" tabindex="0">
+        <span class="dm-ic"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h10M4 12h7.5M4 18h4"/><path d="M17.5 9v11M17.5 20 14 16.5M17.5 20l3.5-3.5"/></svg></span>
+        <span class="dm-label">Sắp xếp theo</span>
+        <span class="dm-arrow" aria-hidden="true">›</span>
+        <div class="desk-sub" role="menu" aria-label="Sắp xếp theo">
+          <button type="button" class="desk-menu-item" data-sort="name" role="menuitemradio" aria-checked="false"><span class="dm-dot">●</span><span class="dm-label">Tên</span></button>
+          <button type="button" class="desk-menu-item" data-sort="date" role="menuitemradio" aria-checked="true"><span class="dm-dot">●</span><span class="dm-label">Ngày nhận</span></button>
+          <button type="button" class="desk-menu-item" data-sort="type" role="menuitemradio" aria-checked="false"><span class="dm-dot">●</span><span class="dm-label">Loại</span></button>
+        </div>
+      </div>
+      <button type="button" class="desk-menu-item" id="dmRefresh" role="menuitem">
+        <span class="dm-ic"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg></span>
+        <span class="dm-label">Làm mới</span>
       </button>
       <div class="desk-menu-sep"></div>
-      <button type="button" class="desk-menu-item" id="dmReset" role="menuitem">
-        <span class="dm-check"></span>
-        <span>Đưa icon về vị trí mặc định<small>Xếp lại thành cột trái như lúc đầu</small></span>
+      <button type="button" class="desk-menu-item" id="dmDisplay" role="menuitem">
+        <span class="dm-ic"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="4" width="19" height="12.5" rx="1.6"/><path d="M9.5 20.5h5M12 16.5v4"/></svg></span>
+        <span class="dm-label">Cài đặt hiển thị</span>
+      </button>
+      <button type="button" class="desk-menu-item" id="dmPersonalize" role="menuitem">
+        <span class="dm-ic"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a9 9 0 1 0 0 18c1.3 0 2-.9 2-1.9 0-.8-.6-1.3-.6-2.1 0-.9.7-1.5 1.7-1.5H17a4 4 0 0 0 4-4c0-4.7-4-8.5-9-8.5Z"/><circle cx="7.5" cy="10.5" r="1.1" fill="currentColor" stroke="none"/><circle cx="12" cy="7.5" r="1.1" fill="currentColor" stroke="none"/><circle cx="16.5" cy="10.5" r="1.1" fill="currentColor" stroke="none"/></svg></span>
+        <span class="dm-label">Cá nhân hóa</span>
       </button>
     </div>
 
@@ -2682,7 +2783,7 @@
         <span class="notif-panel-count" id="notifPanelCount"></span>
         <span class="notif-panel-actions">
           <button type="button" id="notifReadAll">Đã đọc hết</button>
-          <button type="button" id="notifClearAll">Xóa tất cả</button>
+          <button type="button" id="notifClearAll" title="Chuyển mọi thông báo vào Thùng rác — khôi phục lại được ở app Thùng rác">Xóa tất cả</button>
           <button type="button" class="notif-panel-close" id="notifPanelClose" aria-label="Đóng bảng thông báo">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 5l14 14M19 5L5 19"/></svg>
           </button>
@@ -2690,6 +2791,7 @@
       </div>
       <div class="notif-list" id="notifList"></div>
       <p class="notif-empty" id="notifEmpty">Chưa có thông báo nào. Khi có tin mới, chuông ở góc phải taskbar sẽ hiện số chưa đọc.</p>
+      <button type="button" class="notif-panel-more" id="notifOpenSettings" hidden>Xem tất cả thông báo trong Cài đặt →</button>
     </div>
 
     <script>
@@ -6011,12 +6113,21 @@
        chào mừng lúc đăng nhập. Nay mọi lần thêm tin / đánh dấu đã đọc /
        xóa hết đều ghi xuống kho, mở lại trang là khôi phục đủ. */
     var NOTIF_KEY = "hem-cang-notifs-v1";
+    /* Tin chào mừng lúc đăng nhập chỉ hiện ĐÚNG MỘT LẦN trên máy này:
+       trước đây mỗi lần đăng nhập lại là một tin "Xin chào, …!" mới
+       y hệt tin cũ được thêm vào chuông. Cờ riêng hem-cang-welcomed-v1
+       ghi nhớ đã chào rồi; lúc nạp kho thông báo cũng gộp các tin chào
+       mừng trùng đã lỡ sinh ra trước đây, chỉ giữ lại một tin. */
+    var WELCOME_KEY = "hem-cang-welcomed-v1";
+    function welcomeShown() { try { return localStorage.getItem(WELCOME_KEY) === "1"; } catch (e) { return false; } }
+    function markWelcomeShown() { try { localStorage.setItem(WELCOME_KEY, "1"); } catch (e) { /* không lưu được: vẫn chặn trùng trong phiên bằng danh sách tin */ } }
+    function isWelcomeNotif(n) { return !!n && typeof n.main === "string" && n.main.indexOf("Xin chào,") === 0; }
     function saveNotifs() {
       try {
         localStorage.setItem(NOTIF_KEY, JSON.stringify({
           seq: notifSeq,
           items: notifs.slice(0, 100).map(function (n) {
-            return { id: n.id, main: n.main, sub: n.sub, time: n.time instanceof Date ? n.time.getTime() : Number(n.time) || Date.now(), read: !!n.read };
+            return { id: n.id, main: n.main, sub: n.sub, time: n.time instanceof Date ? n.time.getTime() : Number(n.time) || Date.now(), read: !!n.read, deleted: !!n.deleted, deletedAt: n.deletedAt || 0 };
           })
         }));
       } catch (e) { /* hết chỗ lưu: thông báo vẫn còn trong phiên đang mở */ }
@@ -6035,27 +6146,106 @@
             main: it.main,
             sub: typeof it.sub === "string" ? it.sub : "",
             time: new Date(typeof it.time === "number" ? it.time : Date.now()),
-            read: !!it.read
+            read: !!it.read,
+            deleted: !!it.deleted,
+            deletedAt: typeof it.deletedAt === "number" ? it.deletedAt : 0
           });
         });
         if (typeof s.seq === "number" && isFinite(s.seq)) notifSeq = Math.max(notifSeq, Math.floor(s.seq));
         notifs.forEach(function (n) { if (n.id > notifSeq) notifSeq = n.id; });
+        /* Gộp tin chào mừng trùng: chỉ giữ tin chào mừng đầu tiên trong
+           danh sách, các bản sao do đăng nhập lại trước đây thì bỏ. Có
+           sẵn một tin chào mừng trong kho nghĩa là đã chào rồi — đặt cờ
+           để lần đăng nhập sau không sinh thêm tin nữa. */
+        var wSeen = false, wChanged = false;
+        for (var wi = notifs.length - 1; wi >= 0; wi--) {
+          if (!isWelcomeNotif(notifs[wi])) continue;
+          if (wSeen) { notifs.splice(wi, 1); wChanged = true; }
+          else wSeen = true;
+        }
+        if (wSeen) { markWelcomeShown(); if (wChanged) saveNotifs(); }
       } catch (e) { /* dữ liệu lưu hỏng: bắt đầu với chuông trống */ }
     }
 
     function notifTimeStr(d) {
       return d.toLocaleTimeString("vi-VN", { hour: "2-digit", minute: "2-digit" });
     }
-    function notifUnread() { return notifs.filter(n => !n.read).length; }
+    function notifUnread() { return notifs.filter(n => !n.read && !n.deleted).length; }
+    /* Thông báo có hai nơi ở: đang lưu (deleted=false — chuông + Cài đặt) và
+       Thùng rác (deleted=true — chỉ hiện trong app Thùng rác, khôi phục lại
+       được hoặc xóa vĩnh viễn). Xóa ở chuông / Cài đặt là chuyển vào Thùng
+       rác chứ không mất ngay, giống hệt vụ án và manh mối. */
+    function notifActive() { return notifs.filter(n => !n.deleted); }
+    function notifTrashed() { return notifs.filter(n => n.deleted); }
+    function notifDeletedCount() { try { return notifs.filter(n => n.deleted).length; } catch (e) { return 0; } }
+    function afterNotifChange() {
+      saveNotifs();
+      renderNotifs();
+      updateNotifBadge();
+      if (typeof updateTrashBadge === "function") updateTrashBadge();
+      if (typeof G !== "undefined" && G.currentApp === "trash" && typeof renderTrash === "function") renderTrash();
+    }
+    function trashNotifById(id) {
+      const n = notifs.find(x => x.id === id);
+      if (!n || n.deleted) return;
+      n.deleted = true; n.deletedAt = Date.now();
+      afterNotifChange();
+    }
+    function restoreTrashedNotif(id) {
+      const n = notifs.find(x => x.id === id);
+      if (!n || !n.deleted) return;
+      n.deleted = false; n.deletedAt = 0; n.read = true;
+      afterNotifChange();
+    }
+    function permDeleteTrashedNotif(id) {
+      const i = notifs.findIndex(x => x.id === id && x.deleted);
+      if (i < 0) return;
+      notifs.splice(i, 1);
+      afterNotifChange();
+    }
+    /* Móc cho app Cài đặt (script riêng): xem toàn bộ thông báo, đánh dấu
+       đã đọc, xóa vào Thùng rác — mọi thay đổi đều qua afterNotifChange
+       nên chuông, huy hiệu và Thùng rác khớp nhau ngay. */
+    window.__notifAPI = {
+      snapshot: function () {
+        return notifs.map(function (n) {
+          return { id: n.id, main: n.main, sub: n.sub, time: n.time instanceof Date ? n.time.getTime() : Number(n.time) || Date.now(), read: !!n.read, deleted: !!n.deleted, deletedAt: n.deletedAt || 0 };
+        });
+      },
+      markRead: function (id) {
+        const n = notifs.find(x => x.id === id && !x.deleted);
+        if (n && !n.read) { n.read = true; afterNotifChange(); }
+      },
+      markAllRead: function () {
+        let changed = false;
+        notifs.forEach(n => { if (!n.deleted && !n.read) { n.read = true; changed = true; } });
+        if (changed) afterNotifChange();
+      },
+      trash: function (id) { trashNotifById(id); },
+      trashAll: function () {
+        let changed = false;
+        notifs.forEach(n => { if (!n.deleted) { n.deleted = true; n.deletedAt = Date.now(); changed = true; } });
+        if (changed) afterNotifChange();
+      }
+    };
 
+    /* Bảng chuông chỉ hiện GỌN: mọi tin chưa đọc + tối đa 3 tin đã đọc mới
+       nhất. Toàn bộ tin (đã đọc lẫn chưa đọc) xem ở Cài đặt → Thông báo. */
+    var NOTIF_PANEL_READ_SHOWN = 3;
     function renderNotifs() {
       const list = $("notifList"); if (!list) return;
       list.innerHTML = "";
-      notifs.forEach(n => {
-        const item = document.createElement("button");
-        item.type = "button";
+      const active = notifActive();
+      const unreadItems = active.filter(n => !n.read);
+      const readItems = active.filter(n => n.read);
+      const shown = unreadItems.concat(readItems.slice(0, NOTIF_PANEL_READ_SHOWN));
+      shown.forEach(n => {
+        const item = document.createElement("div");
         item.className = "notif-item " + (n.read ? "read" : "unread");
         item.dataset.id = String(n.id);
+        item.tabIndex = 0;
+        item.setAttribute("role", "button");
+        item.title = n.read ? "Tin đã đọc — toàn bộ tin xem ở Cài đặt → Thông báo" : "Bấm để đánh dấu đã đọc";
         const dot = document.createElement("span");
         dot.className = "notif-dot"; dot.setAttribute("aria-hidden", "true");
         const main = document.createElement("span");
@@ -6066,15 +6256,28 @@
         const time = document.createElement("span");
         time.className = "notif-item-time"; time.textContent = notifTimeStr(n.time);
         main.appendChild(time);
-        item.appendChild(dot); item.appendChild(main);
+        const del = document.createElement("button");
+        del.type = "button"; del.className = "notif-item-del"; del.dataset.del = String(n.id);
+        del.setAttribute("aria-label", "Xóa thông báo này vào Thùng rác");
+        del.title = "Xóa vào Thùng rác";
+        del.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 5l14 14M19 5L5 19"/></svg>';
+        item.appendChild(dot); item.appendChild(main); item.appendChild(del);
         list.appendChild(item);
       });
       const empty = $("notifEmpty");
-      if (empty) empty.hidden = notifs.length > 0;
+      if (empty) {
+        empty.hidden = shown.length > 0;
+        empty.textContent = active.length === 0
+          ? "Chưa có thông báo nào. Khi có tin mới, chuông ở góc phải taskbar sẽ hiện số chưa đọc."
+          : "Không còn tin chưa đọc. Mọi tin đã đọc nằm trong Cài đặt → Thông báo.";
+      }
+      const more = $("notifOpenSettings");
+      if (more) more.hidden = active.length <= shown.length;
       const count = $("notifPanelCount");
       if (count) {
-        const u = notifUnread();
-        count.textContent = notifs.length === 0 ? "" : (u > 0 ? u + " chưa đọc · " + notifs.length + " tin" : notifs.length + " tin");
+        const u = unreadItems.length;
+        const hiddenRead = readItems.length - Math.min(readItems.length, NOTIF_PANEL_READ_SHOWN);
+        count.textContent = active.length === 0 ? "" : (u > 0 ? u + " chưa đọc" : "Đã đọc hết") + (hiddenRead > 0 ? " · tin cũ ở Cài đặt" : "");
       }
     }
 
@@ -6150,19 +6353,31 @@
       $("notifPopupClose").addEventListener("click", function (e) { e.stopPropagation(); hideNotifPopup(); });
       $("notifPanelClose").addEventListener("click", function () { closeNotifPanel(); });
       $("notifReadAll").addEventListener("click", function () {
-        notifs.forEach(n => { n.read = true; });
-        saveNotifs();
-        renderNotifs(); updateNotifBadge();
+        window.__notifAPI.markAllRead();
       });
+      /* "Xóa tất cả" ở chuông = chuyển mọi tin vào Thùng rác (khôi phục
+         được ở app Thùng rác), không xóa mất ngay như trước. */
       $("notifClearAll").addEventListener("click", function () {
-        notifs.length = 0;
-        saveNotifs();
-        renderNotifs(); updateNotifBadge();
+        window.__notifAPI.trashAll();
+      });
+      const moreBtn = $("notifOpenSettings");
+      if (moreBtn) moreBtn.addEventListener("click", function () {
+        closeNotifPanel();
+        if (typeof openSettings === "function") openSettings("notifs");
       });
       $("notifList").addEventListener("click", function (e) {
+        const del = e.target.closest(".notif-item-del");
+        if (del) { e.stopPropagation(); trashNotifById(Number(del.dataset.del)); return; }
         const item = e.target.closest(".notif-item"); if (!item) return;
         const n = notifs.find(x => String(x.id) === item.dataset.id);
-        if (n && !n.read) { n.read = true; saveNotifs(); renderNotifs(); updateNotifBadge(); }
+        if (n && !n.read && !n.deleted) { n.read = true; afterNotifChange(); }
+      });
+      $("notifList").addEventListener("keydown", function (e) {
+        if (e.key !== "Enter" && e.key !== " ") return;
+        const item = e.target.closest(".notif-item"); if (!item || e.target.closest(".notif-item-del")) return;
+        e.preventDefault();
+        const n = notifs.find(x => String(x.id) === item.dataset.id);
+        if (n && !n.read && !n.deleted) { n.read = true; afterNotifChange(); }
       });
       document.addEventListener("click", function (e) {
         if (!notifPanelOpen()) return;
@@ -6253,40 +6468,58 @@
         $("ctaCard").style.display = "";
       }
 
-      /* Mục "Vụ đang làm": chỉ liệt kê để xem — tên vụ, trạng thái, tiến độ.
-         Không có nút nào ở đây mở sang app Làm nhiệm vụ. */
+      /* Mục "Vụ đang làm": liệt kê MỌI vụ đang làm dở cùng lúc — phiên
+         hiện tại (G.run) cộng mọi vụ đã cất tiến độ trong G.progress
+         (vụ thường lẫn vụ án hôm nay). Trước đây mục này chỉ hiện đúng
+         phiên hiện tại, nên nhận vụ hôm nay là vụ thường biến mất khỏi
+         mục dù tiến độ của nó vẫn còn nguyên trong G.progress. Các thẻ
+         ở đây chỉ để xem — tên vụ, trạng thái, tiến độ; không có nút
+         nào mở sang app Làm nhiệm vụ. */
       (function renderActiveCase() {
         const box = $("activeCaseBox"); if (!box) return;
         box.innerHTML = "";
-        if (!activeCase) {
+        const items = [];
+        if (activeCase) items.push({ c: activeCase, found: G.run.found.size, current: true });
+        Object.keys(G.progress).forEach(id => {
+          if (activeCase && id === activeCase.id) return;
+          if (G.solved[id] || G.deletedCases[id] || G.goneCases[id]) return;
+          const c = caseById(id); if (!c) return;
+          const p = G.progress[id];
+          items.push({ c: c, found: Array.isArray(p && p.found) ? p.found.length : 0, current: false });
+        });
+        if (!items.length) {
           const d = document.createElement("div");
           d.className = "active-empty";
           d.textContent = "Chưa có vụ nào đang làm. Nhận một vụ ở danh sách nhiệm vụ bên dưới để bắt đầu.";
           box.appendChild(d);
           return;
         }
-        const c = activeCase, r = G.run;
-        const totalClues = Object.keys(c.clues).length;
-        const pct = totalClues ? Math.round(r.found.size / totalClues * 100) : 0;
-        const card = document.createElement("div");
-        card.className = "active-case";
-        const top = document.createElement("div"); top.className = "case-top";
-        const chip1 = document.createElement("span"); chip1.className = "chip"; chip1.textContent = caseTypeLabel(c);
-        const chip2 = document.createElement("span"); chip2.className = "chip diff-" + c.diffClass; chip2.textContent = "Đang làm";
-        top.append(chip1, chip2);
-        const h = document.createElement("h3"); h.textContent = c.title;
-        const pl = document.createElement("p"); pl.className = "place"; pl.textContent = c.place;
-        const prow = document.createElement("div"); prow.className = "prog-row";
-        const pl1 = document.createElement("span"); pl1.innerHTML = "Tiến độ: <b></b>"; pl1.querySelector("b").textContent = "Đã ghim " + r.found.size + "/" + totalClues + " manh mối";
-        const pl2 = document.createElement("span"); pl2.textContent = pct + "%";
-        prow.append(pl1, pl2);
-        const bar = document.createElement("div"); bar.className = "prog-bar";
-        const fill = document.createElement("i"); fill.style.width = pct + "%";
-        bar.appendChild(fill);
-        const note = document.createElement("p"); note.className = "prog-note";
-        note.textContent = "Muốn làm tiếp vụ này thì tự mở app Làm nhiệm vụ từ desktop, menu Start hoặc thanh taskbar.";
-        card.append(top, h, pl, prow, bar, note);
-        box.appendChild(card);
+        items.forEach(it => {
+          const c = it.c;
+          const totalClues = Object.keys(c.clues).length;
+          const pct = totalClues ? Math.round(it.found / totalClues * 100) : 0;
+          const card = document.createElement("div");
+          card.className = "active-case";
+          const top = document.createElement("div"); top.className = "case-top";
+          const chip1 = document.createElement("span"); chip1.className = "chip"; chip1.textContent = c.daily ? "Vụ án hôm nay" : caseTypeLabel(c);
+          const chip2 = document.createElement("span"); chip2.className = "chip diff-" + c.diffClass; chip2.textContent = it.current ? "Đang làm" : "Đang làm dở";
+          top.append(chip1, chip2);
+          const h = document.createElement("h3"); h.textContent = c.title;
+          const pl = document.createElement("p"); pl.className = "place"; pl.textContent = c.place;
+          const prow = document.createElement("div"); prow.className = "prog-row";
+          const pl1 = document.createElement("span"); pl1.innerHTML = "Tiến độ: <b></b>"; pl1.querySelector("b").textContent = "Đã ghim " + it.found + "/" + totalClues + " manh mối";
+          const pl2 = document.createElement("span"); pl2.textContent = pct + "%";
+          prow.append(pl1, pl2);
+          const bar = document.createElement("div"); bar.className = "prog-bar";
+          const fill = document.createElement("i"); fill.style.width = pct + "%";
+          bar.appendChild(fill);
+          const note = document.createElement("p"); note.className = "prog-note";
+          note.textContent = it.current
+            ? "Muốn làm tiếp vụ này thì tự mở app Làm nhiệm vụ từ desktop, menu Start hoặc thanh taskbar."
+            : "Vụ này đang làm dở, tiến độ vẫn còn nguyên — bấm vào thẻ của vụ ở danh sách bên dưới (vụ hôm nay thì mở app Vụ án hôm nay) để làm tiếp.";
+          card.append(top, h, pl, prow, bar, note);
+          box.appendChild(card);
+        });
       })();
 
       const mkCard = (c) => {
@@ -6294,6 +6527,8 @@
         const b = document.createElement("div"); b.className = "case-card";
         const unlocked = seriesUnlocked(c), done = !!G.solved[c.id];
         const active = !!(G.run && G.run.caseId === c.id && !G.run.solvedHere);
+        /* Vụ đã nhận rồi cất tiến độ (đang làm vụ khác): vẫn là vụ đang làm dở */
+        const inProg = !active && !done && !!G.progress[c.id];
         if (!unlocked) b.classList.add("locked");
         const top = document.createElement("div"); top.className = "case-top";
         const chip1 = document.createElement("span"); chip1.className = "chip"; chip1.textContent = caseTypeLabel(c);
@@ -6301,6 +6536,7 @@
         if (active) { chip2.className = "chip diff-" + c.diffClass; chip2.textContent = "Đang làm"; }
         else if (done) { chip2.className = "chip done"; chip2.textContent = "Đã phá ✓"; }
         else if (!unlocked) { chip2.className = "chip"; chip2.textContent = "Chưa mở khóa"; }
+        else if (inProg) { chip2.className = "chip diff-" + c.diffClass; chip2.textContent = "Đang làm dở"; }
         else { chip2.className = "chip diff-" + c.diffClass; chip2.textContent = c.diff; }
         /* Nút xóa vụ: chuyển vụ vào Thùng rác (khôi phục lại được ở app Thùng rác) */
         const del = document.createElement("button");
@@ -6317,7 +6553,7 @@
         const te = document.createElement("p"); te.className = "teaser"; te.textContent = unlocked ? c.teaser : "Phá xong phần trước của series để mở hồ sơ này.";
         const foot = document.createElement("div"); foot.className = "case-foot";
         const rw = document.createElement("span"); rw.className = "reward"; rw.textContent = "+" + c.reward + " danh tiếng";
-        const st = document.createElement("span"); st.textContent = active ? "Đang làm" : (done ? "Nhận lại →" : (unlocked ? "Nhận vụ →" : "🔒"));
+        const st = document.createElement("span"); st.textContent = active ? "Đang làm" : (done ? "Nhận lại →" : (unlocked ? (inProg ? "Làm tiếp →" : "Nhận vụ →") : "🔒"));
         foot.append(rw, st);
         b.append(top, h, pl, te, foot);
         if (active) b.classList.add("is-active");
@@ -7636,7 +7872,8 @@
       return d.toLocaleTimeString("vi-VN", { hour: "2-digit", minute: "2-digit" }) + " · " + d.toLocaleDateString("vi-VN", { day: "2-digit", month: "2-digit", year: "numeric" });
     }
     function updateTrashBadge() {
-      const n = G.trash.length;
+      /* Huy hiệu Thùng rác đếm cả vụ/manh mối lẫn thông báo đã xóa */
+      const n = G.trash.length + (typeof notifDeletedCount === "function" ? notifDeletedCount() : 0);
       const badge = $("trashBadge");
       if (badge) { badge.hidden = n === 0; badge.textContent = n > 99 ? "99+" : String(n); }
       const pill = $("trashCountPill");
@@ -7739,6 +7976,8 @@
     }
     function emptyTrash() {
       const items = G.trash.slice();
+      const trashedNotifs = (typeof notifTrashed === "function") ? notifTrashed().slice() : [];
+      trashedNotifs.forEach(n => permDeleteTrashedNotif(n.id));
       G.trash = [];
       items.forEach(it => {
         if (it.kind === "case") {
@@ -7756,7 +7995,7 @@
       updateTrashBadge();
       saveProgress();
       renderTrash();
-      toast("Đã dọn sạch Thùng rác", items.length + " mục đã bị xóa vĩnh viễn.");
+      toast("Đã dọn sạch Thùng rác", (items.length + trashedNotifs.length) + " mục đã bị xóa vĩnh viễn.");
     }
 
     /* ----- Mở 2 app ----- */
@@ -7990,11 +8229,13 @@
       const pane = $("trashPane"); if (!pane) return;
       updateTrashBadge();
       pane.innerHTML = "";
+      const trashedNotifs = (typeof notifTrashed === "function") ? notifTrashed() : [];
+      const totalTrash = G.trash.length + trashedNotifs.length;
       const bar = document.createElement("div"); bar.className = "trash-toolbar";
       const intro = document.createElement("p");
-      intro.textContent = G.trash.length ? "Mỗi mục đã xóa nằm trong một khung riêng. Khôi phục để đưa mục đó về lại game, hoặc xóa vĩnh viễn khi chắc chắn không cần nữa." : "";
+      intro.textContent = totalTrash ? "Mỗi mục đã xóa nằm trong một khung riêng. Khôi phục để đưa mục đó về lại game, hoặc xóa vĩnh viễn khi chắc chắn không cần nữa." : "";
       bar.appendChild(intro);
-      if (G.trash.length) {
+      if (totalTrash) {
         const emptyBtn = document.createElement("button"); emptyBtn.type = "button"; emptyBtn.className = "set-btn danger"; emptyBtn.textContent = "Dọn sạch thùng rác";
         let armed = false, timer = null;
         emptyBtn.onclick = () => {
@@ -8008,11 +8249,11 @@
         bar.appendChild(emptyBtn);
       }
       pane.appendChild(bar);
-      if (!G.trash.length) {
+      if (!totalTrash) {
         const d = document.createElement("div"); d.className = "trash-empty";
         const b = document.createElement("b"); b.textContent = "Thùng rác đang trống";
         const p = document.createElement("p");
-        p.textContent = "Chưa có vụ án hay manh mối nào bị xóa. Khi bạn bấm nút thùng rác trên thẻ vụ ở app Nhận nhiệm vụ, nút “Xóa vụ này” trong app Làm nhiệm vụ, hoặc nút ✕ trên thẻ manh mối ở Bảng ghim, mục đã xóa sẽ vào đây kèm giờ xóa — để khôi phục lại bất cứ lúc nào, hoặc xóa vĩnh viễn.";
+        p.textContent = "Chưa có vụ án, manh mối hay thông báo nào bị xóa. Khi bạn bấm nút thùng rác trên thẻ vụ ở app Nhận nhiệm vụ, nút “Xóa vụ này” trong app Làm nhiệm vụ, nút ✕ trên thẻ manh mối ở Bảng ghim, hoặc xóa thông báo ở chuông / Cài đặt → Thông báo, mục đã xóa sẽ vào đây kèm giờ xóa — để khôi phục lại bất cứ lúc nào, hoặc xóa vĩnh viễn.";
         d.append(b, p); pane.appendChild(d);
         return;
       }
@@ -8047,6 +8288,45 @@
         card.append(ic, main, acts);
         pane.appendChild(card);
       });
+      /* Thông báo đã xóa: khôi phục thì tin quay về Cài đặt → Thông báo
+         (ở trạng thái đã đọc), xóa vĩnh viễn thì mất hẳn khỏi kho chuông. */
+      if (trashedNotifs.length) {
+        const head = document.createElement("h3");
+        head.textContent = "Thông báo đã xóa";
+        head.style.cssText = "margin:22px 0 12px;font-size:17px";
+        pane.appendChild(head);
+        const bellIcon = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M18 9.5a6 6 0 1 0-12 0c0 6-2.5 7-2.5 7h17S18 15.5 18 9.5M10 20a2.2 2.2 0 0 0 4 0"/></svg>';
+        trashedNotifs.forEach(n => {
+          const card = document.createElement("div"); card.className = "trash-item";
+          const ic = document.createElement("span"); ic.className = "ti-ic"; ic.innerHTML = bellIcon;
+          const main = document.createElement("div"); main.className = "trash-item-main";
+          const t = document.createElement("b"); t.textContent = n.main;
+          if (n.sub) { const sub = document.createElement("span"); sub.className = "notif-item-sub"; sub.style.color = "var(--ink-dim)"; sub.textContent = n.sub; main.appendChild(t); main.appendChild(sub); }
+          else main.appendChild(t);
+          const meta = document.createElement("div"); meta.className = "trash-item-meta";
+          const chip = document.createElement("span"); chip.className = "chip"; chip.textContent = "Thông báo";
+          meta.appendChild(chip);
+          const s2 = document.createElement("span"); s2.textContent = "Đã xóa lúc " + trashTimeStr(n.deletedAt || Date.now());
+          meta.appendChild(s2);
+          main.appendChild(meta);
+          const acts = document.createElement("div"); acts.className = "trash-actions";
+          const rs = document.createElement("button"); rs.type = "button"; rs.className = "set-btn"; rs.textContent = "Khôi phục";
+          rs.onclick = () => { restoreTrashedNotif(n.id); toast("Đã khôi phục thông báo", n.main + " — tin đã quay về Cài đặt → Thông báo."); };
+          const pd = document.createElement("button"); pd.type = "button"; pd.className = "set-btn danger"; pd.textContent = "Xóa vĩnh viễn";
+          let armed = false, timer = null;
+          pd.onclick = () => {
+            if (!armed) {
+              armed = true; pd.textContent = "Chắc chắn? Bấm lần nữa"; pd.classList.add("danger-armed");
+              timer = setTimeout(() => { armed = false; pd.textContent = "Xóa vĩnh viễn"; pd.classList.remove("danger-armed"); }, 3500);
+              return;
+            }
+            clearTimeout(timer); permDeleteTrashedNotif(n.id);
+          };
+          acts.append(rs, pd);
+          card.append(ic, main, acts);
+          pane.appendChild(card);
+        });
+      }
     }
 
     /* Nhận vụ ở app Nhận nhiệm vụ: vụ chuyển sang "đang làm" (tạo phiên làm vụ),
@@ -9216,6 +9496,21 @@
       var im = document.getElementById("ytMiniThumb");
       if (im && ytCurrentThumb && im.getAttribute("src") !== ytCurrentThumb) im.src = ytCurrentThumb;
       bar.setAttribute("data-playing", ytState === 1 ? "1" : "0");
+      /* Chữ trạng thái trên thanh bám đúng trạng thái THẬT của trình
+         phát (ytState do onStateChange cập nhật): đang phát / đã tạm
+         dừng / đang tải / đã hết. Trước đây thuộc tính title của thanh
+         ghi chết "Đang phát video" nên video đã tạm dừng mà chữ vẫn
+         báo đang phát. */
+      var stateTxt = ytState === 1 ? "Đang phát"
+        : ytState === 2 ? "Đã tạm dừng"
+        : ytState === 0 ? "Đã hết video"
+        : ytState === 3 ? "Đang tải…"
+        : "Video";
+      var stEl = document.getElementById("ytMiniState");
+      if (stEl) stEl.textContent = stateTxt;
+      bar.title = stateTxt + " — bấm để mở app Xem video";
+      var tgBtn = document.getElementById("ytMiniToggle");
+      if (tgBtn) tgBtn.setAttribute("aria-label", ytState === 1 ? "Tạm dừng video" : "Phát tiếp video");
       bar.hidden = false;
     }
     (function initYoutubeApp() {
@@ -9549,10 +9844,111 @@
         if (userBtn) userBtn.onclick = function () { setOpen(false); goApp("profile"); };
       }
 
-      /* ----- Icon trên desktop ----- */
+      /* ----- Icon trên desktop: nhấn 1 cái = CHỌN, nhấn 2 cái = MỞ app -----
+         Kiểu Windows: bấm 1 lần chỉ chọn icon (tô sáng), bấm đúp chuột hoặc
+         chạm 2 lần nhanh trên cùng icon mới mở app. Bấm bằng bàn phím
+         (Enter/Space — click có detail = 0) thì mở luôn. Ctrl/Cmd + bấm =
+         chọn thêm hoặc bỏ chọn từng icon. Kéo thả icon vẫn như cũ: cú click
+         ngay sau khi thả icon bị chặn ở dưới nên không chọn/mở nhầm. */
+      var deskIconsEl = document.querySelector(".desktop-icons");
+      function deskIconList() { return Array.prototype.slice.call(document.querySelectorAll(".d-icon[data-app]")); }
+      function clearIconSelection() { deskIconList().forEach(function (ic) { ic.classList.remove("selected"); }); }
+      function selectIconOnly(ic) { deskIconList().forEach(function (o) { o.classList.toggle("selected", o === ic); }); }
+      window.__clearIconSelection = clearIconSelection;
+      var lastIconTap = { app: null, t: 0 };
       document.querySelectorAll(".d-icon[data-app]").forEach(function (b) {
-        b.addEventListener("click", function () { goApp(b.dataset.app); });
+        b.addEventListener("click", function (e) {
+          if (e.detail === 0) { selectIconOnly(b); goApp(b.dataset.app); return; } /* bàn phím: mở luôn */
+          var now = Date.now();
+          var isSecond = lastIconTap.app === b.dataset.app && (now - lastIconTap.t) <= 450;
+          lastIconTap = { app: b.dataset.app, t: now };
+          if (isSecond) { lastIconTap = { app: null, t: 0 }; selectIconOnly(b); goApp(b.dataset.app); return; }
+          if (e.ctrlKey || e.metaKey) b.classList.toggle("selected");
+          else selectIconOnly(b);
+        });
       });
+
+      /* ----- Kéo khung chọn nhiều icon trên nền desktop trống -----
+         Nhấn giữ chuột (hoặc bút) trên nền trống rồi kéo: hiện khung chọn
+         mờ, icon nào khung quét qua thì được chọn cùng lúc; nhả chuột là
+         giữ nguyên lựa chọn đó. Bấm trơn vào nền trống (không kéo) thì bỏ
+         chọn hết. Ctrl/Cmd + kéo = cộng thêm vào lựa chọn đang có. Chỉ
+         chạy khi đang ở desktop trống đã mở khóa; chạm cảm ứng thì chạm
+         trơn vào nền trống để bỏ chọn. */
+      (function () {
+        var screenEl = document.querySelector(".screen");
+        if (!screenEl || !deskIconsEl) return;
+        var band = null, drag = null, suppressClearUntil = 0;
+        function ensureBand() {
+          if (!band) {
+            band = document.createElement("div");
+            band.className = "sel-band";
+            band.setAttribute("aria-hidden", "true");
+            deskIconsEl.appendChild(band);
+          }
+          return band;
+        }
+        function deskPoint(e) {
+          var r = deskIconsEl.getBoundingClientRect();
+          return { x: e.clientX - r.left, y: e.clientY - r.top };
+        }
+        function applyBandSelection() {
+          if (!drag || !drag.rect) return;
+          var rc = drag.rect;
+          deskIconList().forEach(function (ic) {
+            var ix = ic.offsetLeft, iy = ic.offsetTop, iw = ic.offsetWidth || 82, ih = ic.offsetHeight || 104;
+            var hit = ix < rc.x + rc.w && ix + iw > rc.x && iy < rc.y + rc.h && iy + ih > rc.y;
+            var keep = drag.base ? drag.base.indexOf(ic) >= 0 : false;
+            ic.classList.toggle("selected", hit || keep);
+          });
+        }
+        screenEl.addEventListener("pointerdown", function (e) {
+          if (e.button !== 0 || e.pointerType === "touch") return;
+          if (document.body.classList.contains("locked")) return;
+          if (!document.body.classList.contains("on-desktop")) return;
+          if (e.target !== screenEl && e.target !== deskIconsEl) return;
+          var p = deskPoint(e);
+          var base = null;
+          if (e.ctrlKey || e.metaKey) base = deskIconList().filter(function (ic) { return ic.classList.contains("selected"); });
+          drag = { sx: p.x, sy: p.y, moved: false, base: base, rect: null };
+          if (!base) clearIconSelection();
+        });
+        window.addEventListener("pointermove", function (e) {
+          if (!drag) return;
+          var p = deskPoint(e);
+          var dx = p.x - drag.sx, dy = p.y - drag.sy;
+          if (!drag.moved && Math.abs(dx) < 4 && Math.abs(dy) < 4) return; /* chưa qua ngưỡng: vẫn là bấm trơn */
+          drag.moved = true;
+          var el = ensureBand();
+          var x = Math.min(drag.sx, p.x), y = Math.min(drag.sy, p.y);
+          el.style.left = x + "px"; el.style.top = y + "px";
+          el.style.width = Math.abs(dx) + "px"; el.style.height = Math.abs(dy) + "px";
+          el.classList.add("show");
+          drag.rect = { x: x, y: y, w: Math.abs(dx), h: Math.abs(dy) };
+          applyBandSelection();
+        });
+        window.addEventListener("pointerup", function () {
+          if (!drag) return;
+          var wasMoved = drag.moved;
+          drag = null;
+          if (band) band.classList.remove("show");
+          /* Cú click theo ngay sau khi thả khung không được xóa lựa chọn vừa kéo */
+          if (wasMoved) suppressClearUntil = Date.now() + 350;
+        });
+        window.addEventListener("pointercancel", function () {
+          drag = null;
+          if (band) band.classList.remove("show");
+        });
+        /* Chạm/bấm trơn vào nền trống (không kéo khung): bỏ chọn hết icon */
+        screenEl.addEventListener("click", function (e) {
+          if (Date.now() < suppressClearUntil) return;
+          if (document.body.classList.contains("locked")) return;
+          if (!document.body.classList.contains("on-desktop")) return;
+          if (e.target !== screenEl && e.target !== deskIconsEl) return;
+          clearIconSelection();
+        });
+        document.addEventListener("keydown", function (e) { if (e.key === "Escape") clearIconSelection(); });
+      })();
 
       /* ----- Kéo thả icon desktop: kéo tự do trong vùng desktop, lưu vị trí -----
          Pointer events nên chạy cả chuột lẫn chạm. Chỉ khi di chuyển quá 6px mới
@@ -9690,15 +10086,10 @@
             e.preventDefault(); e.stopPropagation(); e.stopImmediatePropagation();
           }
         }, true);
-        /* Chuột phải lên nền desktop trống: xếp lại icon về mặc định */
-        var screenEl = document.querySelector(".screen");
-        if (screenEl) screenEl.addEventListener("contextmenu", function (e) {
-          if (document.body.classList.contains("locked")) return;
-          if (e.target !== screenEl && e.target !== desk) return;
-          e.preventDefault();
-          window.__resetIconLayout();
-          toast("Đã sắp xếp lại icon.", "Các icon trên desktop đã về vị trí mặc định ở cột trái.");
-        });
+        /* Chuột phải lên nền desktop trống giờ mở menu kiểu Windows (khối
+           menu ở dưới lo) — không còn tự xếp lại icon như bản cũ nữa; muốn
+           xếp lại thì dùng mục "Đưa icon về vị trí mặc định" trong menu đó
+           hoặc nút trong Cài đặt (cùng gọi window.__resetIconLayout). */
         window.addEventListener("resize", function () { ensureAllVisible(); icons.forEach(clampIcon); });
         applyPos();
         /* Mở khóa xong vùng desktop mới hiện và đo được kích thước thật:
@@ -9726,9 +10117,21 @@
         var icons = Array.prototype.slice.call(desk.querySelectorAll(".d-icon[data-app]"));
         if (!icons.length) return;
         var GX = 14, GY = 16, CW = 104, CH = 104;
-        var opts = { grid: true, auto: false };
+        /* Cỡ icon từ menu Xem: Vừa (md) là cỡ gốc; Lớn/Nhỏ đổi luôn ô lưới
+           snap cho khớp kích thước thật của icon. Cách sắp xếp (sort) cũng
+           lưu bền chung kho tùy chọn này. */
+        var SIZE_CELLS = { sm: { cw: 88, ch: 98 }, md: { cw: 104, ch: 104 }, lg: { cw: 130, ch: 144 } };
+        var opts = { grid: true, auto: false, size: "md", sort: "date" };
         try { opts = Object.assign(opts, JSON.parse(localStorage.getItem(OPT_KEY) || "{}") || {}); } catch (e) {}
+        if (!SIZE_CELLS[opts.size]) opts.size = "md";
         function saveOpts() { try { localStorage.setItem(OPT_KEY, JSON.stringify(opts)); } catch (e) {} }
+        function applyIconSize() {
+          var cell = SIZE_CELLS[opts.size] || SIZE_CELLS.md;
+          CW = cell.cw; CH = cell.ch;
+          desk.classList.toggle("sz-lg", opts.size === "lg");
+          desk.classList.toggle("sz-sm", opts.size === "sm");
+        }
+        applyIconSize();
         function saveAllPos() {
           var o = {};
           icons.forEach(function (ic) { o[ic.dataset.app] = { x: Math.round(parseFloat(ic.style.left) || 0), y: Math.round(parseFloat(ic.style.top) || 0) }; });
@@ -9788,23 +10191,71 @@
         }
         window.addEventListener("resize", function () { if (opts.grid || opts.auto) { /* chỉ clamp như cũ, không tự nhảy vị trí khi đổi kích thước */ } });
 
-        /* ----- Menu chuột phải trên nền desktop trống ----- */
+        /* ----- Menu chuột phải kiểu Windows 10 trên nền desktop trống -----
+           Chỉ hiện khi chuột phải trúng nền trống (không trúng icon, không
+           trúng cửa sổ app nào). Xem ›: cỡ icon Lớn/Vừa/Nhỏ (chấm tròn ở mục
+           đang chọn) + Tự sắp xếp + Căn lưới + Đưa về mặc định. Sắp xếp theo ›:
+           Tên / Ngày nhận (thứ tự gốc lúc icon lên desktop) / Loại (nhóm vụ án
+           → trò chơi → giải trí → hướng dẫn → thành tích → hệ thống). Làm mới:
+           nạp lại vị trí icon đã lưu. Cài đặt hiển thị mở Cài đặt → Giao diện,
+           Cá nhân hóa mở Cài đặt → Hình nền. */
         var menu = document.getElementById("deskMenu");
         var screenEl = document.querySelector(".screen");
+        function iconLabel(ic) {
+          var s = ic.querySelector("span:not(.d-glyph):not(.d-badge)");
+          return s ? s.textContent.trim() : (ic.dataset.app || "");
+        }
+        var TYPE_RANK = { missions: 0, investigate: 0, daily: 0, minigames: 1, youtube: 2, howto: 3, badges: 4, thispc: 5, trash: 5 };
+        function placeInOrder(list) {
+          var d = dims(icons[0]); if (!d) return;
+          var rowsPerCol = d.maxRow + 1;
+          list.forEach(function (ic, i) { setCell(ic, Math.floor(i / rowsPerCol), i % rowsPerCol); });
+        }
+        function sortIcons(mode) {
+          var list = icons.slice();
+          if (mode === "name") list.sort(function (a, b) { return iconLabel(a).localeCompare(iconLabel(b), "vi"); });
+          else if (mode === "type") list.sort(function (a, b) {
+            var ra = TYPE_RANK[a.dataset.app] != null ? TYPE_RANK[a.dataset.app] : 9;
+            var rb = TYPE_RANK[b.dataset.app] != null ? TYPE_RANK[b.dataset.app] : 9;
+            return ra - rb || iconLabel(a).localeCompare(iconLabel(b), "vi");
+          });
+          placeInOrder(list);
+          saveAllPos();
+        }
         function syncMenu() {
           var a = document.getElementById("dmAuto"), g = document.getElementById("dmGrid");
           if (a) { a.classList.toggle("on", !!opts.auto); a.setAttribute("aria-checked", opts.auto ? "true" : "false"); }
           if (g) { g.classList.toggle("on", !!opts.grid); g.setAttribute("aria-checked", opts.grid ? "true" : "false"); }
+          if (!menu) return;
+          menu.querySelectorAll("[data-size]").forEach(function (b) {
+            var on = b.dataset.size === opts.size;
+            b.classList.toggle("on", on); b.setAttribute("aria-checked", on ? "true" : "false");
+          });
+          menu.querySelectorAll("[data-sort]").forEach(function (b) {
+            var on = b.dataset.sort === opts.sort;
+            b.classList.toggle("on", on); b.setAttribute("aria-checked", on ? "true" : "false");
+          });
         }
-        function closeDeskMenu() { if (!menu) return; menu.classList.remove("show"); menu.setAttribute("aria-hidden", "true"); }
+        function closeDeskMenu() {
+          if (!menu) return;
+          menu.classList.remove("show"); menu.setAttribute("aria-hidden", "true");
+          menu.querySelectorAll(".has-sub.open").forEach(function (p) { p.classList.remove("open"); });
+        }
         window.__closeDeskMenu = closeDeskMenu;
         function openDeskMenu(x, y) {
           if (!menu) return;
           syncMenu();
+          menu.classList.remove("flip", "sub-up");
           menu.classList.add("show"); menu.setAttribute("aria-hidden", "false");
-          var mw = menu.offsetWidth || 248, mh = menu.offsetHeight || 170;
-          menu.style.left = Math.max(8, Math.min(x, window.innerWidth - mw - 8)) + "px";
-          menu.style.top = Math.max(8, Math.min(y, window.innerHeight - mh - 8)) + "px";
+          var mw = menu.offsetWidth || 238, mh = menu.offsetHeight || 196;
+          var lx = Math.max(8, Math.min(x, window.innerWidth - mw - 8));
+          var ty = Math.max(8, Math.min(y, window.innerHeight - mh - 8));
+          /* Menu con cần thêm ~226px ngang và ~300px dọc: sát mép phải thì
+             lật menu con sang trái, gần đáy thì cho menu con mở ngược lên. */
+          if (lx + mw + 222 > window.innerWidth - 4) menu.classList.add("flip");
+          if (ty + 300 > window.innerHeight) menu.classList.add("sub-up");
+          menu.style.left = lx + "px";
+          menu.style.top = ty + "px";
         }
         if (screenEl) screenEl.addEventListener("contextmenu", function (e) {
           if (document.body.classList.contains("locked")) return;
@@ -9821,6 +10272,53 @@
           if (menu && menu.classList.contains("show") && !e.target.closest("#deskMenu")) closeDeskMenu();
         });
         document.addEventListener("keydown", function (e) { if (e.key === "Escape") closeDeskMenu(); });
+        /* Màn hình cảm ứng không có hover: bấm vào mục cha để mở/đóng menu con */
+        if (menu) menu.querySelectorAll(".has-sub").forEach(function (p) {
+          p.addEventListener("click", function (e) {
+            if (e.target.closest(".desk-sub")) return;
+            menu.querySelectorAll(".has-sub.open").forEach(function (o) { if (o !== p) o.classList.remove("open"); });
+            p.classList.toggle("open");
+          });
+          p.addEventListener("keydown", function (e) {
+            if (e.key === "Enter" || e.key === " " || e.key === "ArrowRight") { e.preventDefault(); p.classList.add("open"); }
+            if (e.key === "ArrowLeft") p.classList.remove("open");
+          });
+        });
+        if (menu) menu.querySelectorAll("[data-size]").forEach(function (b) {
+          b.addEventListener("click", function () {
+            closeDeskMenu();
+            if (opts.size === b.dataset.size) return;
+            opts.size = b.dataset.size; saveOpts(); applyIconSize();
+            arrangeAll(); saveAllPos();
+            toast("Đã đổi cỡ icon desktop.", "Icon giờ là cỡ " + (opts.size === "lg" ? "Lớn" : opts.size === "sm" ? "Nhỏ" : "Vừa") + ", đã xếp lại vào lưới cho thẳng hàng.");
+          });
+        });
+        if (menu) menu.querySelectorAll("[data-sort]").forEach(function (b) {
+          b.addEventListener("click", function () {
+            opts.sort = b.dataset.sort; saveOpts();
+            sortIcons(opts.sort);
+            closeDeskMenu();
+            toast("Đã sắp xếp icon.", opts.sort === "name" ? "Icon đã xếp theo Tên từ A đến Z." : opts.sort === "type" ? "Icon đã xếp theo Loại: vụ án, trò chơi, giải trí, hướng dẫn, thành tích, hệ thống." : "Icon đã xếp theo Ngày nhận — thứ tự gốc trên desktop.");
+          });
+        });
+        var dmRefresh = document.getElementById("dmRefresh");
+        if (dmRefresh) dmRefresh.onclick = function () {
+          closeDeskMenu();
+          var saved = {};
+          try { saved = JSON.parse(localStorage.getItem(POS_KEY) || "{}") || {}; } catch (e) {}
+          icons.forEach(function (ic) {
+            var p = saved[ic.dataset.app];
+            if (p && isFinite(p.x) && isFinite(p.y)) { ic.style.left = p.x + "px"; ic.style.top = p.y + "px"; }
+          });
+          if (opts.auto) arrangeAll(); else if (opts.grid) snapAll();
+          saveAllPos();
+          window.dispatchEvent(new Event("resize"));
+          toast("Đã làm mới desktop.", "Icon đã nạp lại đúng vị trí đã lưu.");
+        };
+        var dmDisplay = document.getElementById("dmDisplay");
+        if (dmDisplay) dmDisplay.onclick = function () { closeDeskMenu(); openSettings("appearance"); };
+        var dmPersonalize = document.getElementById("dmPersonalize");
+        if (dmPersonalize) dmPersonalize.onclick = function () { closeDeskMenu(); openSettings("wallpaper"); };
         var dmAuto = document.getElementById("dmAuto"), dmGrid = document.getElementById("dmGrid"), dmReset = document.getElementById("dmReset");
         if (dmAuto) dmAuto.onclick = function () {
           opts.auto = !opts.auto; saveOpts(); closeDeskMenu();
@@ -9996,10 +10494,11 @@
           if (!title || !body) return;
           title.textContent = "Vụ án ngày " + sel.toLocaleDateString("vi-VN", { day: "numeric", month: "numeric", year: "numeric" });
           body.innerHTML = "";
+          var isTodaySel = sameDay(sel, today);
           /* Ngày hôm nay: vụ của ngày là vụ mini trong app "Vụ án hôm
              nay" — hiện đúng vụ đó ở đầu danh sách (bấm vào là mở app
              Vụ án hôm nay) để Lịch và app gọi cùng một vụ cho hôm nay. */
-          if (sameDay(sel, today) && typeof todaysDailyCase === "function") {
+          if (isTodaySel && typeof todaysDailyCase === "function") {
             var dc = todaysDailyCase();
             if (dc) {
               var b0 = document.createElement("button"); b0.type = "button"; b0.className = "cal-case";
@@ -10023,6 +10522,15 @@
             var p = document.createElement("p"); p.className = "cal-empty";
             p.textContent = "Ngày này không có vụ án nào trong hồ sơ. Các ngày có chấm vàng là ngày có vụ.";
             body.appendChild(p); return;
+          }
+          /* Riêng ngày hôm nay: mục "Vụ án ngày …" ở trên CHỈ gồm vụ
+             mini hôm nay. Các vụ thường tình cờ rơi vào hôm nay (l7, l8,
+             l9 chưa có lệch ngày riêng nên mặc định lệch 0) được tách
+             xuống một mục riêng bên dưới, không trộn vào vụ của ngày. */
+          if (isTodaySel && list.length && body.children.length) {
+            var sub = document.createElement("h6"); sub.className = "cal-cases-sub";
+            sub.textContent = "Vụ thường trong hồ sơ — không phải vụ của ngày";
+            body.appendChild(sub);
           }
           list.forEach(function (c) {
             var b = document.createElement("button"); b.type = "button"; b.className = "cal-case";
@@ -10173,7 +10681,13 @@
         if (pin && pin.value.trim() === G.profile.pin) {
           document.body.classList.remove("locked");
           showDesktop();
-          toast("Xin chào, " + G.profile.name + "!", "Mở app Nhận nhiệm vụ trên desktop để bắt đầu ca làm việc.");
+          /* Chào mừng chỉ một lần duy nhất: đã chào rồi (cờ lưu bền
+             hoặc đã có sẵn một tin chào mừng trong chuông) thì đăng
+             nhập lại không thêm tin trùng nữa. */
+          if (!welcomeShown() && !notifs.some(isWelcomeNotif)) {
+            markWelcomeShown();
+            toast("Xin chào, " + G.profile.name + "!", "Mở app Nhận nhiệm vụ trên desktop để bắt đầu ca làm việc.");
+          }
         } else {
           if (err) err.hidden = false;
           if (signinStage) { signinStage.classList.remove("shake"); void signinStage.offsetWidth; signinStage.classList.add("shake"); }
@@ -10747,6 +11261,54 @@
         bgmUpdateUI();
       }
 
+      /* Mục Thông báo trong Cài đặt: nơi xem TOÀN BỘ thông báo (đã đọc lẫn
+         chưa đọc) — bảng chuông ngoài taskbar chỉ hiện gọn tin chưa đọc +
+         3 tin đã đọc mới nhất. Xóa ở đây là chuyển vào Thùng rác, khôi
+         phục lại được ở app Thùng rác. Dữ liệu qua window.__notifAPI của
+         trung tâm thông báo nên chuông / huy hiệu / Thùng rác luôn khớp. */
+      function renderNotifsPane() {
+        var api = window.__notifAPI;
+        var all = api ? api.snapshot() : [];
+        var active = all.filter(function (n) { return !n.deleted; });
+        var trashedCount = all.length - active.length;
+        var unread = active.filter(function (n) { return !n.read; }).length;
+        var h = '<h3>Thông báo</h3><p class="set-sub">Toàn bộ thông báo của văn phòng nằm ở đây. Bảng chuông ở taskbar chỉ hiện tin chưa đọc và 3 tin đã đọc mới nhất cho gọn — tin đã đọc xem lại tại mục này, tin đã xóa nằm trong app Thùng rác.</p>';
+        h += '<div class="set-card"><div class="set-row"><div class="lbl"><b>' + unread + ' chưa đọc · ' + active.length + ' tin đang lưu' + (trashedCount ? ' · ' + trashedCount + ' tin trong Thùng rác' : '') + '</b><span>Đánh dấu đã đọc hết, hoặc mở Thùng rác để xem và khôi phục các tin đã xóa.</span></div>' +
+          '<div style="display:flex;gap:8px;flex-wrap:wrap"><button type="button" class="set-btn ghost" id="setNotifReadAll">Đã đọc hết</button><button type="button" class="set-btn ghost" id="setNotifOpenTrash">Mở Thùng rác</button></div></div></div>';
+        if (!active.length) {
+          h += '<div class="set-card"><p class="desc" style="margin:0">Chưa có thông báo nào đang lưu. Khi game có tin mới, tin sẽ hiện ở chuông taskbar và được lưu lại tại đây.</p></div>';
+        } else {
+          h += '<div class="set-card">';
+          active.forEach(function (n) {
+            var d = new Date(n.time);
+            var when = d.toLocaleTimeString("vi-VN", { hour: "2-digit", minute: "2-digit" }) + " · " + d.toLocaleDateString("vi-VN", { day: "2-digit", month: "2-digit", year: "numeric" });
+            h += '<div class="set-notif-row' + (n.read ? '' : ' unread') + '"><span class="set-notif-dot" aria-hidden="true"></span>' +
+              '<div class="set-notif-main"><b>' + esc(n.main) + '</b>' +
+              (n.sub ? '<span class="sub">' + esc(n.sub) + '</span>' : '') +
+              '<span class="time">' + esc(when) + '</span></div>' +
+              '<span class="set-notif-state">' + (n.read ? 'Đã đọc' : 'Chưa đọc') + '</span>' +
+              '<div class="set-notif-acts">' +
+              (n.read ? '' : '<button type="button" class="set-btn ghost" data-notif-read="' + n.id + '">Đánh dấu đã đọc</button>') +
+              '<button type="button" class="set-btn ghost" data-notif-del="' + n.id + '">Xóa vào Thùng rác</button>' +
+              '</div></div>';
+          });
+          h += '<div style="margin-top:14px"><button type="button" class="set-btn danger" id="setNotifTrashAll">Xóa tất cả vào Thùng rác</button></div></div>';
+        }
+        main.innerHTML = h;
+        var ra = document.getElementById("setNotifReadAll");
+        if (ra) ra.onclick = function () { if (api) api.markAllRead(); render(); };
+        var ot = document.getElementById("setNotifOpenTrash");
+        if (ot) ot.onclick = function () { if (typeof openTrash === "function") openTrash(); };
+        var ta = document.getElementById("setNotifTrashAll");
+        if (ta) ta.onclick = function () { if (api) api.trashAll(); render(); };
+        main.querySelectorAll("[data-notif-read]").forEach(function (b) {
+          b.onclick = function () { if (api) api.markRead(Number(b.getAttribute("data-notif-read"))); render(); };
+        });
+        main.querySelectorAll("[data-notif-del]").forEach(function (b) {
+          b.onclick = function () { if (api) api.trash(Number(b.getAttribute("data-notif-del"))); render(); };
+        });
+      }
+
       function renderAppearance() {
         var h = '<h3>Giao diện</h3><p class="set-sub">Chế độ sáng/tối cho cửa sổ game và các app văn phòng. Hình nền desktop chỉnh ở mục Hình nền.</p>';
         h += '<div class="set-card"><div class="set-row"><div class="lbl"><b>Chế độ giao diện</b><span>“Theo hệ thống” sẽ tự đổi theo cài đặt sáng/tối của máy bạn</span></div>' +
@@ -10829,7 +11391,7 @@
         main.innerHTML = h;
       }
 
-      var RENDERERS = { profile: renderProfile, wallpaper: renderWallpaper, sound: renderSound, appearance: renderAppearance, security: renderSecurity, data: renderData, about: renderAbout };
+      var RENDERERS = { profile: renderProfile, wallpaper: renderWallpaper, sound: renderSound, notifs: renderNotifsPane, appearance: renderAppearance, security: renderSecurity, data: renderData, about: renderAbout };
       function render() {
         window.__lastSettingsPane = curPane;
         document.querySelectorAll(".set-nav-btn").forEach(function (b) { b.classList.toggle("active", b.dataset.setpane === curPane); });
